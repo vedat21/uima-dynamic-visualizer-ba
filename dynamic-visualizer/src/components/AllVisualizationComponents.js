@@ -1,0 +1,36 @@
+import React from "react";
+import BarChart from "./visualization_components/charts/BarChart"
+import BubbleChart from "./visualization_components/charts/BubbleChart";
+import DoughnutChart from "./visualization_components/charts/DoughnutChart"
+import LineChart from "./visualization_components/charts/LineChart"
+import PieChart from "./visualization_components/charts/PieChart";
+import PolarAreaChart from "./visualization_components/charts/PolarAreaChart";
+import RadarChart from "./visualization_components/charts/RadarChart"
+import ScatterChart from "./visualization_components/charts/ScatterChart";
+import TextComponent from "./visualization_components/TextComponent";
+import TextArea from "./visualization_components/TextArea";
+
+
+// all visualization components
+const components = {
+    "barchart": BarChart,
+    "bubblechart": BubbleChart,
+    "doughnutchart": DoughnutChart,
+    "linechart": LineChart,
+    "piechart": PieChart,
+    "polarareachart": PolarAreaChart,
+    "scatterchart": ScatterChart,
+    "radarchart": RadarChart,
+    "textarea": TextArea,
+    "textcomponent": TextComponent,
+};
+
+// return as react components
+export default (block) => {
+    // component does exist
+    if (typeof components[block.component] !== "undefined") {
+        return React.createElement(components[block.component], {
+            block: block,
+        });
+    }
+}

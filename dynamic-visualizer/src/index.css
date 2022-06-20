@@ -1,0 +1,38 @@
+.scrollable-text {
+    overflow-y: auto;
+    overflow-x: hidden;
+    text-align: justify;
+    font-family: "Georgia";
+    background-color: white;
+}
+
+.chart {
+    border-style: solid;
+    background-color: white;
+}
+
+.top-bar{
+    margin-bottom: 50px;
+}
+
+.select{
+    width: 50%;
+    color: black;
+}
+
+.layout_editable{
+    margin-top: 80px;
+}
+
+.layout{
+    margin-top: 10px;
+}
+
+.primary-color{
+    background-color: #00618F;
+}
+
+.secondary-color{
+    background-color: #00618F;
+
+}
