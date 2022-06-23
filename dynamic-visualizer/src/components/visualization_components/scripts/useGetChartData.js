@@ -1,10 +1,19 @@
 import useGetData from "./useGetData";
 
-const getBasisData = (label, data, labels) =>{
+/**
+ *
+ * @param label is prop
+ * @param url is prop
+ * @returns {{datasets: [{backgroundColor: string[], borderColor: string[], data: [number], borderWidth: number, label: *}], labels: [string]}}
+ */
+const useGetChartData = (label, url) => {
 
     // make request to get data
     //   const url = "http://localhost:9999/result/pos";
     //   const response = useGetData(url);
+    const {response, loading} = useGetData(url);
+    const data = response.data;
+    const labels = response.labels;
 
     // attributes of chart
     const backgroundColor = [
@@ -23,7 +32,6 @@ const getBasisData = (label, data, labels) =>{
         'rgba(153, 102, 255, 1)',
         'rgba(255, 159, 64, 1)'
     ]
-    //label = "Ein Titel wie sdfdsa man ihn will"
 
     const dataForVisualization = {
         labels: labels,
@@ -37,8 +45,7 @@ const getBasisData = (label, data, labels) =>{
 
     };
 
-
     return dataForVisualization;
 }
 
-export default getBasisData;
+export default useGetChartData;

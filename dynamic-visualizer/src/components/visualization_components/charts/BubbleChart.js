@@ -1,18 +1,18 @@
 import React from "react";
 import {Bubble} from "react-chartjs-2"
-import Chart from 'chart.js/auto'; // ohne diesen import werden die charts nicht geladen
+import Chart from 'chart.js/auto';
+import useGetChartData from "../scripts/useGetChartData"; // ohne diesen import werden die charts nicht geladen
 
-// Custom Modules
-import getBasisData from "../scripts/getBasisData";
+// custom modules
 
 function BubbleChart(props) {
 
-    const dataForVisualization = getBasisData();
+    const dataForVisualization = useGetChartData(props.label, props.url);
+
 
     return (
         <Bubble data={dataForVisualization}/>
     )
-
 }
 
 export default BubbleChart;

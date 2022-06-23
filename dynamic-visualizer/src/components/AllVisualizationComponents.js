@@ -11,7 +11,7 @@ import TextComponent from "./visualization_components/TextComponent";
 import TextArea from "./visualization_components/TextArea";
 
 
-// all visualization components
+// all visualization components saved to map a string to the component.
 const components = {
     "barchart": BarChart,
     "bubblechart": BubbleChart,
@@ -25,12 +25,23 @@ const components = {
     "textcomponent": TextComponent,
 };
 
-// return as react components
-export default (block) => {
+/**
+ * return react component
+ * @param block is a component from visualization_components
+ * @param editable is prop from root
+ * @param label of visualization
+ * @param url
+ * @returns {React.FunctionComponentElement<{editable, block, label}>}
+ */
+export default (block, editable, label, url) => {
     // component does exist
     if (typeof components[block.component] !== "undefined") {
         return React.createElement(components[block.component], {
             block: block,
+            editable: editable,
+            label: label,
+            targetData: block.targetData,
+            url: url,
         });
     }
 }

@@ -3,16 +3,15 @@ import {PolarArea} from "react-chartjs-2"
 import Chart from 'chart.js/auto'; // ohne diesen import werden die charts nicht geladen
 
 // Custom Modules
-import getBasisData from "../scripts/getBasisData";
+import useGetChartData from "../scripts/useGetChartData";
 
 function PolarAreaChart(props) {
 
-    const dataForVisualization = getBasisData();
+    const dataForVisualization = useGetChartData(props.label, props.url);
 
     return (
         <PolarArea data={dataForVisualization}/>
     )
-
 }
 
 export default PolarAreaChart;

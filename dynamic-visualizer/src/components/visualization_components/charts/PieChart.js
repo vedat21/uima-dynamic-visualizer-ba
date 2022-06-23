@@ -3,16 +3,16 @@ import {Pie} from "react-chartjs-2"
 import Chart from 'chart.js/auto'; // ohne diesen import werden die charts nicht geladen
 
 // Custom Modules
-import getBasisData from "../scripts/getBasisData";
+import useGetChartData from "../scripts/useGetChartData";
 
 function PieChart(props) {
 
-    const dataForVisualization = getBasisData();
+    const dataForVisualization = useGetChartData(props.label, props.url);
+
 
     return (
         <Pie data={dataForVisualization}/>
     )
-
 }
 
 export default PieChart;

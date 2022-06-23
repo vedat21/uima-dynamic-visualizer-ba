@@ -35,8 +35,7 @@ function HideOnScroll(props) {
  * @constructor
  * Quelle: https://mui.com/material-ui/react-app-bar/
  */
-export default function TopBar(props) {
-
+function TopBar(props) {
     return (
         <React.Fragment>
             <CssBaseline/>
@@ -46,8 +45,8 @@ export default function TopBar(props) {
                         <Typography variant="h5" component="div" sx={{flexGrow: 1}}> {/* buttons on the right */}
                             Dokument X
                         </Typography>
+                        {/* editor modus button */}
                         <Button
-                            // editormodus handling
                             color={props.editable ? "inherit" : "inherit"}
                             variant={props.editable ? "contained" : "text"}
                             onClick={props.reverseEditable}
@@ -56,12 +55,13 @@ export default function TopBar(props) {
                         </Button>
                     </Toolbar>
                     {/* input area for creating new visualization */}
-                    {props.editable &&
-                    <SelectContainer bodyData={props.bodyData} setBodyData={props.setBodyData}
-                                     saveLayout={props.saveLayout}/>}
+                    {props.editable && <SelectContainer addToBodyData={props.addToBodyData}
+                    />}
                 </AppBar>
             </HideOnScroll>
             <Toolbar/> {/* Damit Header unteren content nicht überdeckt */}
         </React.Fragment>
     );
 }
+
+export default TopBar;

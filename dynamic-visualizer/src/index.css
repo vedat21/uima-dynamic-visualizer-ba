@@ -34,5 +34,9 @@
 
 .secondary-color{
     background-color: #00618F;
+}
 
+.chart-filter-field{
+    height: 18%;
+    width: 30%;
 }
