@@ -1,1 +1,1 @@
-# dynamic-visualizer-ba
+# Dynamic Visualizer for UIMA Documents
