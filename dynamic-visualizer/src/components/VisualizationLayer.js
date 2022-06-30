@@ -1,12 +1,15 @@
-import React from "react";
+import React, {useCallback} from "react";
 import Responsive, {WidthProvider} from "react-grid-layout";
-import _ from "lodash";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
+import _ from "lodash";
+
 
 // custom modules
-import LayerComponent from "./LayerComponent";
+import LayoutComponent from "./LayoutComponent";
+import getComponentConfiguration from "./visualization_components/scripts/getComponentConfiguration";
 
+// global variable for layout
 window.$localVisualizationLayout = [];
 
 /**
@@ -16,8 +19,9 @@ window.$localVisualizationLayout = [];
  * @constructor
  */
 function VisualizationLayer(props) {
-    //import
-    const ResponsiveReactGridLayout = WidthProvider(Responsive);
+    const ResponsiveGridLayout = WidthProvider(Responsive);
+
+
 
 
     /**
@@ -26,13 +30,17 @@ function VisualizationLayer(props) {
      */
     function generateVisualizationLayer() {
         return _.map(_.map(props.bodyData), function (block) {
+
+
             return (
                 <div
                     className={block.component === "textcomponent" ? "scrollable-text" : "chart"}
+                    data-grid={getComponentConfiguration(block.component)}
                     key={block.id}
                     id={block.id}
                 >
-                    <LayerComponent block={block} editable={props.editable} onDeleteComponentClicked={props.onDeleteComponentClicked}/>
+                    <LayoutComponent block={block} editable={props.editable}
+                                     onDeleteComponentClicked={props.onDeleteComponentClicked}/>
                 </div>
             )
         });
@@ -40,7 +48,7 @@ function VisualizationLayer(props) {
 
 
     /**
-     * when layout changes than it is saved in a globalvariable so
+     * when layout changes than it is saved in global variable so
      * it doesnt rerender on everey remove or resize.
      * @param layout
      */
@@ -48,17 +56,49 @@ function VisualizationLayer(props) {
         window.$localVisualizationLayout = layout;
     }
 
+
+    /**
+     * to maintain aspect ratio in chart components
+     * @type {(function(*, *, *, *): void)|*}
+     * @author: Adri9wa (https://github.com/react-grid-layout/react-grid-layout/issues/267)
+     */
+    const handleResize = useCallback(
+        (l, oldLayoutItem, layoutItem, placeholder) => {
+
+            // to check if component is text. if true then dont need to maintain aspect ratio
+            if (layoutItem.minH === 1.5) {
+                return;
+            }
+
+            const heightDiff = layoutItem.h - oldLayoutItem.h;
+            const widthDiff = layoutItem.w - oldLayoutItem.w;
+            const changeCoef = oldLayoutItem.w / oldLayoutItem.h;
+            if (Math.abs(heightDiff) < Math.abs(widthDiff)) {
+                layoutItem.h = layoutItem.w / changeCoef;
+                placeholder.h = layoutItem.w / changeCoef;
+            } else {
+                layoutItem.w = layoutItem.h * changeCoef;
+                placeholder.w = layoutItem.h * changeCoef;
+            }
+        },
+        []
+    );
+
+
     return (
-        <div className={props.editable ? "layout_editable" : "layout"}>
-            <ResponsiveReactGridLayout
-                layout={props.layout}
-                onLayoutChange={onLayoutChange}
-                isDraggable={props.editable}
-                isResizable={props.editable}
-            >
-                {generateVisualizationLayer()}
-            </ResponsiveReactGridLayout>
-        </div>
+        <ResponsiveGridLayout
+            className={props.editable ? "layout_editable" : "layout"}
+            layout={props.layout}
+            breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+            onLayoutChange={onLayoutChange}
+            isDraggable={props.editable}
+            isResizable={props.editable}
+            onResize={handleResize}
+            margin={[12, 12]}
+            {...props}
+        >
+            {generateVisualizationLayer()}
+        </ResponsiveGridLayout>
     );
 }
 

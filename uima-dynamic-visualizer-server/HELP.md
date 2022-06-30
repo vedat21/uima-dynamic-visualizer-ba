@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'com.example.uima-dynamic-visualizer-server' is invalid and this project uses 'com.example.uimadynamicvisualizerserver' instead.
+* The original package name 'com.example.uima-dynamic-visualizer-server' is invalid and this project uses 'com.example.run' instead.
 
 # Getting Started
 

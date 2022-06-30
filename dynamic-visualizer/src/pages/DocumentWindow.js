@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import {v4 as uuid} from 'uuid';
+import _ from "lodash";
+
 
 // custom modules
-import TopBar from "./components/generic_components/TopBar";
-import VisualizationLayer from "./components/VisualizationLayer";
-import {colorHexcode} from "./helper/colorHexcode"
-
+import TopBar from "../components/general_components/TopBar";
+import VisualizationLayer from "../components/VisualizationLayer";
+import {colorHexcode} from "../helper/colorHexcode"
 
 
 function DocumentWindow() {
-
 
     // enables/disables editing of layout
     const [editable, setEditable] = useState(true);
@@ -32,7 +32,7 @@ function DocumentWindow() {
         // id of clicked component
         const id = e.currentTarget.parentElement.parentElement.getAttribute("id");
 
-        // deletes component by id from visualization layer
+        // deletes component with id from visualization layer
         setBodyData(bodyData.filter(element => element.id !== id))
 
     }
@@ -41,21 +41,22 @@ function DocumentWindow() {
      * updates the visualization that are shown in visualizationLayer
      */
     function addToBodyData(selectedVisualization, selectedData) {
+        saveLayout();
         const dataToAdd = {
             component: selectedVisualization,
             targetData: selectedData,
             id: uuid(),
         };
 
-        const newBodyData = bodyData.concat([dataToAdd]); //damit änderung neu gerendert wird so umständlich
-        saveLayout();
+        const newBodyData = bodyData.concat([dataToAdd]); //damit änderung neu gerendert wird
         setBodyData(newBodyData);
     }
 
     // saves layout global
-    const saveLayout = () => {
+    function saveLayout() {
         setLayout(window.$localVisualizationLayout);
     }
+
 
     /**
      * called when edit button is pressed.
@@ -69,12 +70,10 @@ function DocumentWindow() {
     return (
         <div>
             <TopBar
-                key="topbar"
                 editable={editable} reverseEditable={reverseEditable}
                 addToBodyData={addToBodyData}
             />
             <VisualizationLayer
-                key="vislayer"
                 editable={editable}
                 bodyData={bodyData}
                 layout={layout}

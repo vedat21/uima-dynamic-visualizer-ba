@@ -4,7 +4,7 @@ import "./index.css";
 
 
 // custom modules
-import DocumentWindow from './DocumentWindow';
+import DocumentWindow from './pages/DocumentWindow';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
