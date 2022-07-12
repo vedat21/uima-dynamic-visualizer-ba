@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 // custom
 import root.database.UimaDocumentRepository;
-import root.entities.UimaDocument;
 
 
 @SpringBootApplication
