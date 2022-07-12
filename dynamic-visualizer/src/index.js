@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'
-import "./index.css";
 
 
 // custom modules
-import DocumentWindow from './pages/DocumentWindow';
+import "./index.css";
+import RoutingView from "./components/views/RoutingView";
+
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <DocumentWindow />
+        <RoutingView/>
     </React.StrictMode>
 );
