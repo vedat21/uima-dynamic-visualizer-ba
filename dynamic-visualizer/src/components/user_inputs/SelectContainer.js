@@ -33,8 +33,8 @@ const optionsData = [
 function SelectContainer(props) {
 
     // darin wird die userauswahl für einen neuen chart gespeichert
-    const [selectedVisualization, setSelectedVisualization] = useState(null);
-    const [selectedData, setSelectedData] = useState(null);
+    const [selectedVisualization, setSelectedVisualization] = useState(optionsVisualization[0].value);
+    const [selectedData, setSelectedData] = useState(optionsData[0].value);
 
     return (
         <Box display="flex" sx={{m: 2}}>

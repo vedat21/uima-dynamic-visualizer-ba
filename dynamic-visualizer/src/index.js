@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'
 
-
 // custom modules
 import "./index.css";
 import RoutingView from "./components/views/RoutingView";
+import Dropzone from "./components/views/Dropzone";
 
 
 

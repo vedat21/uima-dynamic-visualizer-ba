@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 // custom modules
 import SelectContainer from "./SelectContainer";
 import {usedColors} from "../../helper/usedConst";
+import TextArea from "../visualizations/other/TextArea";
 
 
 /**
@@ -43,22 +44,21 @@ function TopBar(props) {
             <HideOnScroll {...props}>
                 <AppBar sx={{backgroundColor: usedColors.primary}}>
                     <Toolbar>
-                        <Typography variant="h5" component="div" sx={{flexGrow: 1}}> {/* buttons on the right */}
-                            {props.title}
-                            { props.editable &&
-                                <IconButton>
-                                    <EditIcon onClick={props.editTitle} sx={{color: usedColors.secondary}}/>
-                                </IconButton>
-                            }
-                        </Typography>
-                        {props.editable == null &&
-                            <Button
-                                onClick={props.addPresentation}
-                                color="inherit"
-                            > Add Presentation</Button>
+
+                        {/* if editable render typohraphy else render textfield to edit titel  */}
+                        {!props.editable &&
+                            <Typography variant="h5" component="div" sx={{flexGrow: 1}}> {/* buttons on the right */}
+                                {props.title}
+                            </Typography>
+                        }
+                        {props.editable &&
+                            <TextField
+                                defaultValue={props.title}
+                                onKeyDown={props.editTitle}
+                                sx={{flexGrow: 1, input: {color: usedColors.secondary}}}></TextField>
                         }
 
-                        {/* editor modus button für documentview. wird nur gerendert wenn props editable übergeben wird */}
+                        {/* button to enable/disable editor modus. Only renders if topbar has prop editable */}
                         {props.editable != null && <Button
                             color={props.editable ? "inherit" : "inherit"}
                             variant={props.editable ? "contained" : "text"}
@@ -66,6 +66,14 @@ function TopBar(props) {
                         >
                             Edit
                         </Button>
+                        }
+
+                        {/* button to add a new presentation. Only renders if topbar has no prop editable */}
+                        {props.editable == null &&
+                            <Button
+                                onClick={props.addPresentation}
+                                color="inherit"
+                            > Add Presentation</Button>
                         }
                     </Toolbar>
                     {/* input area for creating new visualization */}

@@ -18,9 +18,10 @@ function SelectForm(props) {
         props.setSelectedOption(selectedOption.value);
     }
 
+
     return (
         <Select
-            defaultValue={props.selected}
+            defaultValue={props.options[0]} // default is first option
             onChange={(selectedOption) => handleChange(selectedOption)}
             options={props.options}
             className="select"

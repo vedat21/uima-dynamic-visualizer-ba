@@ -18,13 +18,13 @@ import savePresentation from "../../api_crud/savePresentation";
  */
 function PresentationView(props) {
 
-    // id of presentation is url parameter
+    // id of presentation is url parameter. opens presentation page only via routing.
     const {id} =  useParams();
 
     // title of presentation
     const [title, setTitle] = useState("");
     // enables/disables editing of presentation
-    const [editable, setEditable] = useState(true);
+    const [editable, setEditable] = useState(false);
     // stores the components that are visualized in one presentation
     const [visualizations, setVisualizations] = useState([]);
     // saves the layout of the presentation

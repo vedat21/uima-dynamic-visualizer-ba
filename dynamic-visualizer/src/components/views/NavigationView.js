@@ -16,10 +16,10 @@ import {DeleteForever} from "@mui/icons-material";
 
 // custom modules
 import TopBar from "../user_inputs/TopBar";
-import PresentationView from "./PresentationView";
 import savePresentation from "../../api_crud/savePresentation";
 import deletePresentation from "../../api_crud/deletePresentation";
-import {apiEndpoints} from "../../helper/usedConst";
+import {apiEndpoints, usedColors} from "../../helper/usedConst";
+import EditIcon from "@mui/icons-material/Edit";
 
 
 /**
@@ -32,7 +32,7 @@ function NavigationView() {
     // hook that is used for rooting
     const navigate = useNavigate();
 
-    const title = "Presentations";
+    const topBarTitle = "Presentations";
     const [response, setResponse] = useState([]);
 
 
@@ -55,8 +55,7 @@ function NavigationView() {
      * to add a new empty presentation
      */
     function addPresentation() {
-        const titleT = "IWAS" // hier userinput
-        savePresentation({"title": titleT, "layout": [], "visualizations": []});
+        savePresentation({"title": "No Title", "layout": [], "visualizations": []});
 
     }
 
@@ -71,7 +70,7 @@ function NavigationView() {
 
     return (
         <>
-            <TopBar addPresentation={addPresentation} title={title}></TopBar>
+            <TopBar addPresentation={addPresentation} title={topBarTitle}></TopBar>
 
             <TableContainer component={Paper}>
                 <Table sx={{minWidth: 650}} aria-label="simple table">

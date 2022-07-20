@@ -7,8 +7,9 @@ function TextArea() {
 
     return (
         <>
-            <Button onClick={() => setEditable(!editable)}>Text</Button>
             <textarea readOnly={editable}></textarea>
+            <Button onClick={() => setEditable(!editable)}>Text</Button>
+
         </>
     )
 }
