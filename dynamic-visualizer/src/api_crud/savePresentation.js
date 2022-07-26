@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // custom
-import {apiEndpoints} from "../helper/usedConst";
+import {apiEndpoints} from "../helper/envConst";
 
 
 /**

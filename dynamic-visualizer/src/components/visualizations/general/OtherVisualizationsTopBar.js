@@ -4,19 +4,17 @@ import {DeleteForever, Edit} from "@mui/icons-material";
 import {v4 as uuid} from 'uuid';
 
 
-import AllVisualizationComponents from "../AllVisualizationComponents";
-
 /**
  * topbar of chart component. Gives possibility to edit the chart or remove it
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
-function TextTopBar(props) {
+function OtherVisualizationsTopBar(props) {
     return (
         <>
             {
-                props.editable &&
+                props.editable && // only show topbar when editor modus is enabled
                 <IconButton onClick={props.onDeleteComponentClicked}>
                     <DeleteForever/>
                 </IconButton>
@@ -25,4 +23,4 @@ function TextTopBar(props) {
     );
 }
 
-export default TextTopBar;
+export default OtherVisualizationsTopBar;

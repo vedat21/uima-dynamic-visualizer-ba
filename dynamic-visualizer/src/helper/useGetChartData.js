@@ -1,4 +1,5 @@
-import getData from "../api_crud/useGetData";
+import useGetData from "../api_crud/useGetData";
+import {apiEndpoints} from "../helper/envConst"
 
 /**
  *
@@ -6,10 +7,18 @@ import getData from "../api_crud/useGetData";
  * @param url is prop
  * @returns {{datasets: [{backgroundColor: string[], borderColor: string[], data: [number], borderWidth: number, label: *}], labels: [string]}}
  */
-const useGetChartData = (label, url) => {
+const useGetChartData = (label, url, limit) => {
 
     // make request to get data
-    const {response, loading} = getData(url);
+    const {response, loading} = useGetData(url + apiEndpoints.requestParamLimit + limit);
+
+    const labels = (response.map(({id}) =>{
+        return id
+    }));
+
+    const values = (response.map(({count}) =>{
+        return count
+    }));
 
 
     // attributes of chart
@@ -31,10 +40,10 @@ const useGetChartData = (label, url) => {
     ]
 
     const dataForVisualization = {
-        labels: response === null ? ["Nicht geladen"] : response.labels,  // oder loading
+        labels:  labels,  // oder loading
         datasets: [{
             label: label,
-            data: response === null ? [1] : response.data, // während response lädt
+            data: values, // während response lädt
             backgroundColor: backgroundColor,
             borderColor: borderColor,
             borderWidth: 1

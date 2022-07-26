@@ -7,7 +7,7 @@ import useGetChartData from "../../../helper/useGetChartData";
 
 function PolarAreaChart(props) {
 
-    const dataForVisualization = useGetChartData(props.label, props.url);
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit);
 
     return (
         <PolarArea data={dataForVisualization}/>

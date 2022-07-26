@@ -6,20 +6,21 @@ import AllVisualizationComponents from "./AllVisualizationComponents";
 
 function LayoutComponent(props) {
 
+
     const DEFAULTLIMIT = 5;
-    const basisUrl = "http://localhost:9999/result/";
+    const DEFAULTLABEL = "No Lable";
 
+    // if visualization is new created then use default limit and label
+    const [label, setLabel] = useState(props.block.label ? props.block.label : DEFAULTLABEL);
+    const [limit, setLimit] = useState(props.block.limit ? props.block.limit : DEFAULTLIMIT);
+    const [inputLabelAndLimit, setInputLabelAndLimit] = useState(false);
 
-    const [label, setLabel] = useState("Label")
-    const [limit, setLimit] = useState(DEFAULTLIMIT)
-    const [editLabel, setEditLabel] = useState(false);
-    const [url, setUrl] = useState(basisUrl + props.block.targetData + "/" + DEFAULTLIMIT)
 
     /**
-     * enables/disables textarea for setting new label
+     * enables/disables textarea for setting label/limit
      */
-    function reverseEditLabel() {
-        setEditLabel(!editLabel);
+    function handleOnClickInput() {
+        setInputLabelAndLimit(!inputLabelAndLimit);
     }
 
     /**
@@ -29,21 +30,22 @@ function LayoutComponent(props) {
     function changeLabel(event) {
         if (event.keyCode === 13) {
             setLabel(event.target.value);
+            props.block.label = event.target.value;
         }
     }
 
     /**
-     * change filter for min limit
+     * change filter for minimal occurence of target
      * @param event
      */
     function changeLimit(event) {
         if (event.keyCode === 13) {
             if (event.target.value) {
                 setLimit(event.target.value);
-                setUrl(basisUrl + props.block.targetData + "/" + event.target.value)
+                props.block.limit = event.target.value;
+
             } else {
                 setLimit(DEFAULTLIMIT);
-                setUrl(basisUrl + props.block.targetData + "/" + DEFAULTLIMIT)
             }
         }
     }
@@ -51,8 +53,8 @@ function LayoutComponent(props) {
     return (
         <>
             {/* Die Visualisierung selber  */}
-            {AllVisualizationComponents(props.block, props.editable, label, url, props.onDeleteComponentClicked,
-                changeLimit, editLabel, reverseEditLabel, changeLabel)}
+            {AllVisualizationComponents(props.block, props.editable, props.onDeleteComponentClicked, limit, label,
+                changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput)}
         </>
     );
 }

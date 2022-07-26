@@ -12,15 +12,15 @@ const optionsVisualization = [
     {value: 'polarareachart', label: 'Polar Area Chart'},
     {value: 'scatterchart', label: 'Scatter Chart'},
     {value: 'radarchart', label: 'Radar Chart'},
-    {value: "textarea", label: "Text Area"},
+    {value: 'textarea', label: 'Text Area'},
     {value: 'textcomponent', label: 'Text'},
-    {value: "testchart", label: "Testchart"}
+    {value: 'testchart', label: 'Testchart'}
 ];
 // Todo soll dynmisch sein von api abfragen
 const optionsData = [
     {value: 'pos', label: 'PoS Distribution'},
     {value: 'token', label: 'Token Distribution'},
-    {value: 'entity', label: 'Entity Distribution'},
+    {value: 'entities', label: 'Entity Distribution'},
 ];
 
 
@@ -38,9 +38,9 @@ function SelectContainer(props) {
 
     return (
         <Box display="flex" sx={{m: 2}}>
-            <SelectField options={optionsVisualization} selectedOption={selectedVisualization} setSelectedOption={setSelectedVisualization}/>
-            <SelectField options={optionsData} selectedOption={selectedData} setSelectedOption={setSelectedData}/>
-            <Button color="inherit" onClick={() => props.addVisualization(selectedVisualization, selectedData)}>+Create</Button>
+            <SelectField options={optionsVisualization} selectedOption={selectedVisualization} setSelectedOption={setSelectedVisualization} isMulti={false}/>
+            <SelectField options={optionsData} selectedOption={selectedData} setSelectedOption={setSelectedData} isMulti={true}/>
+            <Button color="inherit" onClick={() => props.addVisualization(selectedVisualization, selectedData)}>+CREATE</Button>
         </Box>
     )
 }

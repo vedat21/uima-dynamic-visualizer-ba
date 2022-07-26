@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom'
 
 // custom modules
 import "./index.css";
@@ -8,9 +8,9 @@ import Dropzone from "./components/views/Dropzone";
 
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
     <React.StrictMode>
-        <RoutingView/>
-    </React.StrictMode>
+        <RoutingView />
+    </React.StrictMode>,
+    document.getElementById('root')
 );

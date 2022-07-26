@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // custom modules
-import {apiEndpoints} from "../helper/usedConst"
+import {apiEndpoints} from "../helper/envConst"
 
 /**
  * to update or add a presentation

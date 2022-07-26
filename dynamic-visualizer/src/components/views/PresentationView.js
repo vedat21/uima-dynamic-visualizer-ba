@@ -6,7 +6,7 @@ import {v4 as uuid} from 'uuid';
 // custom modules
 import TopBar from "../user_inputs/TopBar";
 import VisualizationLayout from "../visualizations/VisualizationLayout";
-import {usedColors, apiEndpoints} from "../../helper/usedConst"
+import {usedColors, apiEndpoints} from "../../helper/envConst"
 import savePresentation from "../../api_crud/savePresentation";
 
 
@@ -18,21 +18,21 @@ import savePresentation from "../../api_crud/savePresentation";
  */
 function PresentationView(props) {
 
-    // id of presentation is url parameter. opens presentation page only via routing.
+    // id of presentation is url parameter. Presentation page should only be accessed via routing.
     const {id} =  useParams();
 
     // title of presentation
     const [title, setTitle] = useState("");
     // enables/disables editing of presentation
     const [editable, setEditable] = useState(false);
-    // stores the components that are visualized in one presentation
+    // stores the visualizations
     const [visualizations, setVisualizations] = useState([]);
-    // saves the layout of the presentation
+    // stores the layout of the visualizations
     const [layout, setLayout] = useState([])
 
 
 
-    // get all existing presentation from api
+    // load existing presentation from api
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -49,18 +49,18 @@ function PresentationView(props) {
     }, [])
 
 
-    // set background color of webpage
+    //     // set background color of webpage
     document.body.style.background = usedColors.secondary;
 
 
     /**
      * to delete a component from view
-     * @param e
+     * @param component
      */
-    function onDeleteComponentClicked(e) {
+    function onDeleteComponentClicked(component) {
         saveLayout();
         // id of clicked component
-        const id = e.currentTarget.parentElement.parentElement.getAttribute("id");
+        const id = component.currentTarget.parentElement.parentElement.getAttribute("id");
 
         // deletes component with id from visualizations
         setVisualizations(visualizations.filter(element => element.id !== id))
@@ -71,10 +71,15 @@ function PresentationView(props) {
      */
     function addVisualization(selectedVisualization, selectedData) {
         saveLayout();
+
+        // if selectedData only contains one element then dont join
+        selectedData = Array.isArray(selectedData) ? selectedData.join() : selectedData;
         const dataToAdd = {
-            component: selectedVisualization,
-            targetData: selectedData,
             id: uuid(),
+            component: selectedVisualization,
+            url: apiEndpoints.basis +  apiEndpoints.sum + selectedData,
+            limit: 5,
+            label: "Label",
         };
 
 
@@ -108,15 +113,10 @@ function PresentationView(props) {
      */
     function editTitle(event){
         saveLayout();
-
-
         if (event.keyCode === 13) {
             setTitle(event.target.value);
         }
-
     }
-
-
 
     return (
         <div>

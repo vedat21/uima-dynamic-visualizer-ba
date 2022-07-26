@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 // custom modules
 import SelectContainer from "./SelectContainer";
-import {usedColors} from "../../helper/usedConst";
+import {usedColors} from "../../helper/envConst";
 import TextArea from "../visualizations/other/TextArea";
 
 
@@ -45,7 +45,7 @@ function TopBar(props) {
                 <AppBar sx={{backgroundColor: usedColors.primary}}>
                     <Toolbar>
 
-                        {/* if editable render typohraphy else render textfield to edit titel  */}
+                        {/* if editable render typohraphy else render textfield to edit title  */}
                         {!props.editable &&
                             <Typography variant="h5" component="div" sx={{flexGrow: 1}}> {/* buttons on the right */}
                                 {props.title}
@@ -59,13 +59,14 @@ function TopBar(props) {
                         }
 
                         {/* button to enable/disable editor modus. Only renders if topbar has prop editable */}
-                        {props.editable != null && <Button
-                            color={props.editable ? "inherit" : "inherit"}
-                            variant={props.editable ? "contained" : "text"}
-                            onClick={props.onEditableClicked}
-                        >
-                            Edit
-                        </Button>
+                        {props.editable != null &&
+                            <Button
+                                color={props.editable ? "inherit" : "inherit"}
+                                variant={props.editable ? "contained" : "text"}
+                                onClick={props.onEditableClicked}
+                            >
+                                EDIT
+                            </Button>
                         }
 
                         {/* button to add a new presentation. Only renders if topbar has no prop editable */}

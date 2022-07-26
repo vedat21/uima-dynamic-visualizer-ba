@@ -5,7 +5,7 @@
  */
 function getComponentConfiguration(component){
 
-    // min size of chart and text components.
+    // minimum size of chart and text components.
     const minSizeChart = {width: 3.5, height: 1.4};
     const minSizeSquareChart = {width: 1.7, height: 1.4};
     const minSizeText = {width: 1.5, height: 1.5}; //minheight 1.5 soll nur textchart haben

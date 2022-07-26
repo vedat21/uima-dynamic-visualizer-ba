@@ -7,7 +7,7 @@ import useGetChartData from "../../../helper/useGetChartData";
 
 function RadarChart(props) {
 
-    const dataForVisualization = useGetChartData(props.label, props.url);
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit);
 
     return (
         <Radar data={dataForVisualization}/>

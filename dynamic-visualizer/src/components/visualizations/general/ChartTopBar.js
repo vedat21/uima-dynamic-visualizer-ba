@@ -4,10 +4,8 @@ import {DeleteForever, Edit} from "@mui/icons-material";
 import {v4 as uuid} from 'uuid';
 
 
-import AllVisualizationComponents from "../AllVisualizationComponents";
-
 /**
- * topbar of chart component. Gives possibility to edit the chart or remove it
+ * topbar of a chart component. gives possibility to edit or remove the chart
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -16,44 +14,42 @@ function ChartTopBar(props) {
     return (
         <>
             {
-                props.editable &&
-                <IconButton onClick={props.onDeleteComponentClicked}>
-                    <DeleteForever/>
-                </IconButton>
-            }
-            {
-                props.editable &&
-                <IconButton onClick={props.reverseEditLabel}>
-                    <Edit/>
-                </IconButton>
-            }
-            {
-                props.editable && props.editLabel && // not editable
-                <TextField
-                    onKeyDown={props.changeLabel}
-                    key={uuid()}
-                    size="small"
-                    label="Label"
-                    id="outlined-basic"
-                    variant="outlined"
-                    autoComplete="off"
-                />
-            }
-            {
-                props.editable && !props.editLabel &&
-                <TextField
-                    key={uuid()}
-                    className="chart-filter-field"
-                    id="outlined-basic"
-                    variant="outlined"
-                    type="number"
-                    min="0"
-                    size="small"
-                    label="Limit"
-                    defaultValue={props.limit}
-                    onKeyDown={props.changeLimit}
-                    autoComplete="off"
-                />
+                props.editable && // only show topbar when editor modus is enabled
+                <>
+                    <IconButton onClick={props.onDeleteComponentClicked}>
+                        <DeleteForever/>
+                    </IconButton>
+                    <IconButton onClick={props.reverseEditLabel}>
+                        <Edit/>
+                    </IconButton>
+                    {/* displays textfield for setting label or for setting minimal occurence of data */}
+                    {props.editLabel &&
+                        <TextField
+                            key={uuid()}
+                            size="small"
+                            label="Label"
+                            id="outlined-basic"
+                            variant="outlined"
+                            autoComplete="off"
+                            defaultValue={props.label}
+                            onKeyDown={props.changeLabel}
+                        />
+                    }
+                    {!props.editLabel &&
+                        <TextField
+                            key={uuid()}
+                            id="outlined-basic"
+                            variant="outlined"
+                            size="small"
+                            label="Limit"
+                            autoComplete="off"
+                            type="number"
+                            min="0"
+                            onKeyDown={props.changeLimit}
+                            defaultValue={props.limit}
+                        />
+                    }
+                </>
             }
         </>
     );

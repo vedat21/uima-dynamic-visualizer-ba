@@ -4,7 +4,6 @@ import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
 import _ from "lodash";
 
-
 // custom modules
 import LayoutComponent from "./LayoutComponent";
 import getComponentConfiguration from "../../helper/getComponentConfiguration";
@@ -27,15 +26,16 @@ function VisualizationLayout(props) {
      */
     function generateVisualizationLayer() {
         return _.map(_.map(props.visualizations), function (block) {
-            return (<div
-                className={block.component === "textcomponent" ? "scrollable-text" : "chart"}
-                data-grid={getComponentConfiguration(block.component)}
-                key={block.id}
-                id={block.id}
-            >
-                <LayoutComponent block={block} editable={props.editable}
-                                 onDeleteComponentClicked={props.onDeleteComponentClicked}/>
-            </div>)
+            return (
+                <div
+                    className={block.component === "textcomponent" ? "scrollable-text" : "chart"}
+                    data-grid={getComponentConfiguration(block.component)}
+                    key={block.id}
+                    id={block.id}
+                >
+                    <LayoutComponent block={block} {...props}/>
+                </div>
+            )
         });
     }
 
@@ -50,11 +50,11 @@ function VisualizationLayout(props) {
 
 
     /**
-     * to maintain aspect ratio in chart components
+     * function to maintain aspect ratio on resize. used for chart components.
      * @type {(function(*, *, *, *): void)|*}
      * @author: Adri9wa (https://github.com/react-grid-layout/react-grid-layout/issues/267)
      */
-    const handleResize = useCallback((l, oldLayoutItem, layoutItem, placeholder) => {
+    const handleResizeLockAspectRatio = useCallback((l, oldLayoutItem, layoutItem, placeholder) => {
 
         // to check if component is text. if true then dont need to maintain aspect ratio
         if (layoutItem.minH === 1.5) {
@@ -82,8 +82,8 @@ function VisualizationLayout(props) {
             onLayoutChange={onLayoutChange}
             isDraggable={props.editable}
             isResizable={props.editable}
-            onResize={handleResize}
-            margin={[12, 12]}
+            onResize={handleResizeLockAspectRatio}
+            margin={[10, 10]}
             {...props}
         >
             {generateVisualizationLayer()}

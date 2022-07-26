@@ -7,8 +7,7 @@ import useGetChartData from "../../../helper/useGetChartData"; // ohne diesen im
 
 function LineChart(props) {
 
-    const dataForVisualization = useGetChartData(props.label, props.url);
-
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit);
 
     return (
         <Line data={dataForVisualization}/>

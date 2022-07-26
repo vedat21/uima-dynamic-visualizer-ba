@@ -18,8 +18,7 @@ import {DeleteForever} from "@mui/icons-material";
 import TopBar from "../user_inputs/TopBar";
 import savePresentation from "../../api_crud/savePresentation";
 import deletePresentation from "../../api_crud/deletePresentation";
-import {apiEndpoints, usedColors} from "../../helper/usedConst";
-import EditIcon from "@mui/icons-material/Edit";
+import {apiEndpoints, usedColors} from "../../helper/envConst";
 
 
 /**
@@ -36,7 +35,7 @@ function NavigationView() {
     const [response, setResponse] = useState([]);
 
 
-    // get data from api
+    // fetch data from api
     useEffect(() => {
         const fetchData = async () => {
             try {

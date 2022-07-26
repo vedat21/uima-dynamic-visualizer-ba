@@ -7,8 +7,7 @@ import useGetChartData from "../../../helper/useGetChartData";
 
 function DoughnutChart(props) {
 
-    const dataForVisualization = useGetChartData(props.label, props.url);
-
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit);
 
     return (
         <Doughnut data={dataForVisualization}/>

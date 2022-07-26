@@ -8,12 +8,10 @@ import useGetChartData from "../../../helper/useGetChartData";
 function BarChart(props) {
 
 
-    const dataForVisualization = useGetChartData(props.label, props.url);
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit);
 
     return (
-        <>
-            <Bar data={dataForVisualization}/>
-        </>
+        <Bar data={dataForVisualization}/>
     )
 
 }
