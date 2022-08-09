@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.gte;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 // custom
@@ -106,7 +107,7 @@ public class UimaDocumentService {
     }
 
 
-    public List<UimaEntitySummation> getTypesSummation(String[] types) {
+    public List<UimaEntitySummation> getTypesSummation(String[] types, int limit) {
 
         /* param types is saved in two variable. One is a string and the other an array.
            Because of build in aggregation "concatarray". All types are stored in objects types.
@@ -128,6 +129,7 @@ public class UimaDocumentService {
         );
         operations.add(unwind("data")); // unwind the list
         operations.add(group("data.value").count().as("count")); // count
+        operations.add(match(new Criteria("count").gt(limit))); // limit
         operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
 
         Aggregation aggregation = newAggregation(operations);

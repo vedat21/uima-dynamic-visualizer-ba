@@ -34,7 +34,7 @@ const components = {
 
 /**
  * return react component
- * @param block
+ * @param visualization
  * @param editable
  * @param onDeleteComponentClicked
  * @param limit
@@ -45,24 +45,24 @@ const components = {
  * @param handleOnClickInput
  * @returns {React.ReactElement<{key}>}
  */
-export default (block, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput) => {
+export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput) => {
     // component does exist
-    if (typeof components[block.component] !== "undefined") {
+    if (typeof components[visualization.component] !== "undefined") {
 
 
         // entweder erstell komponenten die texttopbar oder charttopbar entählt. rest identisch
         // hier texttopbar
-        if (block.component.startsWith("text")) {
+        if (visualization.component.startsWith("text")) {
             return React.createElement("div", {key: uuid()}, [
                 React.createElement(OtherVisualizationsTopBar, {
                     key: uuid(),
                     editable: editable,
                     onDeleteComponentClicked: onDeleteComponentClicked,
                 }),
-                React.createElement(components[block.component], {
+                React.createElement(components[visualization.component], {
                     key: uuid(),
                     label: label,
-                    url: block.url,
+                    url: visualization.url,
                 }),
 
             ]);
@@ -79,10 +79,10 @@ export default (block, editable, onDeleteComponentClicked, limit, label, changeL
                     reverseEditLabel: handleOnClickInput,
                     changeLabel: changeLabel,
                 }),
-                React.createElement(components[block.component], {
+                React.createElement(components[visualization.component], {
                     key: uuid(),
                     label: label,
-                    url: block.url,
+                    url: visualization.url,
                     limit: limit,
                 }),
 

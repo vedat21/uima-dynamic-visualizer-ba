@@ -41,3 +41,11 @@
     height: 18%;
     width: 30%;
 }
+
+
+.image-fit{
+    width: inherit;
+    height: inherit;
+    object-fit: contain;
+
+}

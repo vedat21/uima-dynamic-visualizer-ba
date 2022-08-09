@@ -7,6 +7,7 @@ import _ from "lodash";
 // custom modules
 import LayoutComponent from "./LayoutComponent";
 import getComponentConfiguration from "../../helper/getComponentConfiguration";
+import Dropzone from "../views/Dropzone"
 
 // global variable for layout
 window.$localVisualizationLayout = [];
@@ -25,15 +26,15 @@ function VisualizationLayout(props) {
      * @returns {all visualization components}
      */
     function generateVisualizationLayer() {
-        return _.map(_.map(props.visualizations), function (block) {
+        return _.map(_.map(props.visualizations), function (visualization) {
             return (
                 <div
-                    className={block.component === "textcomponent" ? "scrollable-text" : "chart"}
-                    data-grid={getComponentConfiguration(block.component)}
-                    key={block.id}
-                    id={block.id}
+                    className={visualization.component === "textcomponent" ? "scrollable-text" : "chart"}
+                    data-grid={getComponentConfiguration(visualization.component)}
+                    key={visualization.id}
+                    id={visualization.id}
                 >
-                    <LayoutComponent block={block} {...props}/>
+                    <LayoutComponent visualization={visualization} {...props}/>
                 </div>
             )
         });

@@ -34,14 +34,13 @@ public class Controller {
     // controller for presentation entity
 
     /**
-     * add a new presentation to collection
+     * get all presentations
      *
-     * @param layout
      * @return
      */
-    @PostMapping("/presentations")
-    public PresentationLayout newLayout(@RequestBody PresentationLayout layout) {
-        return presentationLayoutService.putNewLayout(layout);
+    @GetMapping("/presentations")
+    public List<PresentationLayout> allPresentations() {
+        return presentationLayoutService.getPresentations();
     }
 
     /**
@@ -55,14 +54,16 @@ public class Controller {
     }
 
     /**
-     * get all presentations
+     * to add a new presentation to collection
      *
+     * @param layout
      * @return
      */
-    @GetMapping("/presentations")
-    public List<PresentationLayout> allPresentations() {
-        return presentationLayoutService.getPresentations();
+    @PostMapping("/presentations")
+    public PresentationLayout newLayout(@RequestBody PresentationLayout layout) {
+        return presentationLayoutService.putNewLayout(layout);
     }
+
 
     /**
      * to delete a presentation by id
@@ -97,7 +98,7 @@ public class Controller {
      * @param types
      * @return
      */
-    @GetMapping("/{id}")
+    @GetMapping("/documents/{id}")
     public List<UimaDocument> findByIdWithKeys(@RequestParam Optional<String> types, @PathVariable String id) {
         if (types.isEmpty()) {
             return uimaDocumentService.findById(id).stream().toList();
@@ -113,7 +114,7 @@ public class Controller {
      * @param types
      * @return
      */
-    @GetMapping("/all")
+    @GetMapping("/documents/all")
     public List<UimaDocument> findAllWithKeys(@RequestParam Optional<String> types) {
         if (types.isEmpty()) {
             return uimaDocumentService.findAll();
@@ -128,12 +129,11 @@ public class Controller {
      * @param types
      * @return
      */
-    @GetMapping("/sum")
-    public List<UimaEntitySummation> getTypesSummation(@RequestParam Optional<String> types) {
+    @GetMapping("/documents/sum")
+    public List<UimaEntitySummation> getTypesSummation(@RequestParam Optional<String> types, @RequestParam(defaultValue = "0") String limit) {
         String[] typesAsArray = types.stream().toList().get(0).split(",");
 
-
-        return uimaDocumentService.getTypesSummation(typesAsArray);
+        return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit));
     }
 
 }

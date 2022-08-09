@@ -11,8 +11,8 @@ function LayoutComponent(props) {
     const DEFAULTLABEL = "No Lable";
 
     // if visualization is new created then use default limit and label
-    const [label, setLabel] = useState(props.block.label ? props.block.label : DEFAULTLABEL);
-    const [limit, setLimit] = useState(props.block.limit ? props.block.limit : DEFAULTLIMIT);
+    const [label, setLabel] = useState(props.visualization.label ? props.visualization.label : DEFAULTLABEL);
+    const [limit, setLimit] = useState(props.visualization.limit ? props.visualization.limit : DEFAULTLIMIT);
     const [inputLabelAndLimit, setInputLabelAndLimit] = useState(false);
 
 
@@ -30,7 +30,7 @@ function LayoutComponent(props) {
     function changeLabel(event) {
         if (event.keyCode === 13) {
             setLabel(event.target.value);
-            props.block.label = event.target.value;
+            props.visualization.label = event.target.value;
         }
     }
 
@@ -42,7 +42,7 @@ function LayoutComponent(props) {
         if (event.keyCode === 13) {
             if (event.target.value) {
                 setLimit(event.target.value);
-                props.block.limit = event.target.value;
+                props.visualization.limit = event.target.value;
 
             } else {
                 setLimit(DEFAULTLIMIT);
@@ -53,7 +53,7 @@ function LayoutComponent(props) {
     return (
         <>
             {/* Die Visualisierung selber  */}
-            {AllVisualizationComponents(props.block, props.editable, props.onDeleteComponentClicked, limit, label,
+            {AllVisualizationComponents(props.visualization, props.editable, props.onDeleteComponentClicked, limit, label,
                 changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput)}
         </>
     );
