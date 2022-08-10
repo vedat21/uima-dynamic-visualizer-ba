@@ -11,7 +11,6 @@ import EditIcon from '@mui/icons-material/Edit';
 // custom modules
 import SelectContainer from "./SelectContainer";
 import {usedColors} from "../../helper/envConst";
-import TextArea from "../visualizations/other/TextArea";
 
 
 /**

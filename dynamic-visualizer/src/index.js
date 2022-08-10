@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 // custom modules
 import "./index.css";
 import RoutingView from "./components/views/RoutingView";
-import Dropzone from "./components/views/Dropzone";
+import DropStaticElement from "./components/visualizations/other/DropStaticElement";
 
 
 

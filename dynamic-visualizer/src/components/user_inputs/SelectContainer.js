@@ -14,8 +14,10 @@ const optionsVisualization = [
     {value: 'radarchart', label: 'Radar Chart'},
     {value: 'textarea', label: 'Text Area'},
     {value: 'textcomponent', label: 'Text'},
-    {value: 'testchart', label: 'Testchart'}
+    {value: 'testchart', label: 'Testchart'},
+    {value: 'staticcomponent', label: 'Static Component'}
 ];
+
 // Todo soll dynmisch sein von api abfragen
 const optionsData = [
     {value: 'pos', label: 'PoS Distribution'},

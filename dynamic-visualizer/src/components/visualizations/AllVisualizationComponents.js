@@ -11,10 +11,9 @@ import PolarAreaChart from "./charts/PolarAreaChart";
 import RadarChart from "./charts/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
 import TextComponent from "./other/TextComponent";
-import TextArea from "./other/TextArea";
-import ChartTopBar from "./general/ChartTopBar";
-import OtherVisualizationsTopBar from "./general/OtherVisualizationsTopBar";
-import TestChart from "../../helper/TestChart";
+import ChartTopBar from "./topbars/ChartTopBar";
+import OtherVisualizationsTopBar from "./topbars/OtherVisualizationsTopBar";
+import DropStaticElement from "./other/DropStaticElement";
 
 
 // all visualization components. map string to the component.
@@ -27,9 +26,8 @@ const components = {
     "polarareachart": PolarAreaChart,
     "scatterchart": ScatterChart,
     "radarchart": RadarChart,
-    "textarea": TextArea,
     "textcomponent": TextComponent,
-    "testchart": TestChart,
+    "staticcomponent": DropStaticElement,
 };
 
 /**
@@ -66,7 +64,23 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
                 }),
 
             ]);
-        } else {
+        }
+        else if (visualization.component === "staticcomponent"){
+            return React.createElement("div", {key: uuid()}, [
+                React.createElement(OtherVisualizationsTopBar, {
+                    key: uuid(),
+                    editable: editable,
+                    onDeleteComponentClicked: onDeleteComponentClicked,
+                }),
+                React.createElement(components[visualization.component], {
+                    key: uuid(),
+                    label: label,
+                    url: visualization.url,
+                }),
+
+            ]);
+        }
+        else {
             return React.createElement("div", {key: uuid()}, [
                 React.createElement(ChartTopBar, {
                     key: uuid(),

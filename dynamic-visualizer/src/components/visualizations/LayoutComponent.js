@@ -8,7 +8,7 @@ function LayoutComponent(props) {
 
 
     const DEFAULTLIMIT = 5;
-    const DEFAULTLABEL = "No Lable";
+    const DEFAULTLABEL = "No Label";
 
     // if visualization is new created then use default limit and label
     const [label, setLabel] = useState(props.visualization.label ? props.visualization.label : DEFAULTLABEL);
