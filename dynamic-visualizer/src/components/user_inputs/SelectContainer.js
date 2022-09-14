@@ -1,30 +1,23 @@
-import React, {useState} from "react";
-import {Box, Button} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Box, Button, Tooltip} from "@mui/material";
 import SelectField from "./SelectField";
 
+import useGetData from "../../api_crud/useGetData";
+import {apiEndpoints} from "../../helper/envConst";
 
+// Alle möglichen Visualisierungskomponenten
 const optionsVisualization = [
-    {value: 'barchart', label: 'Bar Chart'},
-    {value: 'bubblechart', label: 'Bubble Chart'},
-    {value: 'doughnutchart', label: 'Doughnut Chart'},
-    {value: 'linechart', label: 'Line Chart'},
-    {value: 'piechart', label: 'Pie Chart'},
-    {value: 'polarareachart', label: 'Polar Area Chart'},
-    {value: 'scatterchart', label: 'Scatter Chart'},
-    {value: 'radarchart', label: 'Radar Chart'},
-    {value: 'textarea', label: 'Text Area'},
-    {value: 'textcomponent', label: 'Text'},
-    {value: 'testchart', label: 'Testchart'},
-    {value: 'staticcomponent', label: 'Static Component'}
+  {value: 'barchart', label: 'Bar Chart'},
+  {value: 'bubblechart', label: 'Bubble Chart'},
+  {value: 'doughnutchart', label: 'Doughnut Chart'},
+  {value: 'linechart', label: 'Line Chart'},
+  {value: 'piechart', label: 'Pie Chart'},
+  {value: 'polarareachart', label: 'Polar Area Chart'},
+  {value: 'scatterchart', label: 'Scatter Chart'},
+  {value: 'radarchart', label: 'Radar Chart'},
+  {value: 'textcomponent', label: 'Text'},
+  {value: 'staticcomponent', label: 'Static Component'}
 ];
-
-// Todo soll dynmisch sein von api abfragen
-const optionsData = [
-    {value: 'pos', label: 'PoS Distribution'},
-    {value: 'token', label: 'Token Distribution'},
-    {value: 'entities', label: 'Entity Distribution'},
-];
-
 
 /**
  * container for number of input select.
@@ -34,17 +27,47 @@ const optionsData = [
  */
 function SelectContainer(props) {
 
-    // darin wird die userauswahl für einen neuen chart gespeichert
-    const [selectedVisualization, setSelectedVisualization] = useState(optionsVisualization[0].value);
-    const [selectedData, setSelectedData] = useState(optionsData[0].value);
+  const {response, loading} = useGetData(
+      apiEndpoints.basis + apiEndpoints.general);
 
-    return (
-        <Box display="flex" sx={{m: 2}}>
-            <SelectField options={optionsVisualization} selectedOption={selectedVisualization} setSelectedOption={setSelectedVisualization} isMulti={false}/>
-            <SelectField options={optionsData} selectedOption={selectedData} setSelectedOption={setSelectedData} isMulti={true}/>
-            <Button color="inherit" onClick={() => props.addVisualization(selectedVisualization, selectedData)}>+CREATE</Button>
-        </Box>
-    )
+  // darin wird userauswahl gespeichert
+  const [selectedVisualization, setSelectedVisualization] = useState(
+      optionsVisualization[0].value);
+  const [selectedData, setSelectedData] = useState("");
+
+  // lade optionen für daten die vom server bereitgestellt werden
+  let optionsData = [];
+  useEffect(async () => {
+    if (!loading) {
+      response["types"].forEach((type) => {
+        optionsData.push({value: type, label: type.toUpperCase()})
+      })
+    }
+  }, [response, optionsData, loading])
+
+  function addVisualization() {
+    if (selectedData.length !== 0) {
+      props.addVisualization(selectedVisualization, selectedData)
+    }
+  }
+
+  return (
+      <Box display="flex" sx={{m: 2}}>
+        <SelectField
+            options={optionsVisualization}
+            selectedOption={selectedVisualization}
+            setSelectedOption={setSelectedVisualization}
+            isMulti={false}/>
+        <SelectField
+            options={optionsData}
+            selectedOption={selectedData}
+            setSelectedOption={setSelectedData}
+            isMulti={true}/>
+        <Tooltip title={'Create new Visualization'}>
+          <Button color="inherit" onClick={addVisualization}>+CREATE</Button>
+        </Tooltip>
+      </Box>
+  )
 }
 
 export default SelectContainer;
