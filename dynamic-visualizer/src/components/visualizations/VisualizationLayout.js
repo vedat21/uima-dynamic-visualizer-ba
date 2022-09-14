@@ -51,12 +51,14 @@ function VisualizationLayout(props) {
 
 
     /**
+     * currently not used
      * function to maintain aspect ratio on resize. used for chart components.
      * @type {(function(*, *, *, *): void)|*}
      * @author: Adri9wa (https://github.com/react-grid-layout/react-grid-layout/issues/267)
      */
     const handleResizeLockAspectRatio = useCallback((l, oldLayoutItem, layoutItem, placeholder) => {
 
+        return;
         // to check if component is text. if true then dont need to maintain aspect ratio
         if (layoutItem.minH === 1.5) {
             return;
@@ -85,6 +87,8 @@ function VisualizationLayout(props) {
             isResizable={props.editable}
             onResize={handleResizeLockAspectRatio}
             margin={[10, 10]}
+            issaveaspectratio={true}
+            aspectRatio={true}
             {...props}
         >
             {generateVisualizationLayer()}
