@@ -13,4 +13,5 @@ export const apiEndpoints = {
     requestParamLimit : "&limit=",
     documents: "documents/",
     delete : "delete/",
+    general: "general/",
 }
