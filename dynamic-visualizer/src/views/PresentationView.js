@@ -4,10 +4,10 @@ import {useParams} from "react-router";
 import {v4 as uuid} from 'uuid';
 
 // custom modules
-import TopBar from "../user_inputs/TopBar";
-import VisualizationLayout from "../visualizations/VisualizationLayout";
-import {usedColors, apiEndpoints} from "../../helper/envConst"
-import savePresentation from "../../api_crud/savePresentation";
+import TopBar from "../components/user_inputs/TopBar";
+import VisualizationLayout from "../components/visualizations/VisualizationLayout";
+import {usedColors, apiEndpoints} from "../helper/envConst"
+import savePresentation from "../api_crud/savePresentation";
 
 
 /**
@@ -71,7 +71,6 @@ function PresentationView(props) {
      */
     function addVisualization(selectedVisualization, selectedData) {
         saveLayout();
-
         // if selectedData only contains one element then dont join
         selectedData = Array.isArray(selectedData) ? selectedData.join() : selectedData;
         const dataToAdd = {
