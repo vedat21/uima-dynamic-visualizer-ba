@@ -43,7 +43,6 @@ function LayoutComponent(props) {
             if (event.target.value) {
                 setLimit(event.target.value);
                 props.visualization.limit = event.target.value;
-
             } else {
                 setLimit(DEFAULTLIMIT);
             }

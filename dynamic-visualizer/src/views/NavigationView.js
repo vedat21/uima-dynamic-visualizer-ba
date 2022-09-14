@@ -15,10 +15,10 @@ import {DeleteForever} from "@mui/icons-material";
 
 
 // custom modules
-import TopBar from "../user_inputs/TopBar";
-import savePresentation from "../../api_crud/savePresentation";
-import deletePresentation from "../../api_crud/deletePresentation";
-import {apiEndpoints, usedColors} from "../../helper/envConst";
+import TopBar from "../components/user_inputs/TopBar";
+import savePresentation from "../api_crud/savePresentation";
+import deletePresentation from "../api_crud/deletePresentation";
+import {apiEndpoints} from "../helper/envConst";
 
 
 /**
