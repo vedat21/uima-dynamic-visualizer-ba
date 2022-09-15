@@ -42,7 +42,7 @@ public class UimaDocument {
   private Map<String, Object> types = new HashMap<>();
 
 
-  public void loadToDatabase(File xmlDocument) throws UIMAException {
+  public UimaDocument(File xmlDocument) throws UIMAException {
     this.documentTypes = new DocumentTypes();
     this.jCas = JCasFactory.createJCas();
 
