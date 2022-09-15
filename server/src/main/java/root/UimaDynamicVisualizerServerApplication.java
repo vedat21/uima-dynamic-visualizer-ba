@@ -30,14 +30,15 @@ public class UimaDynamicVisualizerServerApplication implements CommandLineRunner
 
   @Override
   public void run(String... args) throws Exception {
-
+/* Nur beim einlesen ausführen
     File folder = new File(System.getenv("path"));
 
     for (File xmlDocument : folder.listFiles()) {
       if (xmlDocument.getName().endsWith("xmi")) {
-        repository.save(new UimaDocument(xmlDocument));
+        repository.save(new UimaDocument().loadToDatabase(xmlDocument));
       }
     }
 
+ */
   }
 }

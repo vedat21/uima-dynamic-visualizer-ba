@@ -86,7 +86,7 @@ function VisualizationLayout(props) {
             isDraggable={props.editable}
             isResizable={props.editable}
             onResize={handleResizeLockAspectRatio}
-            margin={[10, 10]}
+            margin={[15, 15]}
             issaveaspectratio={true}
             aspectRatio={true}
             {...props}

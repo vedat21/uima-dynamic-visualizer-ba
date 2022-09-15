@@ -41,12 +41,8 @@ public class UimaDocument {
   private DocumentTypes documentTypes;
   private Map<String, Object> types = new HashMap<>();
 
-  /**
-   * @throws UIMAException
-   * @throws IOException
-   * @throws SAXException
-   */
-  public UimaDocument(File xmlDocument) throws UIMAException, IOException, SAXException {
+
+  public void loadToDatabase(File xmlDocument) throws UIMAException {
     this.documentTypes = new DocumentTypes();
     this.jCas = JCasFactory.createJCas();
 
@@ -59,10 +55,9 @@ public class UimaDocument {
       this.extraxtPos();
 
 
-    } catch (FileNotFoundException e) {
+    } catch (SAXException | IOException e) {
       e.printStackTrace();
     }
-
   }
 
 
