@@ -95,6 +95,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:5.3.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-configuration-processor:2.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.uima:uimaj-core:2.10.2" level="project" />
     <orderEntry type="library" name="Maven: de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.api.segmentation-asl:1.10.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.uima:uimafit-core:2.4.0" level="project" />
