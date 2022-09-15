@@ -1,5 +1,6 @@
 package root.api;
 
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,9 +102,9 @@ public class Controller {
     @GetMapping("/documents/{id}")
     public List<UimaDocument> findByIdWithKeys(@RequestParam Optional<String> types, @PathVariable String id) {
         if (types.isEmpty()) {
-            return uimaDocumentService.findById(id).stream().toList();
+            return uimaDocumentService.findById(id).stream().collect(Collectors.toList());
         } else {
-            return uimaDocumentService.findByIdWithKeys(types.stream().toList(), id);
+            return uimaDocumentService.findByIdWithKeys(types.stream().collect(Collectors.toList()), id);
         }
     }
 
@@ -119,7 +120,7 @@ public class Controller {
         if (types.isEmpty()) {
             return uimaDocumentService.findAll();
         } else {
-            return uimaDocumentService.findAllWithKeys(types.stream().toList());
+            return uimaDocumentService.findAllWithKeys(types.stream().collect(Collectors.toList()));
         }
     }
 
@@ -131,7 +132,7 @@ public class Controller {
      */
     @GetMapping("/documents/sum")
     public List<UimaEntitySummation> getTypesSummation(@RequestParam Optional<String> types, @RequestParam(defaultValue = "0") String limit) {
-        String[] typesAsArray = types.stream().toList().get(0).split(",");
+        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
 
         return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit));
     }
