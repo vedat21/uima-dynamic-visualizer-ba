@@ -29,6 +29,8 @@ function PresentationView(props) {
     const [visualizations, setVisualizations] = useState([]);
     // stores the layout of the visualizations
     const [layout, setLayout] = useState([])
+    // stores all documents that should be get infromation
+    const [documents, setDocuments] = useState([])
 
 
 
@@ -40,6 +42,7 @@ function PresentationView(props) {
                     setLayout(response.data.layout);
                     setVisualizations(response.data.visualizations);
                     setTitle(response.data.title);
+                    setDocuments(response.data.documents);
                 });
             } catch (error) {
                 console.log(error)
@@ -80,7 +83,7 @@ function PresentationView(props) {
                 id: uuid(),
                 component: selectedVisualization,
                 // apiEndpoints.requestParamIds + "632351684ae9b57e41028424" der teil nicht in db speichern sondern von sidebar beziehen
-                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData + apiEndpoints.requestParamIds + "632351684ae9b57e41028424",
+                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData + apiEndpoints.requestParamIds,
                 limit: 5,
                 label: "Label",
             };
@@ -114,11 +117,23 @@ function PresentationView(props) {
      */
     const onEditableClicked = () => {
         saveLayout();
-        const presentation = {"id": id, "title": title, "layout": window.$localVisualizationLayout, "visualizations": visualizations}
+        const presentation =
+            {"id": id, "title": title, "layout": window.$localVisualizationLayout, "visualizations": visualizations, "documents": documents}
         savePresentation(presentation);
 
         setEditable(!editable);
     }
+
+    // funktion von hier https://contactmentor.com/checkbox-list-react-js-example/
+    const handleCheckedDocuments = (event, item) => {
+        let updatedList = [...documents];
+        if (event.target.checked) {
+            updatedList = [...documents, item];
+        } else {
+            updatedList.splice(documents.indexOf(item), 1);
+        }
+        setDocuments(updatedList);
+    };
 
     /**
      * on edit title of presentation
@@ -138,6 +153,8 @@ function PresentationView(props) {
                 addVisualization={addVisualization}
                 title={title} editTitle={editTitle}
                 useCase="presentation"
+                documents={documents}
+                handleCheckedDocuments={handleCheckedDocuments}
             />
             <VisualizationLayout
                 editable={editable}
@@ -145,6 +162,7 @@ function PresentationView(props) {
                 layout={layout}
                 onDeleteComponentClicked={onDeleteComponentClicked}
                 addVisualization={addVisualization}
+                documents={documents}
             />
         </div>
     )

@@ -42,7 +42,7 @@ const components = {
  * @param handleOnClickInput
  * @returns {React.ReactElement<{key}>}
  */
-export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput, editRichtext, richTextContent) => {
+export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput, editRichtext, richTextContent, documents) => {
     // component does exist
     if (typeof components[visualization.component] !== "undefined") {
 
@@ -84,6 +84,7 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
                     label: label,
                     url: visualization.url,
                     limit: limit,
+                    documents: documents
                 }),
 
             ]);

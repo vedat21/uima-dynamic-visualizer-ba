@@ -54,7 +54,7 @@ function NavigationView() {
      * to add a new empty presentation
      */
     function addPresentation() {
-        savePresentation({"title": "No Title", "layout": [], "visualizations": []});
+        savePresentation({"title": "No Title", "layout": [], "visualizations": [], "documents": []});
 
     }
 

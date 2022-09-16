@@ -40,7 +40,7 @@ function Sidebar(props) {
         {
             props.useCase == "presentation" &&
             <Menu styles={styles}>
-              <DocumentsCheckBox></DocumentsCheckBox>
+              <DocumentsCheckBox handleCheckedDocuments={props.handleCheckedDocuments}  documents={props.documents}></DocumentsCheckBox>
             </Menu>
         }
       </>

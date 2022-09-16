@@ -54,13 +54,14 @@ function LayoutComponent(props) {
     props.visualization.content = content;
   }
 
+
   return (
       <>
         {/* Die Visualisierung selber  */}
         {AllVisualizationComponents(props.visualization, props.editable,
             props.onDeleteComponentClicked, limit, label,
             changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
-            editRichtext, richTextContent)}
+            editRichtext, richTextContent, props.documents)}
       </>
   );
 }

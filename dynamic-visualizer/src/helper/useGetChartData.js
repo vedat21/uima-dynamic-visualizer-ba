@@ -7,10 +7,12 @@ import {apiEndpoints} from "../helper/envConst"
  * @param url is prop
  * @returns {{datasets: [{backgroundColor: string[], borderColor: string[], data: [number], borderWidth: number, label: *}], labels: [string]}}
  */
-const useGetChartData = (label, url, limit) => {
+const useGetChartData = (label, url, limit, documents) => {
+
+    console.log(documents);
 
     // make request to get data
-    const {response, loading} = useGetData(url + apiEndpoints.requestParamLimit + limit);
+    const {response, loading} = useGetData(url + apiEndpoints.requestParamLimit + limit + apiEndpoints.requestParamIds  +   documents.join(","));
 
     const labels = (response.map(({id}) =>{
         return id

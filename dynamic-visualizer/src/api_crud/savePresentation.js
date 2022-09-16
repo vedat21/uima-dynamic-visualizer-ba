@@ -14,6 +14,7 @@ function savePresentation(presentation){
         title: presentation.title,
         layout: presentation.layout,
         visualizations: presentation.visualizations,
+        documents: presentation.documents
     })
         .then(function (response) {
             console.log(response);

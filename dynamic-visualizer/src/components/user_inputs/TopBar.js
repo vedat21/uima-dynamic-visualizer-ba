@@ -49,7 +49,7 @@ function TopBar(props) {
             }
             {
                 !props.editable && props.useCase == "presentation" &&
-                <Sidebar useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
+                <Sidebar handleCheckedDocuments={props.handleCheckedDocuments} documents={props.documents} useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
             }
             {/* topbar */}
             <Toolbar>

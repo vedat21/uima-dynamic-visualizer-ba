@@ -19,4 +19,5 @@ public class PresentationLayout {
     private String title;
     private List layout;
     private List visualizations;
+    private List documents;
 }
