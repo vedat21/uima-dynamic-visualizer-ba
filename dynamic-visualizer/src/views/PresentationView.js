@@ -73,18 +73,31 @@ function PresentationView(props) {
         saveLayout();
         // if selectedData only contains one element then dont join
         selectedData = Array.isArray(selectedData) ? selectedData.join() : selectedData;
-        const dataToAdd = {
-            id: uuid(),
-            component: selectedVisualization,
-            url: apiEndpoints.basis +  apiEndpoints.sum + selectedData,
-            limit: 5,
-            label: "Label",
-        };
 
+        // difference between chart component and other
+        if(selectedVisualization.includes("chart")){
+            const dataToAdd = {
+                id: uuid(),
+                component: selectedVisualization,
+                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData,
+                limit: 5,
+                label: "Label",
+            };
+            /* if bodydata is null then init list with only added data. else add to bodydata.
+                (using concat to trigger rerender) */
+            visualizations === null ? setVisualizations([dataToAdd]) : setVisualizations(visualizations.concat([dataToAdd]))
+        }
+        else {
+            const dataToAdd = {
+                id: uuid(),
+                component: selectedVisualization,
+                content: "x"
+            };
+            /* if bodydata is null then init list with only added data. else add to bodydata.
+               (using concat to trigger rerender) */
+            visualizations === null ? setVisualizations([dataToAdd]) : setVisualizations(visualizations.concat([dataToAdd]));
+        }
 
-        /* if bodydata is null then init list with only added data. else add to bodydata.
-           (using concat to trigger rerender) */
-        visualizations === null ? setVisualizations([dataToAdd]) : setVisualizations(visualizations.concat([dataToAdd]))
     }
 
     /**
@@ -123,12 +136,14 @@ function PresentationView(props) {
                 editable={editable} onEditableClicked={onEditableClicked}
                 addVisualization={addVisualization}
                 title={title} editTitle={editTitle}
+                useCase="presentation"
             />
             <VisualizationLayout
                 editable={editable}
                 visualizations={visualizations}
                 layout={layout}
                 onDeleteComponentClicked={onDeleteComponentClicked}
+                addVisualization={addVisualization}
             />
         </div>
     )

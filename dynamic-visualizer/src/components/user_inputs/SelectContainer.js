@@ -16,7 +16,7 @@ const optionsVisualization = [
   {value: 'scatterchart', label: 'Scatter Chart'},
   {value: 'radarchart', label: 'Radar Chart'},
   {value: 'textcomponent', label: 'Text'},
-  {value: 'staticcomponent', label: 'Static Component'}
+  {value: 'richtexteditor', label: 'Rich Text Editor'}
 ];
 
 /**
@@ -46,7 +46,7 @@ function SelectContainer(props) {
   }, [response, optionsData, loading])
 
   function addVisualization() {
-    if (selectedData.length !== 0) {
+    if (selectedData.length !== 0 || !selectedVisualization.includes("chart")) {
       props.addVisualization(selectedVisualization, selectedData)
     }
   }
@@ -57,12 +57,14 @@ function SelectContainer(props) {
             options={optionsVisualization}
             selectedOption={selectedVisualization}
             setSelectedOption={setSelectedVisualization}
-            isMulti={false}/>
+            isMulti={false}
+        />
         <SelectField
             options={optionsData}
             selectedOption={selectedData}
             setSelectedOption={setSelectedData}
-            isMulti={true}/>
+            isMulti={true}
+        />
         <Tooltip title={'Create new Visualization'}>
           <Button color="inherit" onClick={addVisualization}>+CREATE</Button>
         </Tooltip>

@@ -10,13 +10,13 @@ import PieChart from "./charts/PieChart";
 import PolarAreaChart from "./charts/PolarAreaChart";
 import RadarChart from "./charts/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
+import RichTextEditor from "./other/RichTextEditor";
 import TextComponent from "./other/TextComponent";
 import ChartTopBar from "./topbars/ChartTopBar";
 import OtherVisualizationsTopBar from "./topbars/OtherVisualizationsTopBar";
-import DropStaticElement from "./other/DropStaticElement";
 
 
-// all visualization components. map string to the component.
+// all visualization components. map string to the component. Has to match values in SelectContainer.js
 const components = {
     "barchart": BarChart,
     "bubblechart": BubbleChart,
@@ -26,8 +26,7 @@ const components = {
     "polarareachart": PolarAreaChart,
     "scatterchart": ScatterChart,
     "radarchart": RadarChart,
-    "textcomponent": TextComponent,
-    "staticcomponent": DropStaticElement,
+    "richtexteditor": RichTextEditor,
 };
 
 /**
@@ -43,14 +42,14 @@ const components = {
  * @param handleOnClickInput
  * @returns {React.ReactElement<{key}>}
  */
-export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput) => {
+export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput, editRichtext, richTextContent) => {
     // component does exist
     if (typeof components[visualization.component] !== "undefined") {
 
 
         // entweder erstell komponenten die texttopbar oder charttopbar entählt. rest identisch
         // hier texttopbar
-        if (visualization.component.startsWith("text")) {
+        if (visualization.component.includes("text")) {
             return React.createElement("div", {key: uuid()}, [
                 React.createElement(OtherVisualizationsTopBar, {
                     key: uuid(),
@@ -60,22 +59,9 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
                 React.createElement(components[visualization.component], {
                     key: uuid(),
                     label: label,
-                    url: visualization.url,
-                }),
-
-            ]);
-        }
-        else if (visualization.component === "staticcomponent"){
-            return React.createElement("div", {key: uuid()}, [
-                React.createElement(OtherVisualizationsTopBar, {
-                    key: uuid(),
                     editable: editable,
-                    onDeleteComponentClicked: onDeleteComponentClicked,
-                }),
-                React.createElement(components[visualization.component], {
-                    key: uuid(),
-                    label: label,
-                    url: visualization.url,
+                    content: richTextContent,
+                    editRichtext: editRichtext
                 }),
 
             ]);

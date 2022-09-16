@@ -5,12 +5,13 @@ import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Slide from '@mui/material/Slide';
-import {Button, IconButton, TextField, Tooltip} from "@mui/material";
+import {Box, Button, IconButton, TextField, Tooltip} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 // custom modules
 import SelectContainer from "./SelectContainer";
 import {usedColors} from "../../helper/envConst";
+import Sidebar from "./Sidebar";
 
 /**
  * Quelle: https://mui.com/material-ui/react-app-bar/
@@ -41,17 +42,32 @@ function TopBar(props) {
         <CssBaseline/>
         <HideOnScroll {...props}>
           <AppBar sx={{backgroundColor: usedColors.primary}}>
-            <Toolbar>
 
+            {
+                props.useCase == "navigation" &&
+                <Sidebar useCase="navigation" sx={{flexGrow: 1}}></Sidebar>
+            }
+            {
+                !props.editable && props.useCase == "presentation" &&
+                <Sidebar useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
+            }
+            {/* topbar */}
+            <Toolbar>
               {/* if editable render typohraphy else render textfield to edit title  */}
               {!props.editable &&
-                  <Typography
-                      variant="h5"
-                      component="div"
-                      sx={{flexGrow: 1}}
-                  >
-                    {props.title}
-                  </Typography>
+                  <Box sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <Typography
+                        variant="h4"
+                        component="div"
+                    >
+                      {props.title}
+                    </Typography>
+                  </Box>
               }
               {props.editable &&
                   <Tooltip title={'Press enter to save Title'}>

@@ -27,7 +27,6 @@ function SelectForm(props) {
             }));
         }
         else{
-            console.log("WAS", selectedData.value)
             props.setSelectedOption(selectedData.value);
         }
     }

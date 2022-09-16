@@ -7,7 +7,6 @@ import _ from "lodash";
 // custom modules
 import LayoutComponent from "./LayoutComponent";
 import getComponentConfiguration from "../../helper/getComponentConfiguration";
-import DropStaticElement from "./other/DropStaticElement"
 
 // global variable for layout
 window.$localVisualizationLayout = [];

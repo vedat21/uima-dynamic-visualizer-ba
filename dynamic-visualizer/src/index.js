@@ -5,8 +5,6 @@ import ReactDOM from 'react-dom'
 import "./index.css";
 import RoutingView from "./views/RoutingView";
 
-
-
 ReactDOM.render(
     <React.StrictMode>
         <RoutingView />

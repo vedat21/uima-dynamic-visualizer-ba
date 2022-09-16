@@ -69,7 +69,8 @@ function NavigationView() {
 
     return (
         <>
-            <TopBar addPresentation={addPresentation} title={topBarTitle}></TopBar>
+
+            <TopBar useCase="navigation" addPresentation={addPresentation} title={topBarTitle}></TopBar>
 
             <TableContainer component={Paper}>
                 <Table sx={{minWidth: 650}} aria-label="simple table">
