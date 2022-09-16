@@ -5,6 +5,7 @@ import {Button, TextField, Tooltip} from "@mui/material";
 // custom
 import {usedColors, apiEndpoints} from "../../helper/envConst"
 import zIndex from "@mui/material/styles/zIndex";
+import DocumentsCheckBox from "./helper/DocumentsCheckBox";
 
 function Sidebar(props) {
 
@@ -23,7 +24,7 @@ function Sidebar(props) {
         {
             props.useCase == "navigation" &&
             <Menu styles={styles}>
-              <Tooltip title={"Enter path to folder"}>
+              <Tooltip placement="top" title={"Enter path to folder"}>
                 <TextField sx={{background: usedColors.secondary}} label="path"
                            autoComplete="off" size="small"
                            onChange={(e) => setPath(
@@ -39,7 +40,7 @@ function Sidebar(props) {
         {
             props.useCase == "presentation" &&
             <Menu styles={styles}>
-              <div>Test</div>
+              <DocumentsCheckBox></DocumentsCheckBox>
             </Menu>
         }
       </>

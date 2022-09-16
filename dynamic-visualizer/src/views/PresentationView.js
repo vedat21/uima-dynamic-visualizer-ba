@@ -79,7 +79,8 @@ function PresentationView(props) {
             const dataToAdd = {
                 id: uuid(),
                 component: selectedVisualization,
-                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData,
+                // apiEndpoints.requestParamIds + "632351684ae9b57e41028424" der teil nicht in db speichern sondern von sidebar beziehen
+                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData + apiEndpoints.requestParamIds + "632351684ae9b57e41028424",
                 limit: 5,
                 label: "Label",
             };

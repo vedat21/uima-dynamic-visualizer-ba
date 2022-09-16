@@ -14,4 +14,7 @@ export const apiEndpoints = {
     documents: "documents/",
     delete : "delete/",
     general: "general/",
+    requestParamIds: "&ids=",
+    all: "all/",
+    ids: "ids/",
 }

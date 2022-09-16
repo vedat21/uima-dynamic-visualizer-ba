@@ -1,4 +1,4 @@
-package root.database;
+package root.api.repositories;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

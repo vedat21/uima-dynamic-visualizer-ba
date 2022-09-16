@@ -3,8 +3,6 @@ package root.api.controllers;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +26,9 @@ public class UimaDocumentController {
   private UimaDocumentService uimaDocumentService;
 
 
-
   /**
-   * to tell the client which keys (types) can be requested from uima documents and gives some information
-   * about the structure of the data
+   * to tell the client which keys (types) can be requested from uima documents and gives some
+   * information about the structure of the data
    *
    * @return
    */
@@ -41,15 +38,16 @@ public class UimaDocumentController {
   }
 
   /**
-   * returns document with given id.
-   * if params types is given then only data for these types(keys) is available. others are null
+   * returns document with given id. if params types is given then only data for these types(keys)
+   * is available. others are null
    *
    * @param id
    * @param types
    * @return
    */
   @GetMapping("/documents/{id}")
-  public List<UimaDocument> findByIdWithKeys(@RequestParam Optional<String> types, @PathVariable String id) {
+  public List<UimaDocument> findByIdWithKeys(@RequestParam Optional<String> types,
+      @PathVariable String id) {
     if (types.isEmpty()) {
       return uimaDocumentService.findById(id).stream().collect(Collectors.toList());
     } else {
@@ -58,8 +56,8 @@ public class UimaDocumentController {
   }
 
   /**
-   * returns all documents.
-   * if params types is given then only data for these types(keys) is available. others are null
+   * returns all documents. if params types is given then only data for these types(keys) is
+   * available. others are null
    *
    * @param types
    * @return
@@ -80,15 +78,35 @@ public class UimaDocumentController {
    * @return
    */
   @GetMapping("/documents/sum")
-  public List<UimaEntitySummation> getTypesSummation(@RequestParam Optional<String> types, @RequestParam(defaultValue = "0") String limit) {
-    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+  public List<UimaEntitySummation> getTypesSummation(
+      @RequestParam Optional<String> types,
+      @RequestParam(defaultValue = "0") String limit,
+      @RequestParam Optional<String> ids) {
 
-    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit));
+    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+    String[] idsAsArray = ids.stream().collect(Collectors.toList()).get(0).split(",");
+
+
+    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), idsAsArray);
   }
 
+
+  /**
+   * to get summed data of the given types.
+   *
+   * @return
+   */
+  @GetMapping("/documents/all/ids")
+  public List<UimaDocument> getAllDocumentsId() {
+
+    return uimaDocumentService.getAllIds();
+  }
+
+
+
   @PostMapping("/documents")
-  public UimaDocument newUimaDocument (UimaDocument uimaDocument){
-   return uimaDocumentService.putNewUimaDocument(uimaDocument);
+  public UimaDocument newUimaDocument(UimaDocument uimaDocument) {
+    return uimaDocumentService.putNewUimaDocument(uimaDocument);
   }
 
 }

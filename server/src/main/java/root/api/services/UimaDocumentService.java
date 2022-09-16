@@ -14,7 +14,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 // custom
-import root.database.UimaDocumentRepository;
+import root.api.repositories.UimaDocumentRepository;
 import root.entities.GeneralInfo;
 import root.entities.sub.UimaEntitySummation;
 import root.entities.UimaDocument;
@@ -106,7 +106,7 @@ public class UimaDocumentService {
     }
 
 
-    public List<UimaEntitySummation> getTypesSummation(String[] types, int limit) {
+    public List<UimaEntitySummation> getTypesSummation(String[] types, int limit, String[] ids) {
 
         /* param types is saved in two variable. One is a string and the other an array.
            Because of build in aggregation "concatarray". All types are stored in objects types.
@@ -121,7 +121,8 @@ public class UimaDocumentService {
         // to store all aggregate operations
         List<AggregationOperation> operations = new ArrayList<>();
 
-
+        // query by ids
+        operations.add(Aggregation.match(Criteria.where("_id").in(Arrays.stream(ids).toArray())));
         // concat all selected types to one list named data
         operations.add(
                 project("types").and(firstType).concatArrays(remainingTypes).as("data")
@@ -139,10 +140,10 @@ public class UimaDocumentService {
     }
 
 
-    public UimaDocument getKeys() {
+    public List<UimaDocument> getAllIds() {
         Query query = new Query();
-        query.fields().exclude("entities");
-        return mongoTemplate.findOne(query, UimaDocument.class);
+        query.fields().include("_id");
+        return mongoTemplate.find(query, UimaDocument.class);
     }
 
 
