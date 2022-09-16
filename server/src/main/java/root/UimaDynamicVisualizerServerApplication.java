@@ -30,6 +30,7 @@ public class UimaDynamicVisualizerServerApplication implements CommandLineRunner
 
   @Override
   public void run(String... args) throws Exception {
+    /*
     File folder = new File(System.getenv("path"));
 
     for (File xmlDocument : folder.listFiles()) {
@@ -37,6 +38,8 @@ public class UimaDynamicVisualizerServerApplication implements CommandLineRunner
         repository.save(new UimaDocument(xmlDocument));
       }
     }
+
+     */
 
   }
 }

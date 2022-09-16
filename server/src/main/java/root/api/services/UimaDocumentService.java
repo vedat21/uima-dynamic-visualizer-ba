@@ -1,4 +1,4 @@
-package root.api;
+package root.api.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.gte;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 // custom
@@ -144,6 +143,11 @@ public class UimaDocumentService {
         Query query = new Query();
         query.fields().exclude("entities");
         return mongoTemplate.findOne(query, UimaDocument.class);
+    }
+
+
+    public UimaDocument putNewUimaDocument(UimaDocument uimaDocument) {
+        return repository.save(uimaDocument);
     }
 
 }
