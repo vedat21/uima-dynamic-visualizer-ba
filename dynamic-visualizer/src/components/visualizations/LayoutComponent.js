@@ -61,7 +61,7 @@ function LayoutComponent(props) {
         {AllVisualizationComponents(props.visualization, props.editable,
             props.onDeleteComponentClicked, limit, label,
             changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
-            editRichtext, richTextContent, props.documents)}
+            editRichtext, richTextContent, props.selectedDocuments)}
       </>
   );
 }

@@ -30,7 +30,7 @@ function PresentationView(props) {
     // stores the layout of the visualizations
     const [layout, setLayout] = useState([])
     // stores all documents that should be get infromation
-    const [documents, setDocuments] = useState([])
+    const [selectedDocuments, setSelectedDocuments] = useState([])
 
 
 
@@ -42,7 +42,7 @@ function PresentationView(props) {
                     setLayout(response.data.layout);
                     setVisualizations(response.data.visualizations);
                     setTitle(response.data.title);
-                    setDocuments(response.data.documents);
+                    setSelectedDocuments(response.data.documents);
                 });
             } catch (error) {
                 console.log(error)
@@ -118,21 +118,21 @@ function PresentationView(props) {
     const onEditableClicked = () => {
         saveLayout();
         const presentation =
-            {"id": id, "title": title, "layout": window.$localVisualizationLayout, "visualizations": visualizations, "documents": documents}
+            {"id": id, "title": title, "layout": window.$localVisualizationLayout, "visualizations": visualizations, "documents": selectedDocuments}
         savePresentation(presentation);
 
         setEditable(!editable);
     }
 
     // funktion von hier https://contactmentor.com/checkbox-list-react-js-example/
-    const handleCheckedDocuments = (event, item) => {
-        let updatedList = [...documents];
+    const handleSelectedDocuments = (event, item) => {
+        let updatedList = [...selectedDocuments];
         if (event.target.checked) {
-            updatedList = [...documents, item];
+            updatedList = [...selectedDocuments, item];
         } else {
-            updatedList.splice(documents.indexOf(item), 1);
+            updatedList.splice(selectedDocuments.indexOf(item), 1);
         }
-        setDocuments(updatedList);
+        setSelectedDocuments(updatedList);
     };
 
     /**
@@ -153,8 +153,8 @@ function PresentationView(props) {
                 addVisualization={addVisualization}
                 title={title} editTitle={editTitle}
                 useCase="presentation"
-                documents={documents}
-                handleCheckedDocuments={handleCheckedDocuments}
+                selectedDocuments={selectedDocuments}
+                handleSelectedDocuments={handleSelectedDocuments}
             />
             <VisualizationLayout
                 editable={editable}
@@ -162,7 +162,7 @@ function PresentationView(props) {
                 layout={layout}
                 onDeleteComponentClicked={onDeleteComponentClicked}
                 addVisualization={addVisualization}
-                documents={documents}
+                selectedDocuments={selectedDocuments}
             />
         </div>
     )

@@ -42,12 +42,12 @@ const components = {
  * @param handleOnClickInput
  * @returns {React.ReactElement<{key}>}
  */
-export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput, editRichtext, richTextContent, documents) => {
+export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput, editRichtext, richTextContent, selectedDocuments) => {
     // component does exist
     if (typeof components[visualization.component] !== "undefined") {
 
 
-        // entweder erstell komponenten die texttopbar oder charttopbar entählt. rest identisch
+        // entweder erstell komponenten die texttopbar oder charttopbar entählt.
         // hier texttopbar
         if (visualization.component.includes("text")) {
             return React.createElement("div", {key: uuid()}, [
@@ -84,7 +84,7 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
                     label: label,
                     url: visualization.url,
                     limit: limit,
-                    documents: documents
+                    selectedDocuments: selectedDocuments
                 }),
 
             ]);

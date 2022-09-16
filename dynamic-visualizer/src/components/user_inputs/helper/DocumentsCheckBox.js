@@ -33,9 +33,9 @@ function DocumentsCheckBox(props) {
           {loading == false && options.map((item, index) => (
               <div key={index}>
                 <FormControlLabel
-                    control={<Checkbox checked={props.documents.includes(item)} />}
+                    control={<Checkbox checked={props.selectedDocuments.includes(item)} />}
                     label={item}
-                    onChange={(event) => props.handleCheckedDocuments(event, item)}
+                    onChange={(event) => props.handleSelectedDocuments(event, item)}
                 />
               </div>
           ))}

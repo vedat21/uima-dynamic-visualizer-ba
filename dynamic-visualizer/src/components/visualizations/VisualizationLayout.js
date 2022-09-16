@@ -33,7 +33,7 @@ function VisualizationLayout(props) {
                     key={visualization.id}
                     id={visualization.id}
                 >
-                    <LayoutComponent documents={props.documents} visualization={visualization} {...props}/>
+                    <LayoutComponent visualization={visualization} {...props}/>
                 </div>
             )
         });

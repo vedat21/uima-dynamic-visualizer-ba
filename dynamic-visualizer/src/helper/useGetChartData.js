@@ -23,7 +23,7 @@ const useGetChartData = (label, url, limit, documents) => {
     }));
 
 
-    // attributes of chart
+    // chart farben
     const backgroundColor = [
         'rgba(255, 99, 132, 0.2)',
         'rgba(54, 162, 235, 0.2)',
@@ -42,10 +42,10 @@ const useGetChartData = (label, url, limit, documents) => {
     ]
 
     const dataForVisualization = {
-        labels:  labels,  // oder loading
+        labels:  labels,
         datasets: [{
             label: label,
-            data: values, // während response lädt
+            data: values,
             backgroundColor: backgroundColor,
             borderColor: borderColor,
             borderWidth: 1
