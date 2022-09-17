@@ -1,6 +1,12 @@
 import {slide as Menu} from 'react-burger-menu'
 import React, {useState} from "react";
-import {Button, TextField, Tooltip} from "@mui/material";
+import {
+  Button, Dialog, DialogActions,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  Tooltip
+} from "@mui/material";
 
 // custom
 import {usedColors, apiEndpoints} from "../../helper/envConst"
@@ -18,29 +24,82 @@ function Sidebar(props) {
     }
   }
 
+  function deleteAllDocuments() {
+    console.log("resete Datenbank")
+
+    handleClose();
+  }
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   // NOTE: You also need to provide styles, see https://github.com/negomi/react-burger-menu#styling
   return (
       <>
         {
             props.useCase == "navigation" &&
             <Menu styles={styles}>
-              <Tooltip placement="top" title={"Enter path to folder"}>
+              <Tooltip placement="top"
+                       title={"Enter path to folder with uima documents"}>
                 <TextField sx={{background: usedColors.secondary}} label="path"
                            autoComplete="off" size="small"
                            onChange={(e) => setPath(
                                e.target.value)}></TextField>
               </Tooltip>
               <br/>
-              <Tooltip title="Overrides Database">
-                <Button variant="outlined" sx={{color: "black"}}
-                        onClick={importDocuments}>Import Documents</Button>
-              </Tooltip>
+              <br/>
+
+              <Button
+                  variant="outlined"
+                  sx={{color: "black", backgroundColor: usedColors.secondary}}
+                  onClick={importDocuments}
+              >
+                Import Documents
+              </Button>
+              <Button
+                  variant="outlined"
+                  sx={{color: "black", backgroundColor: usedColors.secondary}}
+                  onClick={handleClickOpen}
+              >
+                Delete Documents
+              </Button>
+              <br/>
+              <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+              >
+                {"Delete all Documents"}
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Will delete all Documents that are currently stored in
+                    database
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>Disagree</Button>
+                  <Button onClick={deleteAllDocuments} autoFocus>
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Menu>
         }
         {
             props.useCase == "presentation" &&
             <Menu styles={styles}>
-              <DocumentsCheckBox handleSelectedDocuments={props.handleSelectedDocuments}  selectedDocuments={props.selectedDocuments}></DocumentsCheckBox>
+              <DocumentsCheckBox
+                  handleSelectedDocuments={props.handleSelectedDocuments}
+                  selectedDocuments={props.selectedDocuments}
+              />
             </Menu>
         }
       </>

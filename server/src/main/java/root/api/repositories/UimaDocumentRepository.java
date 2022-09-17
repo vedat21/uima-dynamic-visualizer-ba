@@ -27,6 +27,8 @@ public interface UimaDocumentRepository extends MongoRepository<UimaDocument, St
     public int countAll();
 
 
+    public UimaDocument deleteUimaDocumentByName(String name);
+
 
 }
 

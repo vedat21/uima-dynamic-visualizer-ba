@@ -94,20 +94,24 @@ public class UimaDocument {
     }
  */
   public void extraxtNamedEntity() {
-    List<UimaEntitiy> entities = new ArrayList<>();
-    for (NamedEntity namedEntity : JCasUtil.select(this.jCas, NamedEntity.class)) {
 
-      UimaEntitiy uimaEntitiy = new UimaEntitiy(
-          namedEntity.getValue(),
-          namedEntity.getCoveredText(),
-          namedEntity.getBegin(),
-          namedEntity.getEnd()
-      );
+    for (int i=0 ; i < 30 ; i++){
 
-      entities.add(uimaEntitiy);
+      List<UimaEntitiy> entities = new ArrayList<>();
+      for (NamedEntity namedEntity : JCasUtil.select(this.jCas, NamedEntity.class)) {
+
+        UimaEntitiy uimaEntitiy = new UimaEntitiy(
+            namedEntity.getValue(),
+            namedEntity.getCoveredText(),
+            namedEntity.getBegin(),
+            namedEntity.getEnd()
+        );
+
+        entities.add(uimaEntitiy);
+      }
+
+      types.put("entities"+i, entities);
     }
-
-    types.put("entities", entities);
   }
 
   public void extraxtPos() {

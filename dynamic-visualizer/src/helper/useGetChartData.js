@@ -9,10 +9,10 @@ import {apiEndpoints} from "../helper/envConst"
  */
 const useGetChartData = (label, url, limit, documents) => {
 
-    console.log(documents);
+    console.log(url);
 
     // make request to get data
-    const {response, loading} = useGetData(url + apiEndpoints.requestParamLimit + limit + apiEndpoints.requestParamNames  +   documents.join(","));
+    const {response, loading} = useGetData(url  +   documents.join(",") + apiEndpoints.requestParamLimit + limit);
 
     const labels = (response.map(({id}) =>{
         return id

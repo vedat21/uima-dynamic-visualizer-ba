@@ -10,16 +10,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import LaunchIcon from '@mui/icons-material/Launch';
-import {IconButton} from "@mui/material";
+import {IconButton, Tooltip} from "@mui/material";
 import {DeleteForever} from "@mui/icons-material";
-
 
 // custom modules
 import TopBar from "../components/user_inputs/TopBar";
 import savePresentation from "../api_crud/savePresentation";
 import deletePresentation from "../api_crud/deletePresentation";
 import {apiEndpoints} from "../helper/envConst";
-
 
 /**
  * view to select, add or remove presentations.
@@ -28,88 +26,106 @@ import {apiEndpoints} from "../helper/envConst";
  */
 function NavigationView() {
 
-    // hook that is used for rooting
-    const navigate = useNavigate();
+  // hook that is used for rooting
+  const navigate = useNavigate();
 
-    const topBarTitle = "Presentations";
-    const [response, setResponse] = useState([]);
+  const topBarTitle = "Presentations";
+  const [response, setResponse] = useState([]);
 
-
-    // fetch data from api
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await axios.get(apiEndpoints.basis + apiEndpoints.presentations).then((response) => {
-                    setResponse(response.data)
-                });
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        fetchData();
-    }, [response])
-
-
-    /**
-     * to add a new empty presentation
-     */
-    function addPresentation() {
-        savePresentation({"title": "No Title", "layout": [], "visualizations": [], "documents": []});
-
+  // fetch data from api
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await axios.get(apiEndpoints.basis + apiEndpoints.presentations).then(
+            (response) => {
+              setResponse(response.data)
+            });
+      } catch (error) {
+        console.log(error)
+      }
     }
+    fetchData();
+  }, [response])
 
-    /**
-     * to delete a presentation
-     * @param id
-     */
-    function removePresentation(id) {
-        deletePresentation(id);
-    }
+  /**
+   * to add a new empty presentation
+   */
+  function addPresentation() {
+    savePresentation({
+      "title": "No Title",
+      "layout": [],
+      "visualizations": [],
+      "documents": []
+    });
 
+  }
 
-    return (
-        <>
+  /**
+   * to delete a presentation
+   * @param id
+   */
+  function removePresentation(id) {
+    deletePresentation(id);
+  }
 
-            <TopBar useCase="navigation" addPresentation={addPresentation} title={topBarTitle}></TopBar>
+  return (
+      <>
 
-            <TableContainer component={Paper}>
-                <Table sx={{minWidth: 650}} aria-label="simple table">
+        <TopBar useCase="navigation" addPresentation={addPresentation}
+                title={topBarTitle}></TopBar>
 
-                    <TableHead>
-                        <TableRow>
-                            <TableCell style={{borderColor: "black", fontSize: "x-large"}}>Title</TableCell>
-                            <TableCell style={{borderColor: "black", fontSize: "x-large"}}>Visualizations</TableCell>
-                            <TableCell style={{borderColor: "black"}} algin="right"></TableCell>
-                            <TableCell style={{borderColor: "black"}} algin="right"></TableCell>
-                        </TableRow>
-                    </TableHead>
+        <TableContainer component={Paper}>
+          <Table sx={{minWidth: 650}} aria-label="simple table">
 
-                    <TableBody>
-                        {response.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                            >
-                                <TableCell>{row.title}</TableCell>
-                                <TableCell>{row.visualizations ? row.visualizations.length : 0}</TableCell>
-                                <TableCell algin="right">
-                                    <IconButton onClick={() => navigate("/presentation/" + row.id)}> {/* navigate to presentation view with id */}
-                                        <LaunchIcon></LaunchIcon>
-                                    </IconButton>
-                                </TableCell>
-                                <TableCell algin="right">
-                                    <IconButton onClick={() => removePresentation(row.id)}>
-                                        <DeleteForever></DeleteForever>
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
+            <TableHead>
+              <TableRow>
+                <TableCell style={{
+                  borderColor: "black",
+                  fontSize: "x-large"
+                }}>Title</TableCell>
+                <TableCell style={{
+                  borderColor: "black",
+                  fontSize: "x-large"
+                }}>Visualizations</TableCell>
+                <TableCell style={{borderColor: "black"}}
+                           algin="right"></TableCell>
+                <TableCell style={{borderColor: "black"}}
+                           algin="right"></TableCell>
+              </TableRow>
+            </TableHead>
 
-                </Table>
-            </TableContainer>
-        </>
-    );
+            <TableBody>
+              {response.map((row) => (
+                  <TableRow
+                      key={row.id}
+                      sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                  >
+                    <TableCell>{row.title}</TableCell>
+                    <TableCell>{row.visualizations ? row.visualizations.length
+                        : 0}</TableCell>
+                    <TableCell algin="right">
+                      <Tooltip title="Open Presentation">
+                        <IconButton onClick={() => navigate("/presentation/"
+                            + row.id)}> {/* navigate to presentation view with id */}
+                          <LaunchIcon></LaunchIcon>
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell algin="right">
+                      <Tooltip title="Delete Presentation">
+                        <IconButton onClick={() => removePresentation(row.id)}>
+                          <DeleteForever></DeleteForever>
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+              ))}
+            </TableBody>
+
+          </Table>
+        </TableContainer>
+      </>
+  );
 
 }
 
