@@ -29,6 +29,7 @@ function PresentationView(props) {
     const [visualizations, setVisualizations] = useState([]);
     // stores the layout of the visualizations
     const [layout, setLayout] = useState([])
+
     // stores all documents that should be get infromation
     const [selectedDocuments, setSelectedDocuments] = useState([])
 

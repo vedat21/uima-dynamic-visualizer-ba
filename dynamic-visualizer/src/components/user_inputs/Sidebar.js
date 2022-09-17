@@ -10,18 +10,19 @@ import {
 
 // custom
 import {usedColors, apiEndpoints} from "../../helper/envConst"
-import zIndex from "@mui/material/styles/zIndex";
 import DocumentsCheckBox from "./helper/DocumentsCheckBox";
+import importDocumentsPost from "../../api_crud/importDocumentsPost";
 
 function Sidebar(props) {
 
   const [path, setPath] = useState("");
+  const [open, setOpen] = React.useState(false);
+
 
   function importDocuments() {
-    if (path != "" && path.includes("/")) {
-      // hier dokumenten aus path importieren und verarbeiten
-      console.log(path);
-    }
+ //   if (path != "" && path.includes("/")) {
+      importDocumentsPost(path);
+ //   }
   }
 
   function deleteAllDocuments() {
@@ -30,19 +31,18 @@ function Sidebar(props) {
     handleClose();
   }
 
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
+  function handleClickOpen () {
     setOpen(true);
-  };
+  }
 
-  const handleClose = () => {
+  function handleClose () {
     setOpen(false);
-  };
+  }
 
   // NOTE: You also need to provide styles, see https://github.com/negomi/react-burger-menu#styling
   return (
       <>
+        {/* Sidebar für Navigation View */}
         {
             props.useCase == "navigation" &&
             <Menu styles={styles}>
@@ -93,6 +93,7 @@ function Sidebar(props) {
               </Dialog>
             </Menu>
         }
+        {/* Sidebar für Presentation View */}
         {
             props.useCase == "presentation" &&
             <Menu styles={styles}>
