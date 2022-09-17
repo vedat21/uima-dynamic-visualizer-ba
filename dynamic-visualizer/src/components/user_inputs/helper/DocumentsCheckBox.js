@@ -9,7 +9,7 @@ function DocumentsCheckBox(props) {
 
   const {response, loading} = useGetData(
       apiEndpoints.basis + apiEndpoints.documents + apiEndpoints.all
-      + apiEndpoints.ids);
+      + apiEndpoints.names);
 
   // options and selectedOptions
   const [options, setOptions] = useState([]);
@@ -18,8 +18,8 @@ function DocumentsCheckBox(props) {
   useEffect(async () => {
     if (!loading) {
       response.forEach((document) => {
-        if (!options.includes(document.id)) { // sonst duplikate
-          options.push(document.id)
+        if (!options.includes(document.name)) { // sonst duplikate
+          options.push(document.name)
         }
       })
     }

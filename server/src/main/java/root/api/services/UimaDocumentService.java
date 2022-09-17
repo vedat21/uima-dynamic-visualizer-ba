@@ -39,7 +39,7 @@ public class UimaDocumentService {
 
         List<String> allKeys = new ArrayList<>();
         Query query = new Query();
-        UimaDocument uimaDocument = mongoTemplate.findOne(query, UimaDocument.class);
+        UimaDocument uimaDocument = mongoTemplate.findOne(query ,UimaDocument.class);
 
         // gets all types from types key
         uimaDocument.getTypes().forEach((key, value) -> {
@@ -106,7 +106,7 @@ public class UimaDocumentService {
     }
 
 
-    public List<UimaEntitySummation> getTypesSummation(String[] types, int limit, String[] ids) {
+    public List<UimaEntitySummation> getTypesSummation(String[] types, int limit, String[] names) {
 
         /* param types is saved in two variable. One is a string and the other an array.
            Because of build in aggregation "concatarray". All types are stored in objects types.
@@ -121,8 +121,8 @@ public class UimaDocumentService {
         // to store all aggregate operations
         List<AggregationOperation> operations = new ArrayList<>();
 
-        // query by ids
-        operations.add(Aggregation.match(Criteria.where("_id").in(Arrays.stream(ids).toArray())));
+        // query by name
+        operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
         // concat all selected types to one list named data
         operations.add(
                 project("types").and(firstType).concatArrays(remainingTypes).as("data")
@@ -140,9 +140,9 @@ public class UimaDocumentService {
     }
 
 
-    public List<UimaDocument> getAllIds() {
+    public List<UimaDocument> getAllDocumentNames() {
         Query query = new Query();
-        query.fields().include("_id");
+        query.fields().include("name");
         return mongoTemplate.find(query, UimaDocument.class);
     }
 

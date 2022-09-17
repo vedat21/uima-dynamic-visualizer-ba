@@ -30,21 +30,32 @@ import root.helper.DocumentTypes;
  */
 @Data
 @Document(collection = "uimadocuments")
+@NoArgsConstructor
 public class UimaDocument {
 
   @JsonIgnore
   @Transient // ignoriere jcas in api und mongodb
   private JCas jCas;
 
+
+  @JsonIgnore
+  @Transient
+  private File xmlDocument;
+
+
   @Id
   private String id;
+
+  private String name;
   private DocumentTypes documentTypes;
   private Map<String, Object> types = new HashMap<>();
 
 
-  public void loadDocument(File xmlDocument) throws UIMAException {
+  public UimaDocument(File xmlDocument) throws UIMAException {
+    this.xmlDocument = xmlDocument;
     this.documentTypes = new DocumentTypes();
     this.jCas = JCasFactory.createJCas();
+    this.name = xmlDocument.getName();
 
     //  deserialization of jcas from xmi. All information of document is stored in jcas.
     try {

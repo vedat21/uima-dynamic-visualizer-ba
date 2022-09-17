@@ -83,7 +83,7 @@ function PresentationView(props) {
                 id: uuid(),
                 component: selectedVisualization,
                 // apiEndpoints.requestParamIds + "632351684ae9b57e41028424" der teil nicht in db speichern sondern von sidebar beziehen
-                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData + apiEndpoints.requestParamIds,
+                url: apiEndpoints.basis +  apiEndpoints.sum + selectedData + apiEndpoints.requestParamNames,
                 limit: 5,
                 label: "Label",
             };
@@ -126,6 +126,7 @@ function PresentationView(props) {
 
     // funktion von hier https://contactmentor.com/checkbox-list-react-js-example/
     const handleSelectedDocuments = (event, item) => {
+        console.log(item);
         let updatedList = [...selectedDocuments];
         if (event.target.checked) {
             updatedList = [...selectedDocuments, item];

@@ -25,6 +25,9 @@ public interface UimaDocumentRepository extends MongoRepository<UimaDocument, St
      */
     @Query(value = "{}", count = true)
     public int countAll();
+
+
+
 }
 
 

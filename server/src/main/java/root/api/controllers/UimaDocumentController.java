@@ -81,25 +81,21 @@ public class UimaDocumentController {
   public List<UimaEntitySummation> getTypesSummation(
       @RequestParam Optional<String> types,
       @RequestParam(defaultValue = "0") String limit,
-      @RequestParam Optional<String> ids) {
+      @RequestParam Optional<String> names) {
 
     String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
-    String[] idsAsArray = ids.stream().collect(Collectors.toList()).get(0).split(",");
+    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
 
-    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), idsAsArray);
+    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), namesAsArray);
   }
 
 
-  /**
-   * to get summed data of the given types.
-   *
-   * @return
-   */
-  @GetMapping("/documents/all/ids")
-  public List<UimaDocument> getAllDocumentsId() {
 
-    return uimaDocumentService.getAllIds();
+  @GetMapping("/documents/all/names")
+  public List<UimaDocument> getAllDocumentNames() {
+
+    return uimaDocumentService.getAllDocumentNames();
   }
 
 

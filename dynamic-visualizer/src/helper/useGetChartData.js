@@ -12,7 +12,7 @@ const useGetChartData = (label, url, limit, documents) => {
     console.log(documents);
 
     // make request to get data
-    const {response, loading} = useGetData(url + apiEndpoints.requestParamLimit + limit + apiEndpoints.requestParamIds  +   documents.join(","));
+    const {response, loading} = useGetData(url + apiEndpoints.requestParamLimit + limit + apiEndpoints.requestParamNames  +   documents.join(","));
 
     const labels = (response.map(({id}) =>{
         return id
