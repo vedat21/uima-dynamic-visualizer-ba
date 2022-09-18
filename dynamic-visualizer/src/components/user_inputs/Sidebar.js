@@ -10,7 +10,7 @@ import {
 
 // custom
 import {usedColors, apiEndpoints} from "../../helper/envConst"
-import DocumentsCheckBox from "./helper/DocumentsCheckBox";
+import DocumentsCheckBox from "./DocumentsCheckBox";
 import importDocumentsPost from "../../api_crud/importDocumentsPost";
 
 function Sidebar(props) {

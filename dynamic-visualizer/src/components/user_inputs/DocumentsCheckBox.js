@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import useGetData from "../../../api_crud/useGetData";
-import {apiEndpoints} from "../../../helper/envConst";
+import useGetData from "../../api_crud/useGetData";
+import {apiEndpoints} from "../../helper/envConst";
 import Typography from "@mui/material/Typography";
 import {CheckBox} from "@mui/icons-material";
 import {Checkbox, FormControlLabel} from "@mui/material";
@@ -33,9 +33,11 @@ function DocumentsCheckBox(props) {
           {loading == false && options.map((item, index) => (
               <div key={index}>
                 <FormControlLabel
-                    control={<Checkbox checked={props.selectedDocuments.includes(item)} />}
+                    control={<Checkbox
+                        checked={props.selectedDocuments.includes(item)}/>}
                     label={item}
-                    onChange={(event) => props.handleSelectedDocuments(event, item)}
+                    onChange={(event) => props.handleSelectedDocuments(event,
+                        item)}
                 />
               </div>
           ))}

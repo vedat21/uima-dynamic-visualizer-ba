@@ -37,9 +37,9 @@ function NavigationView() {
     const fetchData = async () => {
       try {
         await axios.get(apiEndpoints.basis + apiEndpoints.presentations).then(
-            (responseAPI) => {
-              if (responseAPI.data !== response){
-                setResponse(responseAPI.data)
+            (responseFromAPI) => {
+              if (responseFromAPI.data !== response) {
+                setResponse(responseFromAPI.data)
               }
             });
       } catch (error) {

@@ -91,14 +91,15 @@ public class UimaDocumentController {
   }
 
 
-
+  /**
+   * To get all document names that are stored in db
+   * @return
+   */
   @GetMapping("/documents/all/names")
   public List<UimaDocument> getAllDocumentNames() {
 
     return uimaDocumentService.getAllDocumentNames();
   }
-
-
 
   @PostMapping("/documents")
   public UimaDocument newUimaDocument(UimaDocument uimaDocument) {

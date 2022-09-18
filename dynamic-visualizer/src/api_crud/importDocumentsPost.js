@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import NavigationView from "../views/NavigationView";
 // custom modules
 import {apiEndpoints} from "../helper/envConst"
 
@@ -7,11 +8,13 @@ import {apiEndpoints} from "../helper/envConst"
  * to update or add a presentation
  * @param presentation
  */
-function importDocumentsPost(path) {
+async function importDocumentsPost(path) {
 
   const formData = new FormData();
 
-  formData.append("file", require("/Users/vyildiz/soko/uima-dynamic-visualizer-ba/dynamic-visualizer/src/index.css"));
+  const file = new File(NavigationView, "testname");
+
+  formData.append("file", file  ,  "iwas");
 
   console.log("ja");
   axios.post("http://localhost:8080/upload", formData, {headers: {
