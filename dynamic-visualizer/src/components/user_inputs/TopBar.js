@@ -48,12 +48,13 @@ function TopBar(props) {
                 <Sidebar useCase="navigation" sx={{flexGrow: 1}}></Sidebar>
             }
             {
-                !props.editable && props.useCase == "presentation" &&
-                <Sidebar handleSelectedDocuments={props.handleSelectedDocuments} selectedDocuments={props.selectedDocuments} useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
+                props.editable && props.useCase == "presentation" &&
+                <Sidebar handleSelectedDocuments={props.handleSelectedDocuments}
+                         selectedDocuments={props.selectedDocuments}
+                         useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
             }
             {/* topbar */}
             <Toolbar>
-              {/* if editable render typohraphy else render textfield to edit title  */}
               {!props.editable &&
                   <Box sx={{
                     flexGrow: 1,
@@ -70,16 +71,17 @@ function TopBar(props) {
                   </Box>
               }
               {props.editable &&
-                  <Tooltip title={'Press enter to save Title'}>
-                    <TextField
-                        defaultValue={props.title}
-                        onKeyDown={props.editTitle}
-                        sx={{
-                          flexGrow: 1,
-                          input: {color: usedColors.secondary}
-                        }}
-                    />
-                  </Tooltip>
+                    <Tooltip title={'Press enter to save Title'}>
+                      <TextField
+                          defaultValue={props.title}
+                          onKeyDown={props.editTitle}
+                          sx={{
+                            flexGrow: 1,
+                            mx: 5,
+                            input: {color: usedColors.secondary}
+                          }}
+                      />
+                    </Tooltip>
               }
 
               {/* button to enable/disable editor modus. Only renders if topbar has prop editable */}

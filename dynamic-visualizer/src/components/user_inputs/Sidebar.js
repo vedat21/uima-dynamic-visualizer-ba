@@ -11,32 +11,27 @@ import {
 // custom
 import {usedColors, apiEndpoints} from "../../helper/envConst"
 import DocumentsCheckBox from "./DocumentsCheckBox";
-import importDocumentsPost from "../../api_crud/importDocumentsPost";
+import importDocuments from "../../api_crud/importDocuments";
 
 function Sidebar(props) {
 
-  const [path, setPath] = useState("");
+  const [files, setFiles] = useState([]);
   const [open, setOpen] = React.useState(false);
 
-
-  function importDocuments() {
- //   if (path != "" && path.includes("/")) {
-      importDocumentsPost(path);
- //   }
-  }
-
   function deleteAllDocuments() {
-    console.log("resete Datenbank")
-
     handleClose();
   }
 
-  function handleClickOpen () {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  function handleClose () {
+  function handleClose() {
     setOpen(false);
+  }
+
+  function handleChange(event) {
+    setFiles(event.target.files)
   }
 
   // NOTE: You also need to provide styles, see https://github.com/negomi/react-burger-menu#styling
@@ -45,13 +40,15 @@ function Sidebar(props) {
         {/* Sidebar für Navigation View */}
         {
             props.useCase == "navigation" &&
-            <Menu styles={styles}>
+            <Menu styles={stylesNavigation}>
+              <input type="file" id="ctrl" webkitdirectory directory multiple
+                     onChange={handleChange}
+              />
               <Tooltip placement="top"
-                       title={"Enter path to folder with uima documents"}>
-                <TextField sx={{background: usedColors.secondary}} label="path"
+                       title={"Enter group name to bundle documents"}>
+                <TextField sx={{background: usedColors.secondary}} label="Groupname"
                            autoComplete="off" size="small"
-                           onChange={(e) => setPath(
-                               e.target.value)}></TextField>
+                       />
               </Tooltip>
               <br/>
               <br/>
@@ -59,7 +56,7 @@ function Sidebar(props) {
               <Button
                   variant="outlined"
                   sx={{color: "black", backgroundColor: usedColors.secondary}}
-                  onClick={importDocuments}
+                  onClick={() => importDocuments(files)}
               >
                 Import Documents
               </Button>
@@ -96,7 +93,7 @@ function Sidebar(props) {
         {/* Sidebar für Presentation View */}
         {
             props.useCase == "presentation" &&
-            <Menu styles={styles}>
+            <Menu styles={stylesPresentation}>
               <DocumentsCheckBox
                   handleSelectedDocuments={props.handleSelectedDocuments}
                   selectedDocuments={props.selectedDocuments}
@@ -109,7 +106,7 @@ function Sidebar(props) {
 
 export default Sidebar;
 
-const styles = {
+const stylesPresentation = {
   zIndex: 1,
   bmBurgerButton: {
     position: 'fixed',
@@ -119,7 +116,54 @@ const styles = {
     top: '20px'
   },
   bmBurgerBars: {
+    background: usedColors.secondary,
+  },
+  bmBurgerBarsHover: {
+    background: '#a90000'
+  },
+  bmCrossButton: {
+    height: '24px',
+    width: '24px'
+  },
+  bmCross: {
+    background: '#bdc3c7'
+  },
+  bmMenuWrap: {
+    position: 'fixed',
+    height: '100%',
+    width: "50%"
+  },
+  bmMenu: {
+    background: usedColors.primary,
+    padding: '2.5em 1.5em 0',
+    fontSize: '1.15em'
+  },
+  bmMorphShape: {
+    fill: '#373a47'
+  },
+  bmItemList: {
+    color: '#b8b7ad',
+    padding: '0.8em'
+  },
+  bmItem: {
+    display: 'inline-block'
+  },
+  bmOverlay: {
     background: usedColors.secondary
+  }
+}
+
+const stylesNavigation = {
+  zIndex: 1,
+  bmBurgerButton: {
+    position: 'fixed',
+    width: '30px',
+    height: '25px',
+    left: '20px',
+    top: '20px'
+  },
+  bmBurgerBars: {
+    background: usedColors.secondary,
   },
   bmBurgerBarsHover: {
     background: '#a90000'
