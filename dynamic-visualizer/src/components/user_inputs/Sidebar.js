@@ -44,7 +44,7 @@ function Sidebar(props) {
               <input type="file" id="ctrl" webkitdirectory directory multiple
                      onChange={handleChange}
               />
-              <Tooltip placement="top"
+              <Tooltip placement="bottom"
                        title={"Enter group name to bundle documents"}>
                 <TextField sx={{background: usedColors.secondary}} label="Groupname"
                            autoComplete="off" size="small"

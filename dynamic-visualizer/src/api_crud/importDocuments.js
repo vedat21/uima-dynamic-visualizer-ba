@@ -11,9 +11,7 @@ import {apiEndpoints} from "../helper/envConst"
  */
 async function importDocuments(files) {
 
-
   Object.values(files).forEach((file) => {
-    console.log('was');
     const formData = new FormData();
     formData.append('file', file);
     formData.append("fileName", file.name);

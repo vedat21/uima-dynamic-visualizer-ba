@@ -1,5 +1,6 @@
 package root.api.services;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,36 +27,29 @@ public class FileUploadService {
   private ImportDocumentsHelper importDocumentsHelper;
 
   /**
-   * saves file to upload dir. overrides when file with name exists already.
-   * Calls function ImportDocumentsHelper.importDocuments after saving:
-   *    -> Creates UimaDocument entity in db for every file in upload dir.
-   * @param file
+   * saves file to upload dir. overrides when file with name exists already. Calls function
+   * ImportDocumentsHelper.importDocuments after saving: -> Creates UimaDocument entity in db for
+   * every file in upload dir.
+   *
+   * @param multipartFile
    * @return
    */
-  public String saveFile(MultipartFile file){
-    Path uploadDir = Paths.get(Objects.requireNonNull(env.getProperty("file.upload-dir")));
-
+  public String saveFile(MultipartFile multipartFile) {
     try {
-
+      Path uploadDir = Paths.get(Objects.requireNonNull(env.getProperty("file.upload-dir")));
       // if there is no uploadDir
       if (!Files.exists(uploadDir)) {
         Files.createDirectories(uploadDir);
       }
+      Path fileDir = uploadDir.resolve(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+      Files.copy(multipartFile.getInputStream(), fileDir, StandardCopyOption.REPLACE_EXISTING);
 
-      Path fileDir = uploadDir.resolve(file.getOriginalFilename());
-      Files.copy(file.getInputStream(), fileDir, StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
+      importDocumentsHelper.importDocuments(multipartFile);
+    } catch (IOException | UIMAException e) {
       throw new RuntimeException(e);
     }
 
-    // import all documents to db from upload dir
-    try {
-      importDocumentsHelper.importDocuments();
-    } catch (UIMAException e) {
-      throw new RuntimeException(e);
-    }
-
-    return file.getName();
+    return multipartFile.getName();
   }
 
 }
