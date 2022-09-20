@@ -17,7 +17,12 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.uima.UIMAException;
+import org.apache.uima.jcas.cas.AnnotationBase;
+import org.apache.uima.jcas.cas.TOP;
+import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.util.CasIOUtils;
 import org.apache.uima.util.XmlCasDeserializer;
+import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -47,6 +52,7 @@ public class UimaDocument {
   private String name;
   private DocumentTypes documentTypes;
   private Map<String, Object> types = new HashMap<>();
+  private Map<String, List<JSONObject>> testTypes = new HashMap<>();
   private String group;
 
   public UimaDocument(MultipartFile xmlDocument, String group) throws UIMAException {
@@ -58,39 +64,21 @@ public class UimaDocument {
 
     //  deserialization of jcas from xmi. All information of document is stored in jcas.
     try {
-      XmlCasDeserializer.deserialize(new BufferedInputStream(xmlDocument.getInputStream()), this.jCas.getCas(), true);
+
+      CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
+
+      this.testTypes = this.getElementsFromJCas(this.jCas);
+      System.out.println(this.testTypes);
 
       // extract all information
       this.extraxtNamedEntity();
       this.extraxtPos();
 
-    } catch (SAXException | IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-
-  /**
-   * Noch am Testen. Soll für generic Type möglich sein.
-   */
-/*
-    public void extractAllTypes(Jcas jcas) {
-        for (Class<T> type : this.documentTypes.getAllTypes()){
-            for (type.getClass() namedEntity : JCasUtil.select(this.jCas, type)) {
-
-                UimaEntitiy uimaEntitiy = new UimaEntitiy(
-                    namedEntity.getValue(),
-                    namedEntity.getCoveredText(),
-                    namedEntity.getBegin(),
-                    namedEntity.getEnd()
-
-                );
-
-                this.entities.add(uimaEntitiy);
-            }
-        }
-    }
- */
   public void extraxtNamedEntity() {
 
     for (int i=0 ; i < 30 ; i++){
@@ -125,6 +113,107 @@ public class UimaDocument {
       pos.add(uimaEntitiy);
     }
     types.put("pos", pos);
+  }
+
+  /**
+   *
+   * @param pCas
+   * @return
+   * @author Giuessepe Abrami
+   */
+  public Map<String, List<JSONObject>> getElementsFromJCas(JCas pCas){
+    Map<String, List<org.json.JSONObject>> resultMap = new HashMap<>();
+
+    JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
+
+      String sType = a.getType().getName();
+
+      List<JSONObject> pList = new ArrayList<>(0);
+
+      if(resultMap.containsKey(sType)){
+        pList = resultMap.get(sType);
+      }
+
+      pList.add(getDataFromObject(a));
+
+      resultMap.put(sType, pList);
+
+    });
+
+    Map<String, List<JSONObject>> resultMapChangedKeys = new HashMap<>();
+    for (String key : resultMap.keySet()){
+      resultMapChangedKeys.put(key.replace(".", "_"), resultMap.get(key));
+    }
+
+    return resultMapChangedKeys;
+
+  }
+
+  /**
+   *
+   * @param pTop
+   * @return
+   * @author Giuessepe Abrami
+   */
+  JSONObject getDataFromObject(TOP pTop){
+
+    JSONObject rObject = new JSONObject();
+    rObject.put("id", pTop.getAddress());
+    pTop.getType().getFeatures().stream().forEach(f->{
+      Object pObject = null;
+      if(f.getRange().isPrimitive()){
+
+        switch (f.getRange().toString()) {
+          case ("uima.cas.String"): {
+            pObject = pTop.getStringValue(f);
+            break;
+          }
+          case ("uima.cas.Integer"): {
+            pObject = pTop.getIntValue(f);
+            break;
+          }
+          case ("uima.cas.Float"): {
+            pObject = pTop.getFloatValue(f);
+            break;
+          }
+          case ("uima.cas.Long"): {
+            pObject = pTop.getLongValue(f);
+            break;
+          }
+          case "uima.cas.Boolean": {
+            pObject = pTop.getBooleanValue(f);
+            break;
+          }
+          case "uima.cas.Short": {
+            pObject = pTop.getShortValue(f);
+            break;
+          }
+          case "uima.cas.Double": {
+            pObject = pTop.getDoubleValue(f);
+            break;
+          }
+          case "uima.cas.Byte": {
+            pObject = pTop.getByteValue(f);
+            break;
+          }
+        }
+      }
+      else if(f.getRange() instanceof AnnotationBase){
+        //     System.out.println(pTop.getFeatureValue(f));
+      }
+      else{
+        Object oValue = pTop.getFeatureValue(f);
+        if(oValue instanceof Annotation){
+          rObject.put(f.getShortName(), ((Annotation)oValue).getAddress());
+        }
+      }
+
+      if(pObject!=null){
+        rObject.put(f.getShortName(), pObject);
+      }
+    });
+
+    return rObject;
   }
 
 }
