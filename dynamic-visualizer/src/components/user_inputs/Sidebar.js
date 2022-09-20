@@ -16,9 +16,11 @@ import importDocuments from "../../api_crud/importDocuments";
 function Sidebar(props) {
 
   const [files, setFiles] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [group, setGroup] = useState("")
 
   function deleteAllDocuments() {
+    // todo: hier müssen die dokumente aus datenbank gelöscht werden.
     handleClose();
   }
 
@@ -34,7 +36,15 @@ function Sidebar(props) {
     setFiles(event.target.files)
   }
 
-  // NOTE: You also need to provide styles, see https://github.com/negomi/react-burger-menu#styling
+  function handleImport(){
+    if(group !== "" && files !== null){
+      importDocuments(files, group)
+    }
+    else {
+      alert("Import was not possible because of missing group or files")
+    }
+  }
+
   return (
       <>
         {/* Sidebar für Navigation View */}
@@ -46,7 +56,7 @@ function Sidebar(props) {
               />
               <Tooltip placement="bottom"
                        title={"Enter group name to bundle documents"}>
-                <TextField sx={{background: usedColors.secondary}} label="Groupname"
+                <TextField onChange={(event) => setGroup(event.target.value)} sx={{background: usedColors.secondary}} label="Group"
                            autoComplete="off" size="small"
                        />
               </Tooltip>
@@ -56,7 +66,7 @@ function Sidebar(props) {
               <Button
                   variant="outlined"
                   sx={{color: "black", backgroundColor: usedColors.secondary}}
-                  onClick={() => importDocuments(files)}
+                  onClick={handleImport}
               >
                 Import Documents
               </Button>

@@ -140,9 +140,9 @@ public class UimaDocumentService {
     }
 
 
-    public List<UimaDocument> getAllDocumentNames() {
+    public List<UimaDocument> getAllDocumentNamesAndGroups() {
         Query query = new Query();
-        query.fields().include("name");
+        query.fields().include("name").include("group");
         return mongoTemplate.find(query, UimaDocument.class);
     }
 

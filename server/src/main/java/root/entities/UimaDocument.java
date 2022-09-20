@@ -49,11 +49,12 @@ public class UimaDocument {
   private Map<String, Object> types = new HashMap<>();
   private String group;
 
-  public UimaDocument(MultipartFile xmlDocument) throws UIMAException {
+  public UimaDocument(MultipartFile xmlDocument, String group) throws UIMAException {
     this.xmlDocument = xmlDocument;
     this.documentTypes = new DocumentTypes();
     this.jCas = JCasFactory.createJCas();
     this.name = xmlDocument.getOriginalFilename();
+    this.group = group;
 
     //  deserialization of jcas from xmi. All information of document is stored in jcas.
     try {

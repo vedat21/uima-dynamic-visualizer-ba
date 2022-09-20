@@ -1,8 +1,6 @@
 package root.helper;
 
 import java.io.File;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -28,12 +26,12 @@ public class ImportDocumentsHelper {
   @Autowired
   private Environment env;
 
-  public void importDocuments(MultipartFile multipartFile) throws UIMAException {
+  public void importDocuments(MultipartFile multipartFile, String group) throws UIMAException {
 
 
     // to not import duplicate xmlDocuments by filename
     List<String> allDocumentNamesInDatabase =
-        uimaDocumentService.getAllDocumentNames().stream().map(uimaDocument -> uimaDocument.getName()).collect(
+        uimaDocumentService.getAllDocumentNamesAndGroups().stream().map(uimaDocument -> uimaDocument.getName()).collect(
             Collectors.toList());
     // get upload dir
     File folder = new File(Objects.requireNonNull(env.getProperty("file.upload-dir")));
@@ -45,7 +43,7 @@ public class ImportDocumentsHelper {
 
     // create uimadocument entity in db from file
     if (!allDocumentNamesInDatabase.contains(multipartFile.getOriginalFilename())){
-      uimaDocumentRepository.save(new UimaDocument(multipartFile));
+      uimaDocumentRepository.save(new UimaDocument(multipartFile, group));
     }
 
   }

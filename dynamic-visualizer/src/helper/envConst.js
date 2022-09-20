@@ -16,6 +16,6 @@ export const apiEndpoints = {
     general: "general/",
     requestParamNames: "&names=",
     all: "all/",
-    names: "names/",
+    namesandgroup: "namesandgroup/",
     upload: "upload/"
 }

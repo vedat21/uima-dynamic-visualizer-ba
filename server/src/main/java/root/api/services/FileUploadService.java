@@ -34,7 +34,7 @@ public class FileUploadService {
    * @param multipartFile
    * @return
    */
-  public String saveFile(MultipartFile multipartFile) {
+  public String saveFile(MultipartFile multipartFile, String group) {
     try {
       Path uploadDir = Paths.get(Objects.requireNonNull(env.getProperty("file.upload-dir")));
       // if there is no uploadDir
@@ -44,7 +44,7 @@ public class FileUploadService {
       Path fileDir = uploadDir.resolve(Objects.requireNonNull(multipartFile.getOriginalFilename()));
       Files.copy(multipartFile.getInputStream(), fileDir, StandardCopyOption.REPLACE_EXISTING);
 
-      importDocumentsHelper.importDocuments(multipartFile);
+      importDocumentsHelper.importDocuments(multipartFile, group);
     } catch (IOException | UIMAException e) {
       throw new RuntimeException(e);
     }

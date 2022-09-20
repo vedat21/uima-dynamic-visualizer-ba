@@ -9,8 +9,6 @@ import {apiEndpoints} from "../helper/envConst"
  */
 const useGetChartData = (label, url, limit, documents) => {
 
-    console.log(url);
-
     // make request to get data
     const {response, loading} = useGetData(url  +   documents.join(",") + apiEndpoints.requestParamLimit + limit);
 
