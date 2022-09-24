@@ -133,5 +133,6 @@
     <orderEntry type="library" name="Maven: org.dkpro.core:dkpro-core-api-semantics-asl:1.12.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.texttechnologylab.textimager-uima:textimager-uima-types:0.3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.dkpro.core:dkpro-core-api-resources-asl:1.12.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.9.1" level="project" />
   </component>
 </module>

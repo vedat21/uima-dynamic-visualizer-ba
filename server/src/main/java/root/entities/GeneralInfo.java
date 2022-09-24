@@ -15,5 +15,4 @@ public class GeneralInfo {
     private int numberOfDocuments;
     private List<String> types;
 
-
 }

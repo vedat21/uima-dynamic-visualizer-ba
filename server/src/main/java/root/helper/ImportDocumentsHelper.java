@@ -43,7 +43,12 @@ public class ImportDocumentsHelper {
 
     // create uimadocument entity in db from file
     if (!allDocumentNamesInDatabase.contains(multipartFile.getOriginalFilename())){
-      uimaDocumentRepository.save(new UimaDocument(multipartFile, group));
+      try {
+        uimaDocumentRepository.save(new UimaDocument(multipartFile, group));
+      }
+      catch (Exception e){
+        e.printStackTrace();
+      }
     }
 
   }

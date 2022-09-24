@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import root.api.services.UimaDocumentService;
 import root.entities.GeneralInfo;
 import root.entities.UimaDocument;
-import root.entities.sub.UimaEntitySummation;
+import root.entities.UimaEntitySummation;
 
 
 @RestController
@@ -24,6 +24,25 @@ public class UimaDocumentController {
 
   @Autowired
   private UimaDocumentService uimaDocumentService;
+
+
+  /**
+   * to get summed data of the given types.
+   *
+   * @param types
+   * @return
+   */
+  @GetMapping("/documents/summ")
+  public List<UimaEntitySummation> getSummationTest(
+      @RequestParam Optional<String> types,
+      @RequestParam(defaultValue = "0") String limit,
+      @RequestParam Optional<String> names) {
+
+    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+    return uimaDocumentService.getSummationTest(typesAsArray, Integer.parseInt(limit), namesAsArray);
+  }
 
 
   /**
@@ -83,16 +102,19 @@ public class UimaDocumentController {
       @RequestParam(defaultValue = "0") String limit,
       @RequestParam Optional<String> names) {
 
+    System.out.println(names.get());
+
     String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
     String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
-
-    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), namesAsArray);
+    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit),
+        namesAsArray);
   }
 
 
   /**
    * To get all document names that are stored in db
+   *
    * @return
    */
   @GetMapping("/documents/all/namesandgroup")

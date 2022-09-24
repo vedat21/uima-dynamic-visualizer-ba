@@ -1,4 +1,4 @@
-package root.entities.sub;
+package root.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,5 +12,5 @@ public class UimaEntitySummation {
     String id;
     String value;
     String count;
-
+    String PosValue;
 }
