@@ -12,10 +12,11 @@ public class GeneralTypeDTO {
   Integer begin;
   Integer end;
   String coarseValue;
-  String Lemma;
+  String lemma;
   String laguage;
   String documentId;
   String documentBaseUri;
   String value;
+  String pos;
 
 }
