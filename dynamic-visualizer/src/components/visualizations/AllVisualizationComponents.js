@@ -11,7 +11,6 @@ import PolarAreaChart from "./charts/PolarAreaChart";
 import RadarChart from "./charts/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
 import RichTextEditor from "./other/RichTextEditor";
-import TextComponent from "./other/TextComponent";
 import ChartTopBar from "./topbars/ChartTopBar";
 import OtherVisualizationsTopBar from "./topbars/OtherVisualizationsTopBar";
 

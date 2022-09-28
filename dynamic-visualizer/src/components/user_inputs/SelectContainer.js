@@ -45,7 +45,6 @@ function SelectContainer(props) {
 
       optionsData.forEach((type) => {
         if (type.label.includes("POS")){
-
         }
       })
     }

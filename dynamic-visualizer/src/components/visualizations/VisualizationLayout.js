@@ -28,7 +28,7 @@ function VisualizationLayout(props) {
     return _.map(_.map(props.visualizations), function (visualization) {
       return (
           <div
-              className={visualization.component === "textcomponent"
+              className={visualization.component === "richtexteditor"
                   ? "scrollable-text" : "chart"}
               data-grid={getComponentConfiguration(visualization.component)}
               key={visualization.id}

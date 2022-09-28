@@ -2,7 +2,7 @@
 // stores some used color
 export const usedColors = {
     "primary": "#00618F",
-    "secondary": "#F8F6F5",
+    "secondary": "#faf9f7",
 }
 
 // stores api endpoints
