@@ -135,6 +135,7 @@ function PresentationView(props) {
 
   // funktion von hier https://contactmentor.com/checkbox-list-react-js-example/
   const handleSelectedDocuments = (event, item) => {
+    console.log(item);
     let updatedList = [...selectedDocuments];
     if (event.target.checked) {
       updatedList = [...selectedDocuments, item];
@@ -143,6 +144,34 @@ function PresentationView(props) {
     }
     setSelectedDocuments(updatedList);
   };
+
+  /**
+   * sets all chekcboxes of items to true
+   * @param items
+   */
+  function handleSelectGroup(items){
+    let newItems = [];
+    items.forEach((item) => {
+      if (!selectedDocuments.includes(item)){
+        newItems.push(item);
+        }
+    })
+    setSelectedDocuments(selectedDocuments.concat(newItems));
+  }
+
+  /**
+   * sets all chekcboxes of items to false
+   * @param items
+   */
+  function handleUnselectGroup(items){
+    let oldItems = [];
+    items.forEach((item) => {
+      if (selectedDocuments.includes(item)){
+        oldItems.push(item)
+      }
+    })
+    setSelectedDocuments(selectedDocuments.filter(item => !oldItems.includes(item)))
+  }
 
   /**
    * on edit title of presentation
@@ -165,6 +194,9 @@ function PresentationView(props) {
             selectedDocuments={selectedDocuments}
             setS
             handleSelectedDocuments={handleSelectedDocuments}
+            handleUnselectGroup={handleUnselectGroup}
+            handleSelectGroup={handleSelectGroup}
+
         />
         <VisualizationLayout
             editable={editable}

@@ -19,7 +19,6 @@ function SelectForm(props) {
      * @param selectedOption
      */
     function handleChange(selectedData) {
-
         // if multiple data is selected than save only the values in a list
         if (props.isMulti){
             props.setSelectedOption(selectedData.map(({value}) => {
@@ -30,7 +29,6 @@ function SelectForm(props) {
             props.setSelectedOption(selectedData.value);
         }
     }
-
 
     return (
         <Select

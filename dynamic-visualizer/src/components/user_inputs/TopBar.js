@@ -50,6 +50,9 @@ function TopBar(props) {
             {
                 props.editable && props.useCase == "presentation" &&
                 <Sidebar handleSelectedDocuments={props.handleSelectedDocuments}
+                         handleUnselectGroup={props.handleUnselectGroup}
+                         handleSelectGroup={props.handleSelectGroup}
+
                          selectedDocuments={props.selectedDocuments}
                          useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
             }

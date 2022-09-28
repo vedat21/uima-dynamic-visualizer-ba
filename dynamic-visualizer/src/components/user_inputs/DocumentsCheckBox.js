@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import useGetData from "../../api_crud/useGetData";
-import {apiEndpoints} from "../../helper/envConst";
+import {apiEndpoints, usedColors} from "../../helper/envConst";
 import Typography from "@mui/material/Typography";
 import {Checkbox, FormControlLabel} from "@mui/material";
 
@@ -10,49 +10,82 @@ function DocumentsCheckBox(props) {
       apiEndpoints.basis + apiEndpoints.documents + apiEndpoints.all
       + apiEndpoints.namesandgroup);
 
-  const [options, setOptions] = useState([]);
-  const [options1, setOptions1] = useState({});
+  const [groupsOptions, setGroupsOptions] = useState({});
 
   useEffect(async () => {
-
-    let optionsCopy = {};
+    let groupsOptionsCopy = {};
     if (!loading) {
-
       response.forEach((document) => {
-        optionsCopy[document.group] = [];
+        groupsOptionsCopy[document.group] = [];
       })
 
       response.forEach((document) => {
-        optionsCopy[document.group].push(document.name)
-        if (!options.includes(document.name)) { // gegen duplikate
-          options.push(document.name)
+        if(!groupsOptionsCopy[document.group].includes(document.name)){
+          groupsOptionsCopy[document.group].push(document.name)
         }
       })
-
-      setOptions1(optionsCopy);
-
+      setGroupsOptions(groupsOptionsCopy);
     }
-  }, [response, loading])
+  }, [loading])
+
+  /**
+   * for selecting/unselecting parent checkbox
+   * @param groupName
+   */
+  function handleSelectedGroup(groupName) {
+    let allSelected = true;
+
+    groupsOptions[groupName].forEach((item) => {
+      if (!props.selectedDocuments.includes(item)) {
+        allSelected = false;
+      }
+    })
+
+    allSelected ? props.handleUnselectGroup(groupsOptions[groupName])
+        : props.handleSelectGroup(groupsOptions[groupName])
+  }
 
   return (
       <>
-        <Typography variant="h5">Documents</Typography>
+        <Typography variant="h4">Uima Documents</Typography>
         <br/>
-        <>
-          {loading === false && Object.values(options1).map((value, index) => (
-              <div key={index}>
-                <FormControlLabel
+        {loading === false && Object.entries(groupsOptions).map((group) => (
+            <>
+              <div key={group[0]}>
+                <FormControlLabel sx={{transform: "scale(1.2)"}}
                     control=
-                        {<Checkbox checked={props.selectedDocuments.includes(value[0])}/>}
-                    label={value[0]}
-                    onChange=
-                        {(event) => props.handleSelectedDocuments(event, value[0])}
-                >
-
-                </FormControlLabel>
+                        {<Checkbox style={{
+                          color: usedColors.secondary,
+                        }}
+                                   checked={group[1].every(
+                                       item => props.selectedDocuments.includes(
+                                           item))}
+                        />}
+                    label={group[0]}
+                    onChange={(event) => handleSelectedGroup(group[0])}
+                />
               </div>
-          ))}
-        </>
+              {group[1].map((item, index) => (
+                  <div key={index}>
+                    <FormControlLabel
+                        sx={{paddingLeft: "25px"}}
+                        control=
+                            {<Checkbox style={{
+                              color: usedColors.secondary,
+                            }}
+                                       checked={props.selectedDocuments.includes(
+                                           item)}/>}
+                        label={item}
+                        onChange=
+                            {(event) => props.handleSelectedDocuments(
+                                event,
+                                item)}
+                    >
+                    </FormControlLabel>
+                  </div>
+              ))}
+            </>
+        ))}
       </>
   );
 }

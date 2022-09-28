@@ -28,28 +28,6 @@ public class UimaDocumentService {
   @Autowired
   private UimaDocumentRepository repository;
 
-  /**
-   * to get general information about the documents in collection. e.g how many documents are
-   * stored, what are the available uima types
-   *
-   * @return
-   */
-  public GeneralInfo getGeneralInfo() {
-
-    List<String> allKeys = new ArrayList<>();
-    Query query = new Query();
-    UimaDocument uimaDocument = mongoTemplate.findOne(query, UimaDocument.class);
-
-    // gets all types from types key
-    uimaDocument.getTypes().forEach((key, value) -> {
-      if (key.toLowerCase().contains("pos") || key.toLowerCase().contains("entity")
-          ||  key.toLowerCase().contains("lemma")) {
-        allKeys.add(key);
-      }
-    });
-
-    return new GeneralInfo(repository.countAll(), allKeys);
-  }
 
   /**
    * returns all documents stored in collection.
@@ -68,6 +46,16 @@ public class UimaDocumentService {
    */
   public Optional<UimaDocument> findById(String id) {
     return repository.findById(id);
+  }
+
+  public List<UimaDocument> getAllDocumentNamesAndGroups() {
+    Query query = new Query();
+    query.fields().include("name").include("group");
+    return mongoTemplate.find(query, UimaDocument.class);
+  }
+
+  public UimaDocument putNewUimaDocument(UimaDocument uimaDocument) {
+    return repository.save(uimaDocument);
   }
 
   /**
@@ -101,44 +89,34 @@ public class UimaDocumentService {
     query.fields().include(typesAsArray); // only return included keys (types)
     query.addCriteria(Criteria.where("_id").is(id)); // find document with id
 
-    System.out.println(mongoTemplate.find(query, UimaDocument.class));
-
     return mongoTemplate.find(query, UimaDocument.class);
   }
 
+  /**
+   * to get general information about the documents in collection. e.g how many documents are
+   * stored, what are the available uima types
+   *
+   * @return
+   */
+  public GeneralInfo getGeneralInfo() {
 
-  public List getSummationTest(String[] types, int limit, String[] names) {
+    List<String> allKeys = new ArrayList<>();
+    Query query = new Query();
+    List<UimaDocument> uimaDocuments = mongoTemplate.find(query, UimaDocument.class);
 
-    String firstType = "types." + types[0]; // first entered type
-    String[] remainingTypes = new String[types.length - 1]; // rest of them
-    for (int i = 0; i < remainingTypes.length; i++) {
-      remainingTypes[i] = "types." + types[i + 1];
-    }
+    // gets all types from types key
+    uimaDocuments.forEach((uimaDocument -> {
+      uimaDocument.getTypes().forEach((key, value) -> {
+        if (key.toLowerCase().contains("pos") || key.toLowerCase().contains("entity")
+            || key.toLowerCase().contains("lemma")) {
+          allKeys.add(key + "_VALUE");
+          allKeys.add(key);
+        }
+      });
+    }));
 
-    List<String> x = new ArrayList<>(Arrays.asList("data.value", "data.PosValue"));
-
-    // to store all aggregate operations
-    List<AggregationOperation> operations = new ArrayList<>();
-
-    // query by name
-    operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
-    // concat all selected types to one list named data
-    operations.add(
-        project("types").and(firstType).concatArrays(remainingTypes).as("data")
-    );
-    operations.add(unwind("data")); // unwind the list
-    operations.add(group("data.value").count().as("count")); // count
-    //     operations.add(group("data.PosValue").count().as("count")); // count
-    operations.add(match(new Criteria("count").gt(limit))); // limit
-    operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
-
-    Aggregation aggregation = newAggregation(operations);
-    AggregationResults<UimaEntitySummation> results = mongoTemplate.aggregate(aggregation,
-        "uimadocuments", UimaEntitySummation.class);
-
-    return results.getMappedResults();
+    return new GeneralInfo(repository.countAll(), allKeys);
   }
-
 
   public List<UimaEntitySummation> getTypesSummation(String[] types, int limit, String[] names) {
 
@@ -172,14 +150,37 @@ public class UimaDocumentService {
     return results.getMappedResults();
   }
 
-  public List<UimaDocument> getAllDocumentNamesAndGroups() {
-    Query query = new Query();
-    query.fields().include("name").include("group");
-    return mongoTemplate.find(query, UimaDocument.class);
+  public List getPosTypesSummation(String[] types, int limit, String[] names) {
+
+         /* param types is saved in two variable. One is a string and the other an array.
+           Because of build in aggregation "concatarray". All types are stored in objects types.
+         */
+    String firstType = "types." + types[0]; // first entered type
+    String[] remainingTypes = new String[types.length - 1]; // rest of them
+    for (int i = 0; i < remainingTypes.length; i++) {
+      remainingTypes[i] = "types." + types[i + 1];
+    }
+
+    // to store all aggregate operations
+    List<AggregationOperation> operations = new ArrayList<>();
+
+    // query by name
+    operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
+    // concat all selected types to one list named data
+    operations.add(
+        project("types").and(firstType).concatArrays(remainingTypes).as("data")
+    );
+    operations.add(unwind("data")); // unwind the list
+    operations.add(group("data.tokenValue").count().as("count")); // count
+    operations.add(match(new Criteria("count").gt(limit))); // limit
+    operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
+
+    Aggregation aggregation = newAggregation(operations);
+    AggregationResults<UimaEntitySummation> results = mongoTemplate.aggregate(aggregation,
+        "uimadocuments", UimaEntitySummation.class);
+
+    return results.getMappedResults();
   }
 
-  public UimaDocument putNewUimaDocument(UimaDocument uimaDocument) {
-    return repository.save(uimaDocument);
-  }
 
 }

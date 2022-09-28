@@ -11,6 +11,7 @@ public class UimaEntitySummation {
     @Id
     String id;
     String value;
-    String count;
+    int count;
     String PosValue;
+
 }

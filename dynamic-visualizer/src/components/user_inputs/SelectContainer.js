@@ -40,7 +40,13 @@ function SelectContainer(props) {
   useEffect(async () => {
     if (!loading) {
       response["types"].forEach((type) => {
-        optionsData.push({value: type, label: type.toUpperCase()})
+        optionsData.push({value: type, label: type.split("_type_")[1].toUpperCase()})
+      })
+
+      optionsData.forEach((type) => {
+        if (type.label.includes("POS")){
+
+        }
       })
     }
   }, [response, optionsData, loading])
@@ -71,5 +77,6 @@ function SelectContainer(props) {
       </Box>
   )
 }
+
 
 export default SelectContainer;

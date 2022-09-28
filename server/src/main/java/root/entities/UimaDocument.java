@@ -3,6 +3,7 @@ package root.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import java.io.BufferedInputStream;
+import java.util.Map.Entry;
 import lombok.*;
 
 import org.apache.uima.fit.factory.JCasFactory;
@@ -45,7 +46,7 @@ public class UimaDocument {
   @Id
   private String id;
   private String name;
-  private Map<String, List<GeneralTypeDTO>> types = new HashMap<>();
+  private Map<String, List<GeneralTypeDTO>> types = new TreeMap<>();
   private String group;
 
   public UimaDocument(MultipartFile xmlDocument, String group) throws UIMAException {
@@ -58,6 +59,42 @@ public class UimaDocument {
     try {
       CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
       this.types = this.getElementsFromJCas(this.jCas);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * For splitting documents in multiple documents if the data is too large to save in one.
+   * @param xmlDocument
+   * @param group
+   * @param number current document
+   * @param split number of documents to split into
+   * @throws UIMAException
+   */
+  public UimaDocument(MultipartFile xmlDocument, String group, Integer number , Integer split) throws UIMAException {
+    this.gson = new Gson();
+    this.xmlDocument = xmlDocument;
+    this.jCas = JCasFactory.createJCas();
+    this.name = xmlDocument.getOriginalFilename();
+    this.group = group;
+
+    try {
+      CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
+      Map<String, List<GeneralTypeDTO>> typesAll = this.getElementsFromJCas(this.jCas);
+
+      int numberCopy = number;
+      for (Entry<String, List<GeneralTypeDTO>> entry : typesAll.entrySet()) {
+        if (numberCopy == split) {
+          this.types.put(entry.getKey(), entry.getValue());
+          numberCopy = 1;
+        }
+        else {
+          numberCopy++;
+
+        }
+      }
+
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -93,8 +130,33 @@ public class UimaDocument {
       resultMapChangedKeys.put(key.replace(".", "_"), resultMap.get(key));
     }
 
-    return resultMapChangedKeys;
+    return this.addPosValues(resultMapChangedKeys);
 
+  }
+
+  public Map<String, List<GeneralTypeDTO>> addPosValues(Map<String, List<GeneralTypeDTO>> resultMap){
+
+    List<GeneralTypeDTO> lemmas = resultMap.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
+    Map<String, List<GeneralTypeDTO>> start = new HashMap<>();
+
+    for (Map.Entry<String, List<GeneralTypeDTO>> entry : resultMap.entrySet()) {
+
+      List<GeneralTypeDTO> type = entry.getValue();
+
+      if (entry.getKey().toLowerCase().contains("pos")){
+        for (GeneralTypeDTO typeValue : type){
+          for(GeneralTypeDTO lemma : lemmas){
+            if(lemma.getBegin().equals(typeValue.getBegin())){
+              typeValue.setTokenValue(lemma.getValue());
+            }
+          }
+        }
+      }
+
+      start.put(entry.getKey(), type);
+    }
+
+    return start;
   }
 
   /**
@@ -165,6 +227,8 @@ public class UimaDocument {
     if (rObject.has("PosValue")){
       rObject.put("value", rObject.get("PosValue"));
     }
+
+
 
     return gson.fromJson(rObject.toString(), GeneralTypeDTO.class);
   }

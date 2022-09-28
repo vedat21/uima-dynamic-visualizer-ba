@@ -38,7 +38,10 @@ function Sidebar(props) {
 
   function handleImport(){
     if(group !== "" && files !== null){
-      importDocuments(files, group)
+      importDocuments(files, group);
+      setGroup("")
+      setFiles([]);
+      alert("Documents are imported. The processing could take a minute.")
     }
     else {
       alert("Import was not possible because of missing group or files")
@@ -56,7 +59,7 @@ function Sidebar(props) {
               />
               <Tooltip placement="bottom"
                        title={"Enter group name to bundle documents"}>
-                <TextField onChange={(event) => setGroup(event.target.value)} sx={{background: usedColors.secondary}} label="Group"
+                <TextField value={group} onChange={(event) => setGroup(event.target.value)} sx={{background: usedColors.secondary}} label="Group"
                            autoComplete="off" size="small"
                        />
               </Tooltip>
@@ -106,6 +109,8 @@ function Sidebar(props) {
             <Menu styles={stylesPresentation}>
               <DocumentsCheckBox
                   handleSelectedDocuments={props.handleSelectedDocuments}
+                  handleUnselectGroup={props.handleUnselectGroup}
+                  handleSelectGroup={props.handleSelectGroup}
                   selectedDocuments={props.selectedDocuments}
               />
             </Menu>
