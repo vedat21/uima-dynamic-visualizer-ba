@@ -61,6 +61,7 @@ public class ImportDocumentsHelper {
           splitter *= 2;
         }
       }
+      System.out.println(multipartFile.getOriginalFilename() + " Document has been imported");
     }
 
   }

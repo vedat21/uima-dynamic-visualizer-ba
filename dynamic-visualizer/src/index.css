@@ -6,9 +6,12 @@
     background-color: #faf9f7;
 }
 
+text {
+    background-color: #faf9f7;
+}
+
 .chart {
     background-color: white;
-    aspect-ratio: 10 / 1;
 }
 
 .top-bar{

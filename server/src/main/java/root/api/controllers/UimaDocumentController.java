@@ -129,13 +129,34 @@ public class UimaDocumentController {
       @RequestParam(defaultValue = "0") String limit,
       @RequestParam Optional<String> names) {
 
-    System.out.println(names.get());
-
     String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
     String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
-    return uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit),
-        namesAsArray);
+    List<String> posValueTypes = new ArrayList<>();
+    List<String> allTypes = new ArrayList<>();
+
+    for (int i = 0; i < typesAsArray.length; i++) {
+      if (typesAsArray[i].endsWith("VALUE")) {
+        posValueTypes.add(typesAsArray[i].replace("_VALUE", ""));
+      } else {
+        allTypes.add(typesAsArray[i]);
+      }
+    }
+
+    List<UimaEntitySummation> result = new ArrayList<>();
+    if(posValueTypes.size() != 0){
+      result.addAll( uimaDocumentService.getPosTypesSummation(
+          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray));
+    }
+    if (allTypes.size() != 0){
+      result.addAll(uimaDocumentService.getTypesSummation(
+          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray));
+    }
+
+    Collections.sort(result, Comparator.comparing(UimaEntitySummation ::getCount).reversed());
+
+
+    return result;
   }
 
 

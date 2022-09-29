@@ -26,7 +26,7 @@ public class UimaDocumentService {
   @Autowired
   private MongoTemplate mongoTemplate;
   @Autowired
-  private UimaDocumentRepository repository;
+  private UimaDocumentRepository uimaDocumentRepository;
 
 
   /**
@@ -35,7 +35,7 @@ public class UimaDocumentService {
    * @return
    */
   public List<UimaDocument> findAll() {
-    return repository.findAll();
+    return uimaDocumentRepository.findAll();
   }
 
   /**
@@ -45,7 +45,7 @@ public class UimaDocumentService {
    * @return
    */
   public Optional<UimaDocument> findById(String id) {
-    return repository.findById(id);
+    return uimaDocumentRepository.findById(id);
   }
 
   public List<UimaDocument> getAllDocumentNamesAndGroups() {
@@ -54,8 +54,13 @@ public class UimaDocumentService {
     return mongoTemplate.find(query, UimaDocument.class);
   }
 
+  /**
+   * put new uima document in db
+   * @param uimaDocument
+   * @return
+   */
   public UimaDocument putNewUimaDocument(UimaDocument uimaDocument) {
-    return repository.save(uimaDocument);
+    return uimaDocumentRepository.save(uimaDocument);
   }
 
   /**
@@ -102,20 +107,23 @@ public class UimaDocumentService {
 
     List<String> allKeys = new ArrayList<>();
     Query query = new Query();
+    query.fields().include("typesNames");
     List<UimaDocument> uimaDocuments = mongoTemplate.find(query, UimaDocument.class);
+
+
 
     // gets all types from types key
     uimaDocuments.forEach((uimaDocument -> {
-      uimaDocument.getTypes().forEach((key, value) -> {
-        if (key.toLowerCase().contains("pos") || key.toLowerCase().contains("entity")
-            || key.toLowerCase().contains("lemma")) {
-          allKeys.add(key + "_VALUE");
-          allKeys.add(key);
+      uimaDocument.getTypesNames().forEach((type) -> {
+        if (type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity")) {
+          allKeys.add(type + "_VALUE");
+          allKeys.add(type);
         }
       });
     }));
 
-    return new GeneralInfo(repository.countAll(), allKeys);
+
+    return new GeneralInfo(uimaDocumentRepository.countAll(), allKeys);
   }
 
   public List<UimaEntitySummation> getTypesSummation(String[] types, int limit, String[] names) {

@@ -29,7 +29,7 @@ function VisualizationLayout(props) {
       return (
           <div
               className={visualization.component === "richtexteditor"
-                  ? "scrollable-text" : "chart"}
+                  ? "text" : "chart"}
               data-grid={getComponentConfiguration(visualization.component)}
               key={visualization.id}
               id={visualization.id}
@@ -84,7 +84,7 @@ function VisualizationLayout(props) {
           isDraggable={props.editable}
           isResizable={props.editable}
           onResize={handleResizeLockAspectRatio}
-          margin={[10, 10]}
+          margin={[15, 15]}
           // This turns off compaction so you can place items wherever.
           verticalCompact={false}
           // This turns off rearrangement so items will not be pushed arround.

@@ -48,6 +48,7 @@ public class UimaDocument {
   private String name;
   private Map<String, List<GeneralTypeDTO>> types = new TreeMap<>();
   private String group;
+  private Set<String> typesNames;
 
   public UimaDocument(MultipartFile xmlDocument, String group) throws UIMAException {
     this.gson = new Gson();
@@ -59,6 +60,7 @@ public class UimaDocument {
     try {
       CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
       this.types = this.getElementsFromJCas(this.jCas);
+      this.typesNames = this.getTypesNames(this.types);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -81,12 +83,13 @@ public class UimaDocument {
 
     try {
       CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
-      Map<String, List<GeneralTypeDTO>> typesAll = this.getElementsFromJCas(this.jCas);
+      Map<String, List<GeneralTypeDTO>> allTypes = this.getElementsFromJCas(this.jCas);
 
       int numberCopy = number;
-      for (Entry<String, List<GeneralTypeDTO>> entry : typesAll.entrySet()) {
+      for (Entry<String, List<GeneralTypeDTO>> entry : allTypes.entrySet()) {
         if (numberCopy == split) {
           this.types.put(entry.getKey(), entry.getValue());
+          this.typesNames = this.getTypesNames(this.types);
           numberCopy = 1;
         }
         else {
@@ -98,65 +101,6 @@ public class UimaDocument {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  /**
-   *
-   * @param pCas
-   * @return
-   * @author Giuessepe Abrami
-   */
-  public Map<String, List<GeneralTypeDTO>> getElementsFromJCas(JCas pCas){
-    Map<String, List<GeneralTypeDTO>> resultMap = new HashMap<>();
-
-    JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
-
-      List<GeneralTypeDTO> pList = new ArrayList<>(0);
-      String sType = a.getType().getName();
-
-      if(resultMap.containsKey(sType)){
-        pList = resultMap.get(sType);
-      }
-
-      pList.add(this.getDataFromObject(a));
-
-      resultMap.put(sType, pList);
-
-    });
-
-    Map<String, List<GeneralTypeDTO>> resultMapChangedKeys = new HashMap<>();
-
-    for (String key : resultMap.keySet()){
-      resultMapChangedKeys.put(key.replace(".", "_"), resultMap.get(key));
-    }
-
-    return this.addPosValues(resultMapChangedKeys);
-
-  }
-
-  public Map<String, List<GeneralTypeDTO>> addPosValues(Map<String, List<GeneralTypeDTO>> resultMap){
-
-    List<GeneralTypeDTO> lemmas = resultMap.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
-    Map<String, List<GeneralTypeDTO>> start = new HashMap<>();
-
-    for (Map.Entry<String, List<GeneralTypeDTO>> entry : resultMap.entrySet()) {
-
-      List<GeneralTypeDTO> type = entry.getValue();
-
-      if (entry.getKey().toLowerCase().contains("pos")){
-        for (GeneralTypeDTO typeValue : type){
-          for(GeneralTypeDTO lemma : lemmas){
-            if(lemma.getBegin().equals(typeValue.getBegin())){
-              typeValue.setTokenValue(lemma.getValue());
-            }
-          }
-        }
-      }
-
-      start.put(entry.getKey(), type);
-    }
-
-    return start;
   }
 
   /**
@@ -227,10 +171,78 @@ public class UimaDocument {
     if (rObject.has("PosValue")){
       rObject.put("value", rObject.get("PosValue"));
     }
-
-
-
     return gson.fromJson(rObject.toString(), GeneralTypeDTO.class);
+  }
+
+  /**
+   *
+   * @param pCas
+   * @return
+   * @author Giuessepe Abrami
+   */
+  public Map<String, List<GeneralTypeDTO>> getElementsFromJCas(JCas pCas){
+    Map<String, List<GeneralTypeDTO>> resultMap = new HashMap<>();
+
+    JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
+
+      List<GeneralTypeDTO> pList = new ArrayList<>(0);
+      String sType = a.getType().getName();
+
+      if(resultMap.containsKey(sType)){
+        pList = resultMap.get(sType);
+      }
+
+      pList.add(this.getDataFromObject(a));
+
+      resultMap.put(sType, pList);
+
+    });
+
+    Map<String, List<GeneralTypeDTO>> resultMapChangedKeys = new HashMap<>();
+
+    for (String key : resultMap.keySet()){
+      resultMapChangedKeys.put(key.replace(".", "_"), resultMap.get(key));
+    }
+
+    return this.addPosValues(resultMapChangedKeys);
+
+  }
+
+  public Map<String, List<GeneralTypeDTO>> addPosValues(Map<String, List<GeneralTypeDTO>> resultMap){
+
+    List<GeneralTypeDTO> lemmas = resultMap.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
+    Map<String, List<GeneralTypeDTO>> start = new HashMap<>();
+
+    for (Map.Entry<String, List<GeneralTypeDTO>> entry : resultMap.entrySet()) {
+
+      List<GeneralTypeDTO> type = entry.getValue();
+
+      if (entry.getKey().toLowerCase().contains("pos")){
+        for (GeneralTypeDTO typeValue : type){
+          for(GeneralTypeDTO lemma : lemmas){
+            if(lemma.getBegin().equals(typeValue.getBegin())){
+              typeValue.setTokenValue(lemma.getValue());
+            }
+          }
+        }
+      }
+
+      start.put(entry.getKey(), type);
+    }
+
+    return start;
+  }
+
+
+  public Set<String> getTypesNames(Map<String, List<GeneralTypeDTO>> types){
+     Set<String> typesNames = new HashSet<>();
+
+    for (String type : types.keySet()){
+      typesNames.add(type);
+    }
+
+     return typesNames;
+
   }
 
 }

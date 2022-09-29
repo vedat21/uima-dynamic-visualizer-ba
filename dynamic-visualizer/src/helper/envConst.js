@@ -9,7 +9,7 @@ export const usedColors = {
 export const apiEndpoints = {
     basis : "http://localhost:8080/",
     presentations : "presentations/",
-    sum : "documents/summ?types=",
+    sum : "documents/sum?types=",
     requestParamLimit : "&limit=",
     documents: "documents/",
     delete : "delete/",

@@ -6,7 +6,7 @@ import AllVisualizationComponents from "./AllVisualizationComponents";
 function LayoutComponent(props) {
 
   const DEFAULTLIMIT = 5;
-  const DEFAULTLABEL = "No Label";
+  const DEFAULTLABEL = "Default Label";
 
   // if visualization is new created then use default limit and label
   const [label, setLabel] = useState(
