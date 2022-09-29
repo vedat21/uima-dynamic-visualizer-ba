@@ -8,6 +8,9 @@ import Slide from '@mui/material/Slide';
 import {Box, Button, IconButton, TextField, Tooltip} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
+import html2canvas from 'html2canvas';
+import {jsPDF} from 'jspdf';
+
 // custom modules
 import SelectContainer from "./SelectContainer";
 import {usedColors} from "../../helper/envConst";
@@ -37,6 +40,22 @@ function HideOnScroll(props) {
  * Quelle: https://mui.com/material-ui/react-app-bar/
  */
 function TopBar(props) {
+
+  // function from here: https://www.robinwieruch.de/react-component-to-pdf/
+  async function handleDownloadPdf() {
+    const element = props.printRef.current;
+    const canvas = await html2canvas(element);
+    const data = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF();
+    const imgProperties = pdf.getImageProperties(data);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight =
+        (imgProperties.height * pdfWidth) / imgProperties.width;
+    pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save('print.pdf');
+  };
+
   return (
       <React.Fragment>
         <CssBaseline/>
@@ -59,12 +78,14 @@ function TopBar(props) {
             {/* topbar */}
             <Toolbar>
               {!props.editable &&
-                  <Box sx={{
-                    flexGrow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                  <Box
+                      sx={{
+                        flexGrow: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                  >
                     <Typography
                         variant="h4"
                         component="div"
@@ -74,30 +95,41 @@ function TopBar(props) {
                   </Box>
               }
               {props.editable &&
-                    <Tooltip title={'Press enter to save Title'}>
-                      <TextField
-                          defaultValue={props.title}
-                          onKeyDown={props.editTitle}
-                          sx={{
-                            flexGrow: 1,
-                            mx: 5,
-                            input: {color: usedColors.secondary}
-                          }}
-                      />
-                    </Tooltip>
+                  <Tooltip title={'Press enter to save Title'}>
+                    <TextField
+                        defaultValue={props.title}
+                        onKeyDown={props.editTitle}
+                        sx={{
+                          flexGrow: 1,
+                          mx: 5,
+                          input: {color: usedColors.secondary}
+                        }}
+                    />
+                  </Tooltip>
               }
 
               {/* button to enable/disable editor modus. Only renders if topbar has prop editable */}
               {props.editable != null &&
-                  <Tooltip title={'Also saves the current Presentation'}>
+                  <>
+                    <Tooltip title={'Also saves the current Presentation'}>
+                      <Button
+                          color="inherit"
+                          variant={props.editable ? "contained" : "text"}
+                          onClick={props.onEditableClicked}
+                      >
+                        EDIT
+                      </Button>
+                    </Tooltip>
+                    {!props.editable &&
                     <Button
-                        color={props.editable ? "inherit" : "inherit"}
-                        variant={props.editable ? "contained" : "text"}
-                        onClick={props.onEditableClicked}
+                        color="inherit"
+                        type="button"
+                        onClick={handleDownloadPdf}
                     >
-                      EDIT
+                      Download as PDF
                     </Button>
-                  </Tooltip>
+                    }
+                  </>
               }
 
               {/* button to add a new presentation. Only renders if topbar has no prop editable */}

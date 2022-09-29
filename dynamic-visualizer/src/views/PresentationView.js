@@ -19,6 +19,8 @@ import useGetData from "../api_crud/useGetData";
  */
 function PresentationView(props) {
 
+  const printRef = React.useRef();
+
   // id of presentation is url parameter. Presentation page should only be accessed via routing.
   const {id} = useParams();
 
@@ -149,12 +151,12 @@ function PresentationView(props) {
    * sets all chekcboxes of items to true
    * @param items
    */
-  function handleSelectGroup(items){
+  function handleSelectGroup(items) {
     let newItems = [];
     items.forEach((item) => {
-      if (!selectedDocuments.includes(item)){
+      if (!selectedDocuments.includes(item)) {
         newItems.push(item);
-        }
+      }
     })
     setSelectedDocuments(selectedDocuments.concat(newItems));
   }
@@ -163,14 +165,15 @@ function PresentationView(props) {
    * sets all chekcboxes of items to false
    * @param items
    */
-  function handleUnselectGroup(items){
+  function handleUnselectGroup(items) {
     let oldItems = [];
     items.forEach((item) => {
-      if (selectedDocuments.includes(item)){
+      if (selectedDocuments.includes(item)) {
         oldItems.push(item)
       }
     })
-    setSelectedDocuments(selectedDocuments.filter(item => !oldItems.includes(item)))
+    setSelectedDocuments(
+        selectedDocuments.filter(item => !oldItems.includes(item)))
   }
 
   /**
@@ -185,14 +188,14 @@ function PresentationView(props) {
   }
 
   return (
-      <div>
+      <div ref={printRef}>
         <TopBar
+            printRef={printRef}
             editable={editable} onEditableClicked={onEditableClicked}
             addVisualization={addVisualization}
             title={title} editTitle={editTitle}
             useCase="presentation"
             selectedDocuments={selectedDocuments}
-            setS
             handleSelectedDocuments={handleSelectedDocuments}
             handleUnselectGroup={handleUnselectGroup}
             handleSelectGroup={handleSelectGroup}
