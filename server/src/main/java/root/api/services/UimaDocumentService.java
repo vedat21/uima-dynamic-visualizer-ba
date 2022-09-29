@@ -54,6 +54,11 @@ public class UimaDocumentService {
     return mongoTemplate.find(query, UimaDocument.class);
   }
 
+  public void deleteCollection(){
+    mongoTemplate.remove(new Query(),"uimadocuments");
+  }
+
+
   /**
    * put new uima document in db
    * @param uimaDocument

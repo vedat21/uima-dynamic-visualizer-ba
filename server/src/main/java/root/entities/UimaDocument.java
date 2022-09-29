@@ -104,7 +104,6 @@ public class UimaDocument {
   }
 
   /**
-   *
    * @param pTop
    * @return
    * @author Giuessepe Abrami
@@ -153,7 +152,7 @@ public class UimaDocument {
         }
       }
       else if(f.getRange() instanceof AnnotationBase){
-        //     System.out.println(pTop.getFeatureValue(f));
+        System.out.println(pTop.getFeatureValue(f));
       }
       else{
         Object oValue = pTop.getFeatureValue(f);
@@ -181,39 +180,47 @@ public class UimaDocument {
    * @author Giuessepe Abrami
    */
   public Map<String, List<GeneralTypeDTO>> getElementsFromJCas(JCas pCas){
-    Map<String, List<GeneralTypeDTO>> resultMap = new HashMap<>();
+    Map<String, List<GeneralTypeDTO>> result = new HashMap<>();
 
     JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
 
       List<GeneralTypeDTO> pList = new ArrayList<>(0);
       String sType = a.getType().getName();
 
-      if(resultMap.containsKey(sType)){
-        pList = resultMap.get(sType);
+      if(result.containsKey(sType)){
+        pList = result.get(sType);
       }
 
       pList.add(this.getDataFromObject(a));
 
-      resultMap.put(sType, pList);
+      result.put(sType, pList);
 
     });
 
     Map<String, List<GeneralTypeDTO>> resultMapChangedKeys = new HashMap<>();
 
-    for (String key : resultMap.keySet()){
-      resultMapChangedKeys.put(key.replace(".", "_"), resultMap.get(key));
+    for (String key : result.keySet()){
+      resultMapChangedKeys.put(key.replace(".", "_"), result.get(key));
     }
 
     return this.addPosValues(resultMapChangedKeys);
-
   }
 
-  public Map<String, List<GeneralTypeDTO>> addPosValues(Map<String, List<GeneralTypeDTO>> resultMap){
+  /**
+   * for pos types add tokenValue as key
+   * @param result
+   * @return Map
+   */
+  public Map<String, List<GeneralTypeDTO>> addPosValues(Map<String, List<GeneralTypeDTO>> result){
 
-    List<GeneralTypeDTO> lemmas = resultMap.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
-    Map<String, List<GeneralTypeDTO>> start = new HashMap<>();
+    if (result.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma") == null){
+      return result;
+    }
 
-    for (Map.Entry<String, List<GeneralTypeDTO>> entry : resultMap.entrySet()) {
+    List<GeneralTypeDTO> lemmas = result.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
+    Map<String, List<GeneralTypeDTO>> newResult = new HashMap<>();
+
+    for (Map.Entry<String, List<GeneralTypeDTO>> entry : result.entrySet()) {
 
       List<GeneralTypeDTO> type = entry.getValue();
 
@@ -227,10 +234,10 @@ public class UimaDocument {
         }
       }
 
-      start.put(entry.getKey(), type);
+      newResult.put(entry.getKey(), type);
     }
 
-    return start;
+    return newResult;
   }
 
 

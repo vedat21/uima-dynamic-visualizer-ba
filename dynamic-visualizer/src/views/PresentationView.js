@@ -25,7 +25,7 @@ function PresentationView(props) {
   // title of presentation
   const [title, setTitle] = useState("");
   // enables/disables editing of presentation
-  const [editable, setEditable] = useState(false);
+  const [editable, setEditable] = useState(true);
   // stores the visualizations
   const [visualizations, setVisualizations] = useState([]);
   // stores the layout of the visualizations

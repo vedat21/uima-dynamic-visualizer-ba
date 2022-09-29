@@ -9,18 +9,19 @@ import {
 } from "@mui/material";
 
 // custom
-import {usedColors, apiEndpoints} from "../../helper/envConst"
+import {usedColors} from "../../helper/envConst"
 import DocumentsCheckBox from "./DocumentsCheckBox";
 import importDocuments from "../../api_crud/importDocuments";
+import deleteDocuments from "../../api_crud/deleteDocuments";
 
-function Sidebar(props) {
+function SideBar(props) {
 
   const [files, setFiles] = useState([]);
   const [open, setOpen] = useState(false);
   const [group, setGroup] = useState("")
 
   function deleteAllDocuments() {
-    // todo: hier müssen die dokumente aus datenbank gelöscht werden.
+    deleteDocuments()
     handleClose();
   }
 
@@ -36,21 +37,24 @@ function Sidebar(props) {
     setFiles(event.target.files)
   }
 
-  function handleImport(){
-    if(group !== "" && files !== null){
+  function handleImport() {
+    if (group !== "" && files.length !== 0) {
       importDocuments(files, group);
+      alert("Documents will be imported. The processing could take a minute.");
       setGroup("")
       setFiles([]);
-      alert("Documents are imported. The processing could take a minute.")
-    }
-    else {
-      alert("Import was not possible because of missing group or files")
+    } else if (group === "" && files.length === 0) {
+      alert("Import was not possible because of missing group and files");
+    } else if (group !== "" && files.length === 0) {
+      alert("Import was not possible because of missing files");
+    } else if (group === "" && files.length !== 0) {
+      alert("Import was not possible because of missing group");
     }
   }
 
   return (
       <>
-        {/* Sidebar für Navigation View */}
+        {/* SideBar für Navigation View */}
         {
             props.useCase == "navigation" &&
             <Menu styles={stylesNavigation}>
@@ -59,9 +63,11 @@ function Sidebar(props) {
               />
               <Tooltip placement="bottom"
                        title={"Enter group name to bundle documents"}>
-                <TextField value={group} onChange={(event) => setGroup(event.target.value)} sx={{background: usedColors.secondary}} label="Group"
+                <TextField value={group}
+                           onChange={(event) => setGroup(event.target.value)}
+                           sx={{background: usedColors.secondary}} label="Group"
                            autoComplete="off" size="small"
-                       />
+                />
               </Tooltip>
               <br/>
               <br/>
@@ -103,7 +109,7 @@ function Sidebar(props) {
               </Dialog>
             </Menu>
         }
-        {/* Sidebar für Presentation View */}
+        {/* SideBar für Presentation View */}
         {
             props.useCase == "presentation" &&
             <Menu styles={stylesPresentation}>
@@ -119,7 +125,7 @@ function Sidebar(props) {
   );
 }
 
-export default Sidebar;
+export default SideBar;
 
 const stylesPresentation = {
   zIndex: 1,

@@ -12,6 +12,7 @@ function DocumentsCheckBox(props) {
 
   const [groupsOptions, setGroupsOptions] = useState({});
 
+  // getting document names and their group name
   useEffect(async () => {
     let groupsOptionsCopy = {};
     if (!loading) {
@@ -26,7 +27,7 @@ function DocumentsCheckBox(props) {
       })
       setGroupsOptions(groupsOptionsCopy);
     }
-  }, [loading])
+  }, [loading, response])
 
   /**
    * for selecting/unselecting parent checkbox

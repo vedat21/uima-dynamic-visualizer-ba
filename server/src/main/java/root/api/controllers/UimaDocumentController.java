@@ -30,45 +30,12 @@ public class UimaDocumentController {
 
 
   /**
-   * to get summed data of the given types.
-   *
-   * @param types
-   * @return
+   * to delete the collection
    */
-  @GetMapping("/documents/summ")
-  public List<UimaEntitySummation> getSummationTest(
-      @RequestParam Optional<String> types,
-      @RequestParam(defaultValue = "0") String limit,
-      @RequestParam Optional<String> names) {
-
-    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
-    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
-
-    List<String> posValueTypes = new ArrayList<>();
-    List<String> allTypes = new ArrayList<>();
-
-    for (int i = 0; i < typesAsArray.length; i++) {
-      if (typesAsArray[i].endsWith("VALUE")) {
-        posValueTypes.add(typesAsArray[i].replace("_VALUE", ""));
-      } else {
-        allTypes.add(typesAsArray[i]);
-      }
-    }
-
-    List<UimaEntitySummation> result = new ArrayList<>();
-    if(posValueTypes.size() != 0){
-      result.addAll( uimaDocumentService.getPosTypesSummation(
-          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray));
-    }
-    if (allTypes.size() != 0){
-      result.addAll(uimaDocumentService.getTypesSummation(
-          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray));
-    }
-
-    Collections.sort(result, Comparator.comparing(UimaEntitySummation ::getCount).reversed());
-
-
-    return result;
+  @GetMapping("/documents/delete")
+  public void deleteDocument() {
+    System.out.println("ja");
+    uimaDocumentService.deleteCollection();
   }
 
 

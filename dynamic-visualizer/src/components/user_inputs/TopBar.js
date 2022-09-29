@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 // custom modules
 import SelectContainer from "./SelectContainer";
 import {usedColors} from "../../helper/envConst";
-import Sidebar from "./Sidebar";
+import SideBar from "./SideBar";
 
 /**
  * Quelle: https://mui.com/material-ui/react-app-bar/
@@ -45,16 +45,16 @@ function TopBar(props) {
 
             {
                 props.useCase == "navigation" &&
-                <Sidebar useCase="navigation" sx={{flexGrow: 1}}></Sidebar>
+                <SideBar useCase="navigation" sx={{flexGrow: 1}}></SideBar>
             }
             {
                 props.editable && props.useCase == "presentation" &&
-                <Sidebar handleSelectedDocuments={props.handleSelectedDocuments}
+                <SideBar handleSelectedDocuments={props.handleSelectedDocuments}
                          handleUnselectGroup={props.handleUnselectGroup}
                          handleSelectGroup={props.handleSelectGroup}
 
                          selectedDocuments={props.selectedDocuments}
-                         useCase="presentation" sx={{flexGrow: 1}}></Sidebar>
+                         useCase="presentation" sx={{flexGrow: 1}}></SideBar>
             }
             {/* topbar */}
             <Toolbar>
