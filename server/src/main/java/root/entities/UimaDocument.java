@@ -224,7 +224,7 @@ public class UimaDocument {
 
       List<GeneralTypeDTO> type = entry.getValue();
 
-      if (entry.getKey().toLowerCase().contains("pos")){
+      if (entry.getKey().toLowerCase().contains("pos") || entry.getKey().toLowerCase().contains("entity")){
         for (GeneralTypeDTO typeValue : type){
           for(GeneralTypeDTO lemma : lemmas){
             if(lemma.getBegin().equals(typeValue.getBegin())){

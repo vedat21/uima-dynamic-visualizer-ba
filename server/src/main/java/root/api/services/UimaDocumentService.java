@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.size;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 // custom
@@ -116,11 +117,10 @@ public class UimaDocumentService {
     List<UimaDocument> uimaDocuments = mongoTemplate.find(query, UimaDocument.class);
 
 
-
     // gets all types from types key
     uimaDocuments.forEach((uimaDocument -> {
       uimaDocument.getTypesNames().forEach((type) -> {
-        if (type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity")) {
+        if ((type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity")) && (!allKeys.contains(type))) {
           allKeys.add(type + "_VALUE");
           allKeys.add(type);
         }

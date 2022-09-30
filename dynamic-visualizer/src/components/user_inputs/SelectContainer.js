@@ -38,15 +38,13 @@ function SelectContainer(props) {
   // lade optionen für daten die vom server bereitgestellt werden
   let optionsData = [];
   useEffect(async () => {
-    if (!loading) {
+    if (!loading && optionsData.length == 0) {
       response["types"].forEach((type) => {
-        optionsData.push({value: type, label: type.split("_type_")[1].toUpperCase()})
-      })
+        optionsData.push(
+            {value: type, label: type.split("_type_")[1].toUpperCase()})
 
-      optionsData.forEach((type) => {
-        if (type.label.includes("POS")){
-        }
       })
+      console.log(optionsData)
     }
   }, [response, optionsData, loading])
 
@@ -76,6 +74,5 @@ function SelectContainer(props) {
       </Box>
   )
 }
-
 
 export default SelectContainer;

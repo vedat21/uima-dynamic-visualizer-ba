@@ -32,6 +32,7 @@ function HideOnScroll(props) {
   );
 }
 
+
 /**
  * Topbar Komponente. Wird genutzt für NavigationView und Documentwindow
  * @param props
@@ -41,8 +42,13 @@ function HideOnScroll(props) {
  */
 function TopBar(props) {
 
+  const [makePdf, setMakePdf] = new useState(false);
+
   // function from here: https://www.robinwieruch.de/react-component-to-pdf/
   async function handleDownloadPdf() {
+    setMakePdf(true);
+    await setTimeout(5000);
+
     const element = props.printRef.current;
     const canvas = await html2canvas(element);
     const data = canvas.toDataURL('image/png');
@@ -54,6 +60,8 @@ function TopBar(props) {
         (imgProperties.height * pdfWidth) / imgProperties.width;
     pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save('print.pdf');
+
+    setMakePdf(false);
   };
 
   return (
@@ -109,8 +117,17 @@ function TopBar(props) {
               }
 
               {/* button to enable/disable editor modus. Only renders if topbar has prop editable */}
-              {props.editable != null &&
+              {props.editable != null && makePdf == false &&
                   <>
+                    {!props.editable &&
+                        <Button
+                            color="inherit"
+                            type="button"
+                            onClick={handleDownloadPdf}
+                        >
+                          Download as PDF
+                        </Button>
+                    }
                     <Tooltip title={'Also saves the current Presentation'}>
                       <Button
                           color="inherit"
@@ -120,15 +137,6 @@ function TopBar(props) {
                         EDIT
                       </Button>
                     </Tooltip>
-                    {!props.editable &&
-                    <Button
-                        color="inherit"
-                        type="button"
-                        onClick={handleDownloadPdf}
-                    >
-                      Download as PDF
-                    </Button>
-                    }
                   </>
               }
 
