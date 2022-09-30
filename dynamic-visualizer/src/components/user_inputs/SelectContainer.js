@@ -40,11 +40,14 @@ function SelectContainer(props) {
   useEffect(async () => {
     if (!loading && optionsData.length == 0) {
       response["types"].forEach((type) => {
-        optionsData.push(
-            {value: type, label: type.split("_type_")[1].toUpperCase()})
 
+        let label = type.split("_type_")[1]
+        if (label.startsWith("pos_")){
+          label = label.substring(4);
+        }
+        optionsData.push(
+            {value: type, label: label})
       })
-      console.log(optionsData)
     }
   }, [response, optionsData, loading])
 

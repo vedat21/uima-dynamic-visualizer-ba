@@ -121,7 +121,7 @@ public class UimaDocumentService {
     uimaDocuments.forEach((uimaDocument -> {
       uimaDocument.getTypesNames().forEach((type) -> {
         if ((type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity")) && (!allKeys.contains(type))) {
-          allKeys.add(type + "_VALUE");
+          allKeys.add(type + "_TokenValue");
           allKeys.add(type);
         }
       });
@@ -163,6 +163,13 @@ public class UimaDocumentService {
     return results.getMappedResults();
   }
 
+  /**
+   * same function as getTypesSummation but gets values of tokenValue instead of value
+   * @param types
+   * @param limit
+   * @param names
+   * @return
+   */
   public List getPosTypesSummation(String[] types, int limit, String[] names) {
 
          /* param types is saved in two variable. One is a string and the other an array.

@@ -103,8 +103,8 @@ public class UimaDocumentController {
     List<String> allTypes = new ArrayList<>();
 
     for (int i = 0; i < typesAsArray.length; i++) {
-      if (typesAsArray[i].endsWith("VALUE")) {
-        posValueTypes.add(typesAsArray[i].replace("_VALUE", ""));
+      if (typesAsArray[i].endsWith("TokenValue")) {
+        posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
       } else {
         allTypes.add(typesAsArray[i]);
       }

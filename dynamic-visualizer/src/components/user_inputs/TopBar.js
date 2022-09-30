@@ -128,13 +128,13 @@ function TopBar(props) {
                           Download as PDF
                         </Button>
                     }
-                    <Tooltip title={'Also saves the current Presentation'}>
+                    <Tooltip title={'Saves the changes'}>
                       <Button
                           color="inherit"
-                          variant={props.editable ? "contained" : "text"}
+                          variant={props.editable ? "outlined" : "text"}
                           onClick={props.onEditableClicked}
                       >
-                        EDIT
+                        {props.editable? "SAVE" : "EDIT"}
                       </Button>
                     </Tooltip>
                   </>
