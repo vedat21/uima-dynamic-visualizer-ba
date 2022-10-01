@@ -46,25 +46,10 @@ public class UimaDocument {
   @Id
   private String id;
   private String name;
+  private String text;
   private Map<String, List<GeneralTypeDTO>> types = new TreeMap<>();
   private String group;
   private Set<String> typesNames;
-
-  public UimaDocument(MultipartFile xmlDocument, String group) throws UIMAException {
-    this.gson = new Gson();
-    this.xmlDocument = xmlDocument;
-    this.jCas = JCasFactory.createJCas();
-    this.name = xmlDocument.getOriginalFilename();
-    this.group = group;
-
-    try {
-      CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
-      this.types = this.getElementsFromJCas(this.jCas);
-      this.typesNames = this.getTypesNames(this.types);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * For splitting documents in multiple documents if the data is too large to save in one.
@@ -101,6 +86,40 @@ public class UimaDocument {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+
+  /**
+   *
+   * @param pCas
+   * @return
+   * @author Giuessepe Abrami
+   */
+  public Map<String, List<GeneralTypeDTO>> getElementsFromJCas(JCas pCas){
+    Map<String, List<GeneralTypeDTO>> result = new HashMap<>();
+
+    JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
+
+      List<GeneralTypeDTO> pList = new ArrayList<>(0);
+      String sType = a.getType().getName();
+
+      if(result.containsKey(sType)){
+        pList = result.get(sType);
+      }
+
+      pList.add(this.getDataFromObject(a));
+
+      result.put(sType, pList);
+
+    });
+
+    Map<String, List<GeneralTypeDTO>> resultMapChangedKeys = new HashMap<>();
+
+    for (String key : result.keySet()){
+      resultMapChangedKeys.put(key.replace(".", "_"), result.get(key));
+    }
+
+    return this.addPosValues(resultMapChangedKeys);
   }
 
   /**
@@ -174,39 +193,6 @@ public class UimaDocument {
   }
 
   /**
-   *
-   * @param pCas
-   * @return
-   * @author Giuessepe Abrami
-   */
-  public Map<String, List<GeneralTypeDTO>> getElementsFromJCas(JCas pCas){
-    Map<String, List<GeneralTypeDTO>> result = new HashMap<>();
-
-    JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
-
-      List<GeneralTypeDTO> pList = new ArrayList<>(0);
-      String sType = a.getType().getName();
-
-      if(result.containsKey(sType)){
-        pList = result.get(sType);
-      }
-
-      pList.add(this.getDataFromObject(a));
-
-      result.put(sType, pList);
-
-    });
-
-    Map<String, List<GeneralTypeDTO>> resultMapChangedKeys = new HashMap<>();
-
-    for (String key : result.keySet()){
-      resultMapChangedKeys.put(key.replace(".", "_"), result.get(key));
-    }
-
-    return this.addPosValues(resultMapChangedKeys);
-  }
-
-  /**
    * for pos types add tokenValue as key
    * @param result
    * @return Map
@@ -241,6 +227,11 @@ public class UimaDocument {
   }
 
 
+  /**
+   * to know which types are included in the uima document
+   * @param types
+   * @return
+   */
   public Set<String> getTypesNames(Map<String, List<GeneralTypeDTO>> types){
      Set<String> typesNames = new HashSet<>();
 
@@ -251,5 +242,4 @@ public class UimaDocument {
      return typesNames;
 
   }
-
 }

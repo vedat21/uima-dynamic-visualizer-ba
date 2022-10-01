@@ -10,7 +10,7 @@ import {v4 as uuid} from 'uuid';
  * @returns {JSX.Element}
  * @constructor
  */
-function OtherVisualizationsTopBar(props) {
+function TextTopBar(props) {
     return (
         <>
             {
@@ -23,4 +23,4 @@ function OtherVisualizationsTopBar(props) {
     );
 }
 
-export default OtherVisualizationsTopBar;
+export default TextTopBar;

@@ -32,7 +32,6 @@ function HideOnScroll(props) {
   );
 }
 
-
 /**
  * Topbar Komponente. Wird genutzt für NavigationView und Documentwindow
  * @param props
@@ -72,16 +71,19 @@ function TopBar(props) {
 
             {
                 props.useCase == "navigation" &&
-                <SideBar useCase="navigation" sx={{flexGrow: 1}}></SideBar>
+                <SideBar useCase="navigation" sx={{flexGrow: 1}}/>
             }
             {
                 props.editable && props.useCase == "presentation" &&
-                <SideBar handleSelectedDocuments={props.handleSelectedDocuments}
-                         handleUnselectGroup={props.handleUnselectGroup}
-                         handleSelectGroup={props.handleSelectGroup}
+                <SideBar
+                    handleSelectedDocuments={props.handleSelectedDocuments}
+                    handleUnselectGroup={props.handleUnselectGroup}
+                    handleSelectGroup={props.handleSelectGroup}
+                    onEditableClicked={props.onEditableClicked}
 
-                         selectedDocuments={props.selectedDocuments}
-                         useCase="presentation" sx={{flexGrow: 1}}></SideBar>
+                    selectedDocuments={props.selectedDocuments}
+                    useCase="presentation" sx={{flexGrow: 1}}
+                />
             }
             {/* topbar */}
             <Toolbar>
@@ -134,7 +136,7 @@ function TopBar(props) {
                           variant={props.editable ? "outlined" : "text"}
                           onClick={props.onEditableClicked}
                       >
-                        {props.editable? "SAVE" : "EDIT"}
+                        {props.editable ? "SAVE" : "EDIT"}
                       </Button>
                     </Tooltip>
                   </>

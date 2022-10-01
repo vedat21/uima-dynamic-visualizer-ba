@@ -120,7 +120,7 @@ function PresentationView(props) {
   /**
    * called when edit button is pressed. disables/enables editormodus and saves presentation to database.
    */
-  const onEditableClicked = () => {
+  const onEditableClicked = (changeButton=true) => {
     saveLayout();
     const presentation =
         {
@@ -132,12 +132,12 @@ function PresentationView(props) {
         }
     savePresentation(presentation);
 
-    setEditable(!editable);
+    if (changeButton){
+      setEditable(!editable);
+    }
   }
 
-  // funktion von hier https://contactmentor.com/checkbox-list-react-js-example/
   const handleSelectedDocuments = (event, item) => {
-    console.log(item);
     let updatedList = [...selectedDocuments];
     if (event.target.checked) {
       updatedList = [...selectedDocuments, item];

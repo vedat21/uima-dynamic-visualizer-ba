@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.size;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 // custom
 import root.api.repositories.UimaDocumentRepository;
 import root.entities.GeneralInfo;
+import root.entities.GeneralTypeDTO;
 import root.entities.UimaEntitySummation;
 import root.entities.UimaDocument;
 
@@ -38,6 +38,22 @@ public class UimaDocumentService {
   public List<UimaDocument> findAll() {
     return uimaDocumentRepository.findAll();
   }
+
+
+  public Object getTextFromOne(String id){
+    Optional<UimaDocument> uimaDocument =  uimaDocumentRepository.findById(id);
+
+    if (uimaDocument.isPresent()){
+      for(String type : uimaDocument.get().getTypesNames()){
+        if(type.toLowerCase().contains("lemma")){
+         return uimaDocument.get().getTypes().get(type);
+        }
+      }
+    }
+
+    return "was";
+  }
+
 
   /**
    * returns document with specific id from collection

@@ -10,9 +10,10 @@ import PieChart from "./charts/PieChart";
 import PolarAreaChart from "./charts/PolarAreaChart";
 import RadarChart from "./charts/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
-import RichTextEditor from "./other/RichTextEditor";
+import RichTextEditor from "./text/RichTextEditor";
 import ChartTopBar from "./topbars/ChartTopBar";
-import OtherVisualizationsTopBar from "./topbars/OtherVisualizationsTopBar";
+import TextTopBar from "./topbars/TextTopBar";
+import DocumentText from "./text/DocumentText";
 
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
@@ -26,6 +27,7 @@ const components = {
     "scatterchart": ScatterChart,
     "radarchart": RadarChart,
     "richtexteditor": RichTextEditor,
+    "documenttext" : DocumentText
 };
 
 /**
@@ -50,7 +52,7 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
         // hier texttopbar
         if (visualization.component.includes("text")) {
             return React.createElement("div", {key: uuid()}, [
-                React.createElement(OtherVisualizationsTopBar, {
+                React.createElement(TextTopBar, {
                     key: uuid(),
                     editable: editable,
                     onDeleteComponentClicked: onDeleteComponentClicked,

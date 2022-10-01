@@ -29,7 +29,13 @@ public class UimaDocumentController {
   private UimaDocumentService uimaDocumentService;
 
 
-  /**
+  @GetMapping("/text/{id}")
+  public Object getTextFromOne(@PathVariable String id) {
+   return uimaDocumentService.getTextFromOne(id);
+  }
+
+
+  /**®
    * to delete the collection
    */
   @GetMapping("/documents/delete")
@@ -111,17 +117,16 @@ public class UimaDocumentController {
     }
 
     List<UimaEntitySummation> result = new ArrayList<>();
-    if(posValueTypes.size() != 0){
-      result.addAll( uimaDocumentService.getPosTypesSummation(
+    if (posValueTypes.size() != 0) {
+      result.addAll(uimaDocumentService.getPosTypesSummation(
           posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray));
     }
-    if (allTypes.size() != 0){
+    if (allTypes.size() != 0) {
       result.addAll(uimaDocumentService.getTypesSummation(
           allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray));
     }
 
-    Collections.sort(result, Comparator.comparing(UimaEntitySummation ::getCount).reversed());
-
+    Collections.sort(result, Comparator.comparing(UimaEntitySummation::getCount).reversed());
 
     return result;
   }
