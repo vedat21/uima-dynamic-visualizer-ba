@@ -18,7 +18,6 @@ function DocumentsCheckBox(props) {
   useEffect(async () => {
     let groupsOptionsCopy = {};
     if (!loading) {
-      console.log("JSAMAN")
       response.forEach((document) => {
         if (!onlyNamesOptions.includes(document.name)) {
           onlyNamesOptions.push(document.name);

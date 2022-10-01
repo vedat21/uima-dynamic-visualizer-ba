@@ -15,19 +15,18 @@ import ChartTopBar from "./topbars/ChartTopBar";
 import TextTopBar from "./topbars/TextTopBar";
 import DocumentText from "./text/DocumentText";
 
-
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
 const components = {
-    "barchart": BarChart,
-    "bubblechart": BubbleChart,
-    "doughnutchart": DoughnutChart,
-    "linechart": LineChart,
-    "piechart": PieChart,
-    "polarareachart": PolarAreaChart,
-    "scatterchart": ScatterChart,
-    "radarchart": RadarChart,
-    "richtexteditor": RichTextEditor,
-    "documenttext" : DocumentText
+  "barchart": BarChart,
+  "bubblechart": BubbleChart,
+  "doughnutchart": DoughnutChart,
+  "linechart": LineChart,
+  "piechart": PieChart,
+  "polarareachart": PolarAreaChart,
+  "scatterchart": ScatterChart,
+  "radarchart": RadarChart,
+  "richtexteditor": RichTextEditor,
+  "textcomponent": DocumentText
 };
 
 /**
@@ -43,53 +42,55 @@ const components = {
  * @param handleOnClickInput
  * @returns {React.ReactElement<{key}>}
  */
-export default (visualization, editable, onDeleteComponentClicked, limit, label, changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput, editRichtext, richTextContent, selectedDocuments) => {
-    // component does exist
-    if (typeof components[visualization.component] !== "undefined") {
+export default (visualization, editable, onDeleteComponentClicked, limit, label,
+    changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
+    editRichtext, richTextContent, selectedDocuments) => {
 
+  console.log(visualization)
+  if (typeof components[visualization.component] !== "undefined") {
+    // entweder erstell komponenten die texttopbar oder charttopbar entählt.
+    // hier texttopbar
+    if (visualization.component.includes("text")) {
+      console.log("asdadasd");
+      return React.createElement("div", {key: uuid()}, [
+        React.createElement(TextTopBar, {
+          key: uuid(),
+          editable: editable,
+          onDeleteComponentClicked: onDeleteComponentClicked,
+        }),
+        React.createElement(components[visualization.component], {
+          key: uuid(),
+          label: label,
+          editable: editable,
+          content: richTextContent,
+          editRichtext: editRichtext,
+          selectedDocuments: selectedDocuments
+        }),
 
-        // entweder erstell komponenten die texttopbar oder charttopbar entählt.
-        // hier texttopbar
-        if (visualization.component.includes("text")) {
-            return React.createElement("div", {key: uuid()}, [
-                React.createElement(TextTopBar, {
-                    key: uuid(),
-                    editable: editable,
-                    onDeleteComponentClicked: onDeleteComponentClicked,
-                }),
-                React.createElement(components[visualization.component], {
-                    key: uuid(),
-                    label: label,
-                    editable: editable,
-                    content: richTextContent,
-                    editRichtext: editRichtext
-                }),
+      ]);
+    } else {
+      return React.createElement("div", {key: uuid()}, [
+        React.createElement(ChartTopBar, {
+          key: uuid(),
+          editable: editable,
+          onDeleteComponentClicked: onDeleteComponentClicked,
+          changeLimit: changeLimit,
+          editLabel: inputLabelAndLimit,
+          label: label,
+          limit: limit,
+          reverseEditLabel: handleOnClickInput,
+          changeLabel: changeLabel,
+        }),
+        React.createElement(components[visualization.component], {
+          key: uuid(),
+          label: label,
+          url: visualization.url,
+          limit: limit,
+          selectedDocuments: selectedDocuments
+        }),
 
-            ]);
-        }
-        else {
-            return React.createElement("div", {key: uuid()}, [
-                React.createElement(ChartTopBar, {
-                    key: uuid(),
-                    editable: editable,
-                    onDeleteComponentClicked: onDeleteComponentClicked,
-                    changeLimit: changeLimit,
-                    editLabel: inputLabelAndLimit,
-                    label: label,
-                    limit: limit,
-                    reverseEditLabel: handleOnClickInput,
-                    changeLabel: changeLabel,
-                }),
-                React.createElement(components[visualization.component], {
-                    key: uuid(),
-                    label: label,
-                    url: visualization.url,
-                    limit: limit,
-                    selectedDocuments: selectedDocuments
-                }),
-
-            ]);
-        }
-
+      ]);
     }
+
+  }
 }

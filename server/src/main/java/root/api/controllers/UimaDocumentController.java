@@ -29,9 +29,9 @@ public class UimaDocumentController {
   private UimaDocumentService uimaDocumentService;
 
 
-  @GetMapping("/text/{id}")
-  public Object getTextFromOne(@PathVariable String id) {
-   return uimaDocumentService.getTextFromOne(id);
+  @GetMapping("/text/{name}")
+  public Object getTextFromOne(@PathVariable String name) {
+   return uimaDocumentService.getTextFromOne(name);
   }
 
 

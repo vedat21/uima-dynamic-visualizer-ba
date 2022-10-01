@@ -38,6 +38,7 @@ function PresentationView(props) {
 
   // load existing presentation from api
   useEffect(() => {
+
     const fetchData = async () => {
       try {
         await axios.get(
@@ -202,6 +203,7 @@ function PresentationView(props) {
 
         />
         <VisualizationLayout
+            onKeyPress={(event) => console.log(event)}
             editable={editable}
             visualizations={visualizations}
             layout={layout}

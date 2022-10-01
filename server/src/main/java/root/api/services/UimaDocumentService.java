@@ -40,10 +40,11 @@ public class UimaDocumentService {
   }
 
 
-  public Object getTextFromOne(String id){
-    Optional<UimaDocument> uimaDocument =  uimaDocumentRepository.findById(id);
+  public Object getTextFromOne(String name){
+    Optional<UimaDocument> uimaDocument =  uimaDocumentRepository.findByName(name);
 
     if (uimaDocument.isPresent()){
+      System.out.println("ja");
       for(String type : uimaDocument.get().getTypesNames()){
         if(type.toLowerCase().contains("lemma")){
          return uimaDocument.get().getTypes().get(type);

@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Responsive, {WidthProvider} from "react-grid-layout";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
@@ -20,6 +20,27 @@ window.$localVisualizationLayout = [];
 function VisualizationLayout(props) {
   const ResponsiveGridLayout = WidthProvider(Responsive);
 
+  let keyDownPressed = false;
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown, true);
+    document.addEventListener("keyup", handleKeyUp, true);
+
+
+  }, [])
+
+  function handleKeyUp(e){
+    if (e.key == "Shift"){
+      keyDownPressed = !keyDownPressed;
+    }
+  }
+
+  function handleKeyDown(e){
+    if (e.key == "Shift"){
+      keyDownPressed = !keyDownPressed;
+    }
+  }
+
   /**
    * creates and returns the components that are defined in visualizations.
    * @returns {all visualization components}
@@ -28,7 +49,7 @@ function VisualizationLayout(props) {
     return _.map(_.map(props.visualizations), function (visualization) {
       return (
           <div
-              className={visualization.component === "richtexteditor"
+              className={visualization.component.includes("text")
                   ? "text" : "chart"}
               data-grid={getComponentConfiguration(visualization.component)}
               key={visualization.id}

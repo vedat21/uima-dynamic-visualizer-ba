@@ -52,6 +52,10 @@ function SideBar(props) {
     }
   }
 
+  function savePresentation(){
+    props.onEditableClicked(false);
+  }
+
   return (
       <>
         {/* SideBar für Navigation View */}
@@ -112,12 +116,13 @@ function SideBar(props) {
         {/* SideBar für Presentation View */}
         {
             props.useCase == "presentation" &&
-            <Menu styles={stylesPresentation}>
+            <Menu onStateChange={savePresentation} styles={stylesPresentation}>
               <DocumentsCheckBox
                   handleSelectedDocuments={props.handleSelectedDocuments}
                   handleUnselectGroup={props.handleUnselectGroup}
                   handleSelectGroup={props.handleSelectGroup}
                   selectedDocuments={props.selectedDocuments}
+                  onEditableClicked={props.onEditableClicked}
               />
             </Menu>
         }
