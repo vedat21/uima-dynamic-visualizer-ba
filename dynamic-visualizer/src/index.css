@@ -1,9 +1,10 @@
 .scrollable-text {
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow-y: scroll;
+    overflow-x: scroll;
     text-align: justify;
     font-family: "Georgia";
     background-color: #faf9f7;
+
 }
 
 text {
@@ -11,7 +12,7 @@ text {
 }
 
 .chart {
-    background-color: white;
+    background-color: #faf9f7;
 }
 
 .top-bar{

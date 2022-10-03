@@ -66,7 +66,7 @@ function SelectContainer(props) {
             isMulti={false}
         />
         <SelectField
-            options={optionsData}
+            options={selectedVisualization.includes("text")? [] : optionsData}
             selectedOption={selectedData}
             setSelectedOption={setSelectedData}
             isMulti={true}

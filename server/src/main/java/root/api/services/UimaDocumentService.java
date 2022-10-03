@@ -16,7 +16,6 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 // custom
 import root.api.repositories.UimaDocumentRepository;
 import root.entities.GeneralInfo;
-import root.entities.GeneralTypeDTO;
 import root.entities.UimaEntitySummation;
 import root.entities.UimaDocument;
 
@@ -40,19 +39,18 @@ public class UimaDocumentService {
   }
 
 
-  public Object getTextFromOne(String name){
-    Optional<UimaDocument> uimaDocument =  uimaDocumentRepository.findByName(name);
+  public Object getTextFromOne(String name) {
+    Optional<UimaDocument> uimaDocument = uimaDocumentRepository.findByName(name);
 
-    if (uimaDocument.isPresent()){
-      System.out.println("ja");
-      for(String type : uimaDocument.get().getTypesNames()){
-        if(type.toLowerCase().contains("lemma")){
-         return uimaDocument.get().getTypes().get(type);
+    if (uimaDocument.isPresent()) {
+      for (String type : uimaDocument.get().getTypesNames()) {
+        if (type.toLowerCase().contains("lemma")) {
+          return uimaDocument.get().getTypes().get(type);
         }
       }
     }
 
-    return "was";
+    return "No Text";
   }
 
 
@@ -72,13 +70,14 @@ public class UimaDocumentService {
     return mongoTemplate.find(query, UimaDocument.class);
   }
 
-  public void deleteCollection(){
-    mongoTemplate.remove(new Query(),"uimadocuments");
+  public void deleteCollection() {
+    mongoTemplate.remove(new Query(), "uimadocuments");
   }
 
 
   /**
    * put new uima document in db
+   *
    * @param uimaDocument
    * @return
    */
@@ -133,65 +132,37 @@ public class UimaDocumentService {
     query.fields().include("typesNames");
     List<UimaDocument> uimaDocuments = mongoTemplate.find(query, UimaDocument.class);
 
-
     // gets all types from types key
     uimaDocuments.forEach((uimaDocument -> {
       uimaDocument.getTypesNames().forEach((type) -> {
-        if ((type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity")) && (!allKeys.contains(type))) {
+        if ((type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity")
+            || type.toLowerCase().contains("lemma"))
+            && (!allKeys.contains(type))) {
           allKeys.add(type + "_TokenValue");
           allKeys.add(type);
         }
       });
     }));
 
-
     return new GeneralInfo(uimaDocumentRepository.countAll(), allKeys);
   }
 
-  public List<UimaEntitySummation> getTypesSummation(String[] types, int limit, String[] names) {
-
-        /* param types is saved in two variable. One is a string and the other an array.
-           Because of build in aggregation "concatarray". All types are stored in objects types.
-         */
-    String firstType = "types." + types[0]; // first entered type
-    String[] remainingTypes = new String[types.length - 1]; // rest of them
-    for (int i = 0; i < remainingTypes.length; i++) {
-      remainingTypes[i] = "types." + types[i + 1];
-    }
-
-    // to store all aggregate operations
-    List<AggregationOperation> operations = new ArrayList<>();
-
-    // query by name
-    operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
-    // concat all selected types to one list named data
-    operations.add(
-        project("types").and(firstType).concatArrays(remainingTypes).as("data")
-    );
-    operations.add(unwind("data")); // unwind the list
-    operations.add(group("data.value").count().as("count")); // count
-    operations.add(match(new Criteria("count").gt(limit))); // limit
-    operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
-
-    Aggregation aggregation = newAggregation(operations);
-    AggregationResults<UimaEntitySummation> results = mongoTemplate.aggregate(aggregation,
-        "uimadocuments", UimaEntitySummation.class);
-
-    return results.getMappedResults();
-  }
 
   /**
    * same function as getTypesSummation but gets values of tokenValue instead of value
+   *
    * @param types
    * @param limit
    * @param names
    * @return
    */
-  public List getPosTypesSummation(String[] types, int limit, String[] names) {
+  public List getTypesSummation(String[] types, int limit, String[] names,
+      Optional<String> begin, Optional<String> end, String valueString) {
 
-         /* param types is saved in two variable. One is a string and the other an array.
-           Because of build in aggregation "concatarray". All types are stored in objects types.
-         */
+    /*
+    param types is saved in two variable. One is a string and the other an array.
+    Because of build in aggregation "concatarray". All types are stored in objects types.
+    */
     String firstType = "types." + types[0]; // first entered type
     String[] remainingTypes = new String[types.length - 1]; // rest of them
     for (int i = 0; i < remainingTypes.length; i++) {
@@ -208,8 +179,13 @@ public class UimaDocumentService {
         project("types").and(firstType).concatArrays(remainingTypes).as("data")
     );
     operations.add(unwind("data")); // unwind the list
-    operations.add(group("data.tokenValue").count().as("count")); // count
-    operations.add(match(new Criteria("count").gt(limit))); // limit
+    if (begin.isPresent() && end.isPresent()) {
+      operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
+      operations.add(match(new Criteria("data.begin").gt(
+          Integer.parseInt(begin.get())))); // include only lemma in begin and end
+    }
+    operations.add(group("data." + valueString).count().as("count")); // count
+    operations.add(match(new Criteria("count").gte(limit))); // limit
     operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
 
     Aggregation aggregation = newAggregation(operations);

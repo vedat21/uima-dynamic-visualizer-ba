@@ -10,6 +10,8 @@ import getComponentConfiguration from "../../helper/getComponentConfiguration";
 
 // global variable for layout
 window.$localVisualizationLayout = [];
+// global variable for layout
+window.$selectedLemmas = {lemmaBegin: 0, lemmaEnd: 0};
 
 /**
  * Grid Layer where all visualization components are stored
@@ -20,26 +22,8 @@ window.$localVisualizationLayout = [];
 function VisualizationLayout(props) {
   const ResponsiveGridLayout = WidthProvider(Responsive);
 
-  let keyDownPressed = false;
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown, true);
-    document.addEventListener("keyup", handleKeyUp, true);
-
-
-  }, [])
-
-  function handleKeyUp(e){
-    if (e.key == "Shift"){
-      keyDownPressed = !keyDownPressed;
-    }
-  }
-
-  function handleKeyDown(e){
-    if (e.key == "Shift"){
-      keyDownPressed = !keyDownPressed;
-    }
-  }
+  const [lemmaBegin, setLemmaBegin] = useState(0);
+  const [lemmaEnd, setLemmaEnd] = useState(0);
 
   /**
    * creates and returns the components that are defined in visualizations.
@@ -50,12 +34,12 @@ function VisualizationLayout(props) {
       return (
           <div
               className={visualization.component.includes("text")
-                  ? "text" : "chart"}
+                  ? "scrollable-text" : "chart"}
               data-grid={getComponentConfiguration(visualization.component)}
               key={visualization.id}
               id={visualization.id}
           >
-            <LayoutComponent visualization={visualization} {...props}/>
+            <LayoutComponent visualization={visualization} lemmaBegin={lemmaBegin} lemmaEnd={lemmaEnd} setLemmaBegin={setLemmaBegin} setLemmaEnd={setLemmaEnd} {...props}/>
           </div>
       )
     });
@@ -69,32 +53,6 @@ function VisualizationLayout(props) {
     window.$localVisualizationLayout = layout;
   }
 
-  /**
-   * currently not used
-   * function to maintain aspect ratio on resize. used for chart components.
-   * @type {(function(*, *, *, *): void)|*}
-   * @author: Adri9wa (https://github.com/react-grid-layout/react-grid-layout/issues/267)
-   */
-  const handleResizeLockAspectRatio = useCallback(
-      (l, oldLayoutItem, layoutItem, placeholder) => {
-
-        return;
-        // to check if component is text. if true then dont need to maintain aspect ratio
-        if (layoutItem.minH === 1.5) {
-          return;
-        }
-
-        const heightDiff = layoutItem.h - oldLayoutItem.h;
-        const widthDiff = layoutItem.w - oldLayoutItem.w;
-        const changeCoef = oldLayoutItem.w / oldLayoutItem.h;
-        if (Math.abs(heightDiff) < Math.abs(widthDiff)) {
-          layoutItem.h = layoutItem.w / changeCoef;
-          placeholder.h = layoutItem.w / changeCoef;
-        } else {
-          layoutItem.w = layoutItem.h * changeCoef;
-          placeholder.w = layoutItem.h * changeCoef;
-        }
-      }, []);
 
   return (
       <ResponsiveGridLayout
@@ -104,12 +62,9 @@ function VisualizationLayout(props) {
           onLayoutChange={onLayoutChange}
           isDraggable={props.editable}
           isResizable={props.editable}
-          onResize={handleResizeLockAspectRatio}
           margin={[15, 15]}
-          // This turns off compaction so you can place items wherever.
-          verticalCompact={false}
-          // This turns off rearrangement so items will not be pushed arround.
           preventCollision={true}
+          verticalCompact={false}
           {...props}
       >
         {generateVisualizationLayer()}

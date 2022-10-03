@@ -19,22 +19,24 @@ import useGetData from "../api_crud/useGetData";
  */
 function PresentationView(props) {
 
+  // for pdf download needed
   const printRef = React.useRef();
-
   // id of presentation is url parameter. Presentation page should only be accessed via routing.
   const {id} = useParams();
 
   // title of presentation
   const [title, setTitle] = useState("");
   // enables/disables editing of presentation
-  const [editable, setEditable] = useState(true);
+  const [editable, setEditable] = useState(false);
   // stores the visualizations
   const [visualizations, setVisualizations] = useState([]);
   // stores the layout of the visualizations
   const [layout, setLayout] = useState([])
-
-  // stores all documents that should be get infromation
+  // stores all documents that are selected
   const [selectedDocuments, setSelectedDocuments] = useState([])
+
+  // to prevent saving layout with empty data
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   // load existing presentation from api
   useEffect(() => {
@@ -48,6 +50,7 @@ function PresentationView(props) {
               setVisualizations(response.data.visualizations);
               setTitle(response.data.title);
               setSelectedDocuments(response.data.documents);
+              setDataLoaded(true);
             });
       } catch (error) {
         console.log(error)
@@ -122,6 +125,11 @@ function PresentationView(props) {
    * called when edit button is pressed. disables/enables editormodus and saves presentation to database.
    */
   const onEditableClicked = (changeButton=true) => {
+
+    if (!dataLoaded){
+      return;
+    }
+
     saveLayout();
     const presentation =
         {
@@ -200,7 +208,6 @@ function PresentationView(props) {
             handleSelectedDocuments={handleSelectedDocuments}
             handleUnselectGroup={handleUnselectGroup}
             handleSelectGroup={handleSelectGroup}
-
         />
         <VisualizationLayout
             onKeyPress={(event) => console.log(event)}

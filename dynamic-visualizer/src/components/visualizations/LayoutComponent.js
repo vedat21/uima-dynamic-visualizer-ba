@@ -17,6 +17,7 @@ function LayoutComponent(props) {
       props.visualization.content ? props.visualization.content : " ");
   const [inputLabelAndLimit, setInputLabelAndLimit] = useState(false);
 
+
   /**
    * enables/disables textarea for setting label/limit
    */
@@ -61,7 +62,7 @@ function LayoutComponent(props) {
         {AllVisualizationComponents(props.visualization, props.editable,
             props.onDeleteComponentClicked, limit, label,
             changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
-            editRichtext, richTextContent, props.selectedDocuments)}
+            editRichtext, richTextContent, props.selectedDocuments, props.lemmaBegin, props.setLemmaBegin, props.lemmaEnd, props.setLemmaEnd)}
       </>
   );
 }

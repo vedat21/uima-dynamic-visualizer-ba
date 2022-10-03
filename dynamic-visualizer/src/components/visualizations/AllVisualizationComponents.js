@@ -44,14 +44,12 @@ const components = {
  */
 export default (visualization, editable, onDeleteComponentClicked, limit, label,
     changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
-    editRichtext, richTextContent, selectedDocuments) => {
+    editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd) => {
 
-  console.log(visualization)
   if (typeof components[visualization.component] !== "undefined") {
     // entweder erstell komponenten die texttopbar oder charttopbar entählt.
     // hier texttopbar
     if (visualization.component.includes("text")) {
-      console.log("asdadasd");
       return React.createElement("div", {key: uuid()}, [
         React.createElement(TextTopBar, {
           key: uuid(),
@@ -64,7 +62,11 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
           editable: editable,
           content: richTextContent,
           editRichtext: editRichtext,
-          selectedDocuments: selectedDocuments
+          selectedDocuments: selectedDocuments,
+          lemmaBegin: lemmaBegin,
+          setLemmaBegin: setLemmaBegin,
+          setLemmaEnd: setLemmaEnd,
+          lemmaEnd: lemmaEnd
         }),
 
       ]);
@@ -86,7 +88,9 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
           label: label,
           url: visualization.url,
           limit: limit,
-          selectedDocuments: selectedDocuments
+          selectedDocuments: selectedDocuments,
+          lemmaBegin: lemmaBegin,
+          lemmaEnd: lemmaEnd
         }),
 
       ]);

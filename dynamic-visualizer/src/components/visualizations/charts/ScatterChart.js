@@ -7,7 +7,7 @@ import useGetChartData from "../../../helper/useGetChartData";
 
 function ScatterChart(props) {
 
-    const dataForVisualization = useGetChartData(props.label, props.url, props.limit, props.selectedDocuments);
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit, props.selectedDocuments, props.lemmaBegin, props.lemmaEnd);
 
     return (
         <Scatter data={dataForVisualization}/>

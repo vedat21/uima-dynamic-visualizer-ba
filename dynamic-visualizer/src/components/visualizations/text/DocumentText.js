@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import useGetData from "../../../api_crud/useGetData";
 import {apiEndpoints} from "../../../helper/envConst";
-import {TextareaAutosize, TextField} from "@mui/material";
+import TextSelector from 'text-selection-react'
+import HighlightWithinTextarea from "react-highlight-within-textarea";
 
 function DocumentText(props) {
 
@@ -9,28 +10,65 @@ function DocumentText(props) {
       apiEndpoints.basis + apiEndpoints.text +
       props.selectedDocuments.toString());
 
-  const [text, setText] = useState("FAILURE: EXACTLY ONE DOCUMENT HAS TO BE SELECTED");
+  const [text, setText] = useState("Loading Text");
 
   useEffect(async () => {
 
-    if (props.selectedDocuments.length > 1 || props.selectedDocuments.length == 0){
+    if (props.selectedDocuments.length > 1 || props.selectedDocuments.length
+        == 0) {
+      setText(
+          "More then 1 Document selected. Cant display text of multiple documents.")
       return
     }
-    let tx = ""
     if (!loading) {
+      let tx = ""
+      let lastLemmaEnd = response[0]["begin"];
       response.forEach((lemma) => {
-        tx = tx + lemma.value + " ";
+        for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
+          tx = tx + " ";
+        }
+        tx = tx + lemma.value;
+
+        lastLemmaEnd = lemma.end;
       })
       setText(tx)
     }
   }, [response, loading])
+
+  function handleSelectedText(selectedText) {
+
+
+    console.log(0 + "   " + props.lemmaBegin);
+    console.log(props.lemmaBegin + "   " + props.lemmaEnd);
+    console.log(props.lemmaEnd + "   " + text.length);
+
+    console.log(selectedText)
+
+    const begin = text.indexOf(selectedText);
+    const end = begin + selectedText.length;
+
+
+    props.setLemmaBegin(begin);
+    props.setLemmaEnd(end);
+  }
+
   return (
-      <div>
-        <TextareaAutosize sx={{paddingBottom : 20}}
-            value={text}
-            maxRows={20}
+      <>
+        <TextSelector
+            events={[
+              {
+                text: 'Select',
+                handler: (html, selectedText) => handleSelectedText(
+                    selectedText),
+              }
+            ]}
         />
-      </div>
+        <div>
+          <span> {text.slice(0, props.lemmaBegin)}</span>
+          <span style={{backgroundColor: "yellow"}}> {text.slice(props.lemmaBegin, props.lemmaEnd)}</span>
+          <span> {text.slice(props.lemmaEnd, text.length)}</span>
+        </div>
+      </>
   )
 }
 

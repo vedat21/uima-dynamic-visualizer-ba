@@ -27,10 +27,21 @@ export const options = {
  * @param url is prop
  * @returns {{datasets: [{backgroundColor: string[], borderColor: string[], data: [number], borderWidth: number, label: *}], labels: [string]}}
  */
-const useGetChartData = (label, url, limit, documents) => {
+const useGetChartData = (label, url, limit, documents, lemmaBegin, lemmaEnd) => {
+
+    let reqeustUrl = url  +   documents.join(",") + apiEndpoints.requestParamLimit + limit;
+
+    console.log(lemmaBegin);
+    console.log(lemmaEnd);
+
+    if (lemmaEnd != 0 && documents.length == 1){
+        console.log("JAAMAN");
+        reqeustUrl = reqeustUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
+    }
+
 
     // make request to get data
-    const {response, loading} = useGetData(url  +   documents.join(",") + apiEndpoints.requestParamLimit + limit);
+    const {response, loading} = useGetData(reqeustUrl);
 
     const labels = (response.map(({id}) =>{
         return id

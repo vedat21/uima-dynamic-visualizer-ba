@@ -7,7 +7,7 @@ import useGetChartData from "../../../helper/useGetChartData"; // ohne diesen im
 
 function BubbleChart(props) {
 
-    const dataForVisualization = useGetChartData(props.label, props.url, props.limit, props.selectedDocuments);
+    const dataForVisualization = useGetChartData(props.label, props.url, props.limit, props.selectedDocuments, props.lemmaBegin, props.lemmaEnd);
 
     return (
         <Bubble data={dataForVisualization}/>
