@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import useGetData from "../../../api_crud/useGetData";
 import {apiEndpoints} from "../../../helper/envConst";
 import TextSelector from 'text-selection-react'
-import HighlightWithinTextarea from "react-highlight-within-textarea";
 
 function DocumentText(props) {
 
