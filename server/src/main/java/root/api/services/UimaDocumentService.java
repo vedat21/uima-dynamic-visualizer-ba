@@ -70,7 +70,7 @@ public class UimaDocumentService {
     return mongoTemplate.find(query, UimaDocument.class);
   }
 
-  public void deleteCollection() {
+  public void removeCollection() {
     mongoTemplate.remove(new Query(), "uimadocuments");
   }
 

@@ -18,5 +18,6 @@ export const apiEndpoints = {
     all: "all/",
     namesandgroup: "namesandgroup/",
     upload: "upload/",
-    text: "text/"
+    text: "text/",
+    copy: "copy/",
 }

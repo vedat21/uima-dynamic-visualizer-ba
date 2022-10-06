@@ -39,9 +39,9 @@ public class UimaDocumentController {
    * to delete the collection
    */
   @GetMapping("/documents/delete")
-  public void deleteDocument() {
+  public void removeCollection() {
     System.out.println("ja");
-    uimaDocumentService.deleteCollection();
+    uimaDocumentService.removeCollection();
   }
 
 
@@ -109,7 +109,7 @@ public class UimaDocumentController {
     String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
     String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
-    // for posvalue safed as tokenValue
+    // for posvalue saved as tokenValue
     List<String> posValueTypes = new ArrayList<>();
     // for value
     List<String> allTypes = new ArrayList<>();

@@ -1,7 +1,6 @@
 package root.api.controllers;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +42,30 @@ public class PresentationLayoutController {
   @GetMapping("/presentations/{id}")
   public Optional<PresentationLayout> presentationById(@PathVariable String id) {
     return presentationLayoutService.getPresentationById(id);
+  }
+
+  /**
+   * get a presentation by id
+   *
+   * @return
+   */
+  @GetMapping("/presentations/copy/{id}")
+  public void copyPresentation(@PathVariable String id) {
+
+    PresentationLayout copyOfPresentation = presentationLayoutService.getPresentationById(id)
+        .orElse(new PresentationLayout());
+    copyOfPresentation.setId(null);
+
+    List<String> presentationLayoutsTitles = this.allPresentations().stream()
+        .map(presentationLayout1 -> presentationLayout1.getTitle()).collect(
+            Collectors.toList());
+
+    // adjust title of presentation
+    if (presentationLayoutsTitles.contains(copyOfPresentation.getTitle())) {
+      copyOfPresentation.setTitle(copyOfPresentation.getTitle() + "_copy");
+    }
+
+    this.newLayout(copyOfPresentation);
   }
 
   /**

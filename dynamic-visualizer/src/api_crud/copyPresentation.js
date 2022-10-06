@@ -7,10 +7,9 @@ import {apiEndpoints} from "../helper/envConst"
  * to update or add a presentation
  * @param presentation
  */
-function deletePresentation(id) {
+function copyPresentation(id) {
   axios.get(
-      apiEndpoints.basis + apiEndpoints.presentations + apiEndpoints.delete
-      + id)
+      apiEndpoints.basis + apiEndpoints.presentations + apiEndpoints.copy + id)
   .then(function (response) {
     console.log(response);
   })
@@ -19,4 +18,4 @@ function deletePresentation(id) {
   });
 }
 
-export default deletePresentation;
+export default copyPresentation;

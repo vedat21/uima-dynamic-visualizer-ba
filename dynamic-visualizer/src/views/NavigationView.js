@@ -11,13 +11,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import LaunchIcon from '@mui/icons-material/Launch';
 import {IconButton, Tooltip} from "@mui/material";
-import {DeleteForever} from "@mui/icons-material";
+import {ContentCopy, DeleteForever} from "@mui/icons-material";
 
 // custom modules
 import TopBar from "../components/user_inputs/TopBar";
 import savePresentation from "../api_crud/savePresentation";
 import deletePresentation from "../api_crud/deletePresentation";
 import {apiEndpoints} from "../helper/envConst";
+import copyPresentation from "../api_crud/copyPresentation";
 
 /**
  * view to select, add or remove presentations.
@@ -30,6 +31,8 @@ function NavigationView() {
   const navigate = useNavigate();
 
   const topBarTitle = "Presentations";
+  const defaultPresentationTitle = "Title";
+
   const [response, setResponse] = useState([]);
 
   // fetch data from api
@@ -47,26 +50,29 @@ function NavigationView() {
       }
     }
     fetchData();
-  }, [response])
+  }, [])
 
   /**
    * to add a new empty presentation
    */
   function addPresentation() {
     savePresentation({
-      "title": "No Title",
+      "title": defaultPresentationTitle,
       "layout": [],
       "visualizations": [],
       "documents": []
     });
+  }
 
+  function handleCopyPresentation(id) {
+    copyPresentation(id);
   }
 
   /**
    * to delete a presentation
    * @param id
    */
-  function removePresentation(id) {
+  function handleRemovePresentation(id) {
     deletePresentation(id);
   }
 
@@ -90,7 +96,9 @@ function NavigationView() {
                   fontSize: "x-large"
                 }}>Visualizations</TableCell>
                 <TableCell style={{borderColor: "black"}}
-                           algin="right"></TableCell>
+                           algin="right"/>
+                <TableCell style={{borderColor: "black"}}
+                           algin="right"/>
                 <TableCell style={{borderColor: "black"}}
                            algin="right"></TableCell>
               </TableRow>
@@ -114,8 +122,15 @@ function NavigationView() {
                       </Tooltip>
                     </TableCell>
                     <TableCell algin="right">
+                      <Tooltip title="Copy Presentation">
+                        <IconButton onClick={() => handleCopyPresentation(row.id)}>
+                          <ContentCopy></ContentCopy>
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell algin="right">
                       <Tooltip title="Delete Presentation">
-                        <IconButton onClick={() => removePresentation(row.id)}>
+                        <IconButton onClick={() => handleRemovePresentation(row.id)}>
                           <DeleteForever></DeleteForever>
                         </IconButton>
                       </Tooltip>

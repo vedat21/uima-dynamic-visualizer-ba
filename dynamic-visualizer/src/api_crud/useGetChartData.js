@@ -1,4 +1,4 @@
-import useGetData from "../api_crud/useGetData";
+import useGetData from "./useGetData";
 import {apiEndpoints} from "../helper/envConst"
 
 
@@ -31,14 +31,9 @@ const useGetChartData = (label, url, limit, documents, lemmaBegin, lemmaEnd) => 
 
     let reqeustUrl = url  +   documents.join(",") + apiEndpoints.requestParamLimit + limit;
 
-    console.log(lemmaBegin);
-    console.log(lemmaEnd);
-
     if (lemmaEnd != 0 && documents.length == 1){
-        console.log("JAAMAN");
         reqeustUrl = reqeustUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
     }
-
 
     // make request to get data
     const {response, loading} = useGetData(reqeustUrl);

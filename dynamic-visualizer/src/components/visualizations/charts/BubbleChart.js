@@ -1,7 +1,7 @@
 import React from "react";
 import {Bubble} from "react-chartjs-2"
 import Chart from 'chart.js/auto';
-import useGetChartData from "../../../helper/useGetChartData"; // ohne diesen import werden die charts nicht geladen
+import useGetChartData from "../../../api_crud/useGetChartData"; // ohne diesen import werden die charts nicht geladen
 
 // custom modules
 
