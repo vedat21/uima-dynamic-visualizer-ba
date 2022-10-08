@@ -6,12 +6,13 @@ import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor
-public class UimaEntitySummation {
+public class UIMATypesSummation {
 
     @Id
     String id;
     String value;
     int count;
     String PosValue;
+    String group;
 
 }

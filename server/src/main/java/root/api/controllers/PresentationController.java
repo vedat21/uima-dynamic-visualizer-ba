@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 // custom
-import root.api.services.PresentationLayoutService;
-import root.entities.PresentationLayout;
+import root.api.services.PresentationService;
+import root.entities.Presentation;
 
 
 /**
@@ -18,10 +18,10 @@ import root.entities.PresentationLayout;
 @RestController
 @RequestMapping()
 @CrossOrigin(origins = "http://localhost:3000")
-public class PresentationLayoutController {
+public class PresentationController {
 
   @Autowired
-  private PresentationLayoutService presentationLayoutService;
+  private PresentationService presentationService;
 
 
   /**
@@ -30,8 +30,8 @@ public class PresentationLayoutController {
    * @return
    */
   @GetMapping("/presentations")
-  public List<PresentationLayout> allPresentations() {
-    return presentationLayoutService.getPresentations();
+  public List<Presentation> allPresentations() {
+    return presentationService.getPresentations();
   }
 
   /**
@@ -40,8 +40,8 @@ public class PresentationLayoutController {
    * @return
    */
   @GetMapping("/presentations/{id}")
-  public Optional<PresentationLayout> presentationById(@PathVariable String id) {
-    return presentationLayoutService.getPresentationById(id);
+  public Optional<Presentation> presentationById(@PathVariable String id) {
+    return presentationService.getPresentationById(id);
   }
 
   /**
@@ -52,12 +52,12 @@ public class PresentationLayoutController {
   @GetMapping("/presentations/copy/{id}")
   public void copyPresentation(@PathVariable String id) {
 
-    PresentationLayout copyOfPresentation = presentationLayoutService.getPresentationById(id)
-        .orElse(new PresentationLayout());
+    Presentation copyOfPresentation = presentationService.getPresentationById(id)
+        .orElse(new Presentation());
     copyOfPresentation.setId(null);
 
     List<String> presentationLayoutsTitles = this.allPresentations().stream()
-        .map(presentationLayout1 -> presentationLayout1.getTitle()).collect(
+        .map(presentation1 -> presentation1.getTitle()).collect(
             Collectors.toList());
 
     // adjust title of presentation
@@ -65,18 +65,18 @@ public class PresentationLayoutController {
       copyOfPresentation.setTitle(copyOfPresentation.getTitle() + "_copy");
     }
 
-    this.newLayout(copyOfPresentation);
+    this.newPresentation(copyOfPresentation);
   }
 
   /**
    * to add a new presentation to collection
    *
-   * @param layout
+   * @param presentation
    * @return
    */
   @PostMapping("/presentations")
-  public PresentationLayout newLayout(@RequestBody PresentationLayout layout) {
-    return presentationLayoutService.putNewLayout(layout);
+  public Presentation newPresentation(@RequestBody Presentation presentation) {
+    return presentationService.putNewPresentation(presentation);
   }
 
 
@@ -86,8 +86,8 @@ public class PresentationLayoutController {
    * @param id
    */
   @GetMapping("/presentations/delete/{id}")
-  public void deletePresentationLayoutById(@PathVariable String id) {
-    presentationLayoutService.deletePresentationLayoutById(id);
+  public void deletePresentationById(@PathVariable String id) {
+    presentationService.deletePresentationLayoutById(id);
   }
 
 }

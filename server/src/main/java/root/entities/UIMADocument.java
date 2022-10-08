@@ -31,7 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @Document(collection = "uimadocuments")
 @NoArgsConstructor
-public class UimaDocument {
+public class UIMADocument {
 
   @JsonIgnore
   @Transient // ignoriere jcas in api und mongodb
@@ -46,8 +46,8 @@ public class UimaDocument {
   @Id
   private String id;
   private String name;
-  private String text;
-  private Map<String, List<GeneralTypeDTO>> types = new TreeMap<>();
+  private String time;
+  private Map<String, List<UIMATypeMapper>> types = new TreeMap<>();
   private String group;
   private Set<String> typesNames;
 
@@ -59,7 +59,7 @@ public class UimaDocument {
    * @param split number of documents to split into
    * @throws UIMAException
    */
-  public UimaDocument(MultipartFile xmlDocument, String group, Integer number , Integer split) throws UIMAException {
+  public UIMADocument(MultipartFile xmlDocument, String group, Integer number , Integer split) throws UIMAException {
     this.gson = new Gson();
     this.xmlDocument = xmlDocument;
     this.jCas = JCasFactory.createJCas();
@@ -68,10 +68,10 @@ public class UimaDocument {
 
     try {
       CasIOUtils.load(new BufferedInputStream(xmlDocument.getInputStream()), jCas.getCas());
-      Map<String, List<GeneralTypeDTO>> allTypes = this.getElementsFromJCas(this.jCas);
+      Map<String, List<UIMATypeMapper>> allTypes = this.getTypesFromJcas(this.jCas);
 
       int numberCopy = number;
-      for (Entry<String, List<GeneralTypeDTO>> entry : allTypes.entrySet()) {
+      for (Entry<String, List<UIMATypeMapper>> entry : allTypes.entrySet()) {
         if (numberCopy == split) {
           this.types.put(entry.getKey(), entry.getValue());
           this.typesNames = this.getTypesNames(this.types);
@@ -79,10 +79,8 @@ public class UimaDocument {
         }
         else {
           numberCopy++;
-
         }
       }
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -95,25 +93,25 @@ public class UimaDocument {
    * @return
    * @author Giuessepe Abrami
    */
-  public Map<String, List<GeneralTypeDTO>> getElementsFromJCas(JCas pCas){
-    Map<String, List<GeneralTypeDTO>> result = new HashMap<>();
+  public Map<String, List<UIMATypeMapper>> getTypesFromJcas(JCas pCas){
+    Map<String, List<UIMATypeMapper>> result = new HashMap<>();
 
     JCasUtil.select(pCas, TOP.class).stream().forEach(a->{
 
-      List<GeneralTypeDTO> pList = new ArrayList<>(0);
+      List<UIMATypeMapper> pList = new ArrayList<>(0);
       String sType = a.getType().getName();
 
       if(result.containsKey(sType)){
         pList = result.get(sType);
       }
 
-      pList.add(this.getDataFromObject(a));
+      pList.add(this.getDataFromTypeObject(a));
 
       result.put(sType, pList);
 
     });
 
-    Map<String, List<GeneralTypeDTO>> resultMapChangedKeys = new HashMap<>();
+    Map<String, List<UIMATypeMapper>> resultMapChangedKeys = new HashMap<>();
 
     for (String key : result.keySet()){
       resultMapChangedKeys.put(key.replace(".", "_"), result.get(key));
@@ -127,7 +125,7 @@ public class UimaDocument {
    * @return
    * @author Giuessepe Abrami
    */
-  GeneralTypeDTO getDataFromObject(TOP pTop){
+  UIMATypeMapper getDataFromTypeObject(TOP pTop){
 
     JSONObject rObject = new JSONObject();
     rObject.put("id", pTop.getAddress());
@@ -189,7 +187,7 @@ public class UimaDocument {
     if (rObject.has("PosValue")){
       rObject.put("value", rObject.get("PosValue"));
     }
-    return gson.fromJson(rObject.toString(), GeneralTypeDTO.class);
+    return gson.fromJson(rObject.toString(), UIMATypeMapper.class);
   }
 
   /**
@@ -197,22 +195,22 @@ public class UimaDocument {
    * @param result
    * @return Map
    */
-  public Map<String, List<GeneralTypeDTO>> addPosValues(Map<String, List<GeneralTypeDTO>> result){
+  public Map<String, List<UIMATypeMapper>> addPosValues(Map<String, List<UIMATypeMapper>> result){
 
     if (result.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma") == null){
       return result;
     }
 
-    List<GeneralTypeDTO> lemmas = result.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
-    Map<String, List<GeneralTypeDTO>> newResult = new HashMap<>();
+    List<UIMATypeMapper> lemmas = result.get("de_tudarmstadt_ukp_dkpro_core_api_segmentation_type_Lemma");
+    Map<String, List<UIMATypeMapper>> newResult = new HashMap<>();
 
-    for (Map.Entry<String, List<GeneralTypeDTO>> entry : result.entrySet()) {
+    for (Map.Entry<String, List<UIMATypeMapper>> entry : result.entrySet()) {
 
-      List<GeneralTypeDTO> type = entry.getValue();
+      List<UIMATypeMapper> type = entry.getValue();
 
       if (entry.getKey().toLowerCase().contains("pos") || entry.getKey().toLowerCase().contains("entity")){
-        for (GeneralTypeDTO typeValue : type){
-          for(GeneralTypeDTO lemma : lemmas){
+        for (UIMATypeMapper typeValue : type){
+          for(UIMATypeMapper lemma : lemmas){
             if(lemma.getBegin().equals(typeValue.getBegin())){
               typeValue.setTokenValue(lemma.getValue());
             }
@@ -232,7 +230,7 @@ public class UimaDocument {
    * @param types
    * @return
    */
-  public Set<String> getTypesNames(Map<String, List<GeneralTypeDTO>> types){
+  public Set<String> getTypesNames(Map<String, List<UIMATypeMapper>> types){
      Set<String> typesNames = new HashSet<>();
 
     for (String type : types.keySet()){

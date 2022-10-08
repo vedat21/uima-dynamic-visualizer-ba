@@ -20,7 +20,6 @@ public class FileUploadController {
 
   @PostMapping("/upload")
   public String uploadFile(@RequestParam MultipartFile file, @RequestParam String group) {
-    System.out.println();
     return fileUploadService.saveFile(file, group);
   }
 

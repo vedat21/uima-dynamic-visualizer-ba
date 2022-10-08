@@ -6,7 +6,7 @@ import lombok.Data;
  * entity for types to map from json
  */
 @Data
-public class GeneralTypeDTO {
+public class UIMATypeMapper {
 
   Integer id;
   Integer begin;

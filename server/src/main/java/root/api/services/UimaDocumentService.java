@@ -16,8 +16,8 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 // custom
 import root.api.repositories.UimaDocumentRepository;
 import root.entities.GeneralInfo;
-import root.entities.UimaEntitySummation;
-import root.entities.UimaDocument;
+import root.entities.UIMATypesSummation;
+import root.entities.UIMADocument;
 
 @Service
 public class UimaDocumentService {
@@ -34,13 +34,23 @@ public class UimaDocumentService {
    *
    * @return
    */
-  public List<UimaDocument> findAll() {
+  public List<UIMADocument> findAll() {
     return uimaDocumentRepository.findAll();
+  }
+
+  /**
+   * returns document with specific id from collection
+   *
+   * @param id
+   * @return
+   */
+  public Optional<UIMADocument> findById(String id) {
+    return uimaDocumentRepository.findById(id);
   }
 
 
   public Object getTextFromOne(String name) {
-    Optional<UimaDocument> uimaDocument = uimaDocumentRepository.findByName(name);
+    Optional<UIMADocument> uimaDocument = uimaDocumentRepository.findByName(name);
 
     if (uimaDocument.isPresent()) {
       for (String type : uimaDocument.get().getTypesNames()) {
@@ -54,20 +64,10 @@ public class UimaDocumentService {
   }
 
 
-  /**
-   * returns document with specific id from collection
-   *
-   * @param id
-   * @return
-   */
-  public Optional<UimaDocument> findById(String id) {
-    return uimaDocumentRepository.findById(id);
-  }
-
-  public List<UimaDocument> getAllDocumentNamesAndGroups() {
+  public List<UIMADocument> getAllDocumentNamesAndGroups() {
     Query query = new Query();
     query.fields().include("name").include("group");
-    return mongoTemplate.find(query, UimaDocument.class);
+    return mongoTemplate.find(query, UIMADocument.class);
   }
 
   public void removeCollection() {
@@ -81,43 +81,10 @@ public class UimaDocumentService {
    * @param uimaDocument
    * @return
    */
-  public UimaDocument putNewUimaDocument(UimaDocument uimaDocument) {
+  public UIMADocument putNewUimaDocument(UIMADocument uimaDocument) {
     return uimaDocumentRepository.save(uimaDocument);
   }
 
-  /**
-   * returns all documents but only data for the given keys is available .others are null
-   *
-   * @param types
-   * @return
-   */
-  public List<UimaDocument> findAllWithKeys(List<String> types) {
-
-    // types has always only one element
-    // cast List to array because of include function (takes array as arg).
-    String[] typesAsArray = types.get(0).split(",");
-
-    Query query = new Query();
-    query.fields().include(typesAsArray[0]);
-
-    return mongoTemplate.find(query, UimaDocument.class);
-  }
-
-  /**
-   * returns document with given id but only data for the given keys is available. others are null
-   *
-   * @param types
-   * @return
-   */
-  public List<UimaDocument> findByIdWithKeys(List<String> types, String id) {
-    Query query = new Query();
-
-    String[] typesAsArray = types.get(0).split(",");
-    query.fields().include(typesAsArray); // only return included keys (types)
-    query.addCriteria(Criteria.where("_id").is(id)); // find document with id
-
-    return mongoTemplate.find(query, UimaDocument.class);
-  }
 
   /**
    * to get general information about the documents in collection. e.g how many documents are
@@ -130,7 +97,7 @@ public class UimaDocumentService {
     List<String> allKeys = new ArrayList<>();
     Query query = new Query();
     query.fields().include("typesNames");
-    List<UimaDocument> uimaDocuments = mongoTemplate.find(query, UimaDocument.class);
+    List<UIMADocument> uimaDocuments = mongoTemplate.find(query, UIMADocument.class);
 
     // gets all types from types key
     uimaDocuments.forEach((uimaDocument -> {
@@ -148,12 +115,15 @@ public class UimaDocumentService {
   }
 
 
+
   /**
    * same function as getTypesSummation but gets values of tokenValue instead of value
-   *
    * @param types
    * @param limit
    * @param names
+   * @param begin
+   * @param end
+   * @param valueString is "value" or "tokenValue"
    * @return
    */
   public List getTypesSummation(String[] types, int limit, String[] names,
@@ -179,6 +149,7 @@ public class UimaDocumentService {
         project("types").and(firstType).concatArrays(remainingTypes).as("data")
     );
     operations.add(unwind("data")); // unwind the list
+    // when one document is selected and part of text is selected
     if (begin.isPresent() && end.isPresent()) {
       operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
       operations.add(match(new Criteria("data.begin").gt(
@@ -189,11 +160,40 @@ public class UimaDocumentService {
     operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
 
     Aggregation aggregation = newAggregation(operations);
-    AggregationResults<UimaEntitySummation> results = mongoTemplate.aggregate(aggregation,
-        "uimadocuments", UimaEntitySummation.class);
+    AggregationResults<UIMATypesSummation> results = mongoTemplate.aggregate(aggregation,
+        "uimadocuments", UIMATypesSummation.class);
+
+    System.out.println(results.getMappedResults());
 
     return results.getMappedResults();
   }
 
+
+
+  /*
+  public List<UIMADocument> findAllWithKeys(List<String> types) {
+
+    // types has always only one element
+    // cast List to array because of include function (takes array as arg).
+    String[] typesAsArray = types.get(0).split(",");
+
+    Query query = new Query();
+    query.fields().include(typesAsArray[0]);
+
+    return mongoTemplate.find(query, UIMADocument.class);
+  }
+
+
+  public List<UIMADocument> findByIdWithKeys(List<String> types, String id) {
+    Query query = new Query();
+
+    String[] typesAsArray = types.get(0).split(",");
+    query.fields().include(typesAsArray); // only return included keys (types)
+    query.addCriteria(Criteria.where("_id").is(id)); // find document with id
+
+    return mongoTemplate.find(query, UIMADocument.class);
+  }
+
+   */
 
 }

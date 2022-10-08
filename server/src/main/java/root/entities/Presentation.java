@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Data
 @Document(collection = "presentations")
-public class PresentationLayout {
+public class Presentation {
 
     @Id
     private String id;

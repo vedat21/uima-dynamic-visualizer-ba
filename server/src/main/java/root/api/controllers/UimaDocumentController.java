@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import root.api.services.UimaDocumentService;
 import root.entities.GeneralInfo;
-import root.entities.UimaDocument;
-import root.entities.UimaEntitySummation;
+import root.entities.UIMADocument;
+import root.entities.UIMATypesSummation;
 
 
 @RestController
@@ -40,7 +40,6 @@ public class UimaDocumentController {
    */
   @GetMapping("/documents/delete")
   public void removeCollection() {
-    System.out.println("ja");
     uimaDocumentService.removeCollection();
   }
 
@@ -57,47 +56,13 @@ public class UimaDocumentController {
   }
 
   /**
-   * returns document with given id. if params types is given then only data for these types(keys)
-   * is available. others are null
-   *
-   * @param id
-   * @param types
-   * @return
-   */
-  @GetMapping("/documents/{id}")
-  public List<UimaDocument> findByIdWithKeys(@RequestParam Optional<String> types,
-      @PathVariable String id) {
-    if (types.isEmpty()) {
-      return uimaDocumentService.findById(id).stream().collect(Collectors.toList());
-    } else {
-      return uimaDocumentService.findByIdWithKeys(types.stream().collect(Collectors.toList()), id);
-    }
-  }
-
-  /**
-   * returns all documents. if params types is given then only data for these types(keys) is
-   * available. others are null
-   *
-   * @param types
-   * @return
-   */
-  @GetMapping("/documents/all")
-  public List<UimaDocument> findAllWithKeys(@RequestParam Optional<String> types) {
-    if (types.isEmpty()) {
-      return uimaDocumentService.findAll();
-    } else {
-      return uimaDocumentService.findAllWithKeys(types.stream().collect(Collectors.toList()));
-    }
-  }
-
-  /**
    * to get summed data of the given types.
    *
    * @param types
    * @return
    */
   @GetMapping("/documents/sum")
-  public List<UimaEntitySummation> getTypesSummation(
+  public List<UIMATypesSummation> getTypesSummation(
       @RequestParam Optional<String> types,
       @RequestParam(defaultValue = "0") String limit,
       @RequestParam Optional<String> names,
@@ -122,7 +87,7 @@ public class UimaDocumentController {
       }
     }
 
-    List<UimaEntitySummation> result = new ArrayList<>();
+    List<UIMATypesSummation> result = new ArrayList<>();
     if (posValueTypes.size() != 0) {
       result.addAll(uimaDocumentService.getTypesSummation(
           posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end, "tokenValue"));
@@ -132,7 +97,7 @@ public class UimaDocumentController {
           allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end, "value"));
     }
 
-    Collections.sort(result, Comparator.comparing(UimaEntitySummation::getCount).reversed());
+    Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
 
     return result;
   }
@@ -144,13 +109,44 @@ public class UimaDocumentController {
    * @return
    */
   @GetMapping("/documents/all/namesandgroup")
-  public List<UimaDocument> getAllDocumentNames() {
+  public List<UIMADocument> getAllDocumentNamesAndGroups() {
     return uimaDocumentService.getAllDocumentNamesAndGroups();
   }
 
   @PostMapping("/documents")
-  public UimaDocument newUimaDocument(UimaDocument uimaDocument) {
+  public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
     return uimaDocumentService.putNewUimaDocument(uimaDocument);
   }
+
+
+
+   /*
+   * returns document with given id. if params types is given then only data for these types(keys)
+   * is available. others are null
+   *
+
+  @GetMapping("/documents/{id}")
+  public List<UIMADocument> findByIdWithKeys(@RequestParam Optional<String> types,
+      @PathVariable String id) {
+    if (types.isEmpty()) {
+      return uimaDocumentService.findById(id).stream().collect(Collectors.toList());
+    } else {
+      return uimaDocumentService.findByIdWithKeys(types.stream().collect(Collectors.toList()), id);
+    }
+  }
+
+
+   * returns all documents. if params types is given then only data for these types(keys) is
+   * available. others are null
+   *
+  @GetMapping("/documents/all")
+  public List<UIMADocument> findAllWithKeys(@RequestParam Optional<String> types) {
+    if (types.isEmpty()) {
+      return uimaDocumentService.findAll();
+    } else {
+      return uimaDocumentService.findAllWithKeys(types.stream().collect(Collectors.toList()));
+    }
+  }
+  */
 
 }

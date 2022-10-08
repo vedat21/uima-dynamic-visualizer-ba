@@ -1,9 +1,6 @@
 package root.api.services;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +8,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import org.apache.uima.UIMAException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,7 +40,7 @@ public class FileUploadService {
       Path fileDir = uploadDir.resolve(Objects.requireNonNull(multipartFile.getOriginalFilename()));
       Files.copy(multipartFile.getInputStream(), fileDir, StandardCopyOption.REPLACE_EXISTING);
 
-      importDocumentsHelper.importDocuments(multipartFile, group);
+      importDocumentsHelper.importDocument(multipartFile, group);
     } catch (IOException | UIMAException e) {
       throw new RuntimeException(e);
     }
