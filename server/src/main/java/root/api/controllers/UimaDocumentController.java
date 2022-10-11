@@ -28,15 +28,29 @@ public class UimaDocumentController {
   @Autowired
   private UimaDocumentService uimaDocumentService;
 
+  @PostMapping("/documents")
+  public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
+    return uimaDocumentService.putNewUimaDocument(uimaDocument);
+  }
+
+  /**
+   * To get all document names that are stored in db
+   *
+   * @return
+   */
+  @GetMapping("/documents/all/namesandgroup")
+  public List<UIMADocument> getAllDocumentNamesAndGroups() {
+    return uimaDocumentService.getAllDocumentNamesAndGroups();
+  }
 
   @GetMapping("/text/{name}")
   public Object getTextFromOne(@PathVariable String name) {
-   return uimaDocumentService.getTextFromOne(name);
+    return uimaDocumentService.getTextFromOne(name);
   }
 
 
-  /**®
-   * to delete the collection
+  /**
+   * ® to delete the collection
    */
   @GetMapping("/documents/delete")
   public void removeCollection() {
@@ -90,11 +104,13 @@ public class UimaDocumentController {
     List<UIMATypesSummation> result = new ArrayList<>();
     if (posValueTypes.size() != 0) {
       result.addAll(uimaDocumentService.getTypesSummation(
-          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end, "tokenValue"));
+          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
+          "tokenValue"));
     }
     if (allTypes.size() != 0) {
       result.addAll(uimaDocumentService.getTypesSummation(
-          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end, "value"));
+          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
+          "value"));
     }
 
     Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
@@ -102,21 +118,28 @@ public class UimaDocumentController {
     return result;
   }
 
-
   /**
-   * To get all document names that are stored in db
+   * to get summed data of the given types.
    *
    * @return
    */
-  @GetMapping("/documents/all/namesandgroup")
-  public List<UIMADocument> getAllDocumentNamesAndGroups() {
-    return uimaDocumentService.getAllDocumentNamesAndGroups();
+  @GetMapping("/documents/sum/locations")
+  public List<UIMATypesSummation> getLocationSummation(
+      @RequestParam Optional<String> names,
+      @RequestParam(defaultValue = "0") String limit,
+      @RequestParam Optional<String> begin,
+      @RequestParam Optional<String> end
+
+  ) {
+
+    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+    return uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin,
+        end);
   }
 
-  @PostMapping("/documents")
-  public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
-    return uimaDocumentService.putNewUimaDocument(uimaDocument);
-  }
+}
+
 
 
 
@@ -149,4 +172,3 @@ public class UimaDocumentController {
   }
   */
 
-}

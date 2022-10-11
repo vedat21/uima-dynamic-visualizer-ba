@@ -14,6 +14,9 @@ import RichTextEditor from "./text/RichTextEditor";
 import ChartTopBar from "./topbars/ChartTopBar";
 import TextTopBar from "./topbars/TextTopBar";
 import DocumentText from "./text/DocumentText";
+import WorldMapMarkCities from "./other/WorldMapMarkCities";
+import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
+import WorldMapMarkCountries from "./other/WorldMapMarkCountries";
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
 const components = {
@@ -26,7 +29,10 @@ const components = {
   "scatterchart": ScatterChart,
   "radarchart": RadarChart,
   "richtexteditor": RichTextEditor,
-  "textcomponent": DocumentText
+  "textcomponent": DocumentText,
+  "worldmapcities": WorldMapMarkCities,
+  "worldmapareas": WorldMapMarkAreas,
+  "worldmapcountries": WorldMapMarkCountries
 };
 
 /**

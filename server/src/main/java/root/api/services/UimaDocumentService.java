@@ -1,5 +1,6 @@
 package root.api.services;
 
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -164,6 +165,44 @@ public class UimaDocumentService {
         "uimadocuments", UIMATypesSummation.class);
 
     System.out.println(results.getMappedResults());
+
+    return results.getMappedResults();
+  }
+
+
+  public List getLocationSummation(String[] names, int limit,
+      Optional<String> begin, Optional<String> end) {
+
+    GeneralInfo generalInfo =  this.getGeneralInfo();
+    List<String> namedEntityTypes = generalInfo.getTypes().stream().filter(type -> type.toLowerCase().contains("entity") && !type.toLowerCase().contains("token")).collect(
+        Collectors.toList());
+
+
+    // to store all aggregate operations
+    List<AggregationOperation> operations = new ArrayList<>();
+
+    // query by name
+    operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
+    // concat all selected types to one list named data
+    operations.add(
+        project("types").and("types." + namedEntityTypes.get(0)).as("data")
+    );
+    operations.add(unwind("data")); // unwind the list
+    // when one document is selected and part of text is selected
+    if (begin.isPresent() && end.isPresent()) {
+      operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
+      operations.add(match(new Criteria("data.begin").gt(
+          Integer.parseInt(begin.get())))); // include only lemma in begin and end
+    }
+    operations.add(match(new Criteria("data.value").is("LOC"))); // only named entity locations
+
+    operations.add(group("data." + "tokenValue").count().as("count")); // count
+    operations.add(match(new Criteria("count").gte(limit))); // limit
+    operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
+
+    Aggregation aggregation = newAggregation(operations);
+    AggregationResults<UIMATypesSummation> results = mongoTemplate.aggregate(aggregation,
+        "uimadocuments", UIMATypesSummation.class);
 
     return results.getMappedResults();
   }

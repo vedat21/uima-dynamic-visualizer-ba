@@ -50,7 +50,7 @@ function NavigationView() {
       }
     }
     fetchData();
-  }, [])
+  }, [response])
 
   /**
    * to add a new empty presentation

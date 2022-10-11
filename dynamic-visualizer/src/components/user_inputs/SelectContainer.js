@@ -16,7 +16,10 @@ const optionsVisualization = [
   {value: 'scatterchart', label: 'Scatter Chart'},
   {value: 'radarchart', label: 'Radar Chart'},
   {value: 'textcomponent', label: 'Text'},
-  {value: 'richtexteditor', label: 'Rich Text Editor'}
+  {value: 'richtexteditor', label: 'Rich Text Editor'},
+  {value: 'worldmapcities', label: 'World Map With Cities'},
+  {value: 'worldmapcountries', label: 'World Map With Countries'},
+  {value: 'worldmapareas', label: 'World Map With Areas'},
 ];
 
 /**
@@ -66,7 +69,7 @@ function SelectContainer(props) {
             isMulti={false}
         />
         <SelectField
-            options={selectedVisualization.includes("text")? [] : optionsData}
+            options={!selectedVisualization.includes("chart")? [] : optionsData}
             selectedOption={selectedData}
             setSelectedOption={setSelectedData}
             isMulti={true}

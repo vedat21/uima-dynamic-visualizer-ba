@@ -13,29 +13,36 @@ function DocumentText(props) {
 
   useEffect(async () => {
 
-    if (props.selectedDocuments.length > 1 || props.selectedDocuments.length
-        == 0) {
-      setText(
-          "More then 1 Document selected. Cant display text of multiple documents.")
-      return
-    }
-    if (!loading) {
-      let tx = ""
-      let lastLemmaEnd = response[0]["begin"];
-      response.forEach((lemma) => {
-        for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
-          tx = tx + " ";
-        }
-        tx = tx + lemma.value;
+        if (props.selectedDocuments.length > 1) {
+          setText(
+              "More then 1 Document selected. Cant display text of multiple documents.")
+          return
+        } else if (props.selectedDocuments.length === 0) {
+          setText(
+              "No document selected")
+          return
 
-        lastLemmaEnd = lemma.end;
-      })
-      setText(tx)
-    }
-  }, [response, loading])
+        }
+
+        if (!loading) {
+          let tx = ""
+          let lastLemmaEnd = response[0]["begin"];
+          response.forEach((lemma) => {
+            for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
+              tx = tx + " ";
+            }
+            tx = tx + lemma.value;
+
+            lastLemmaEnd = lemma.end;
+          })
+          setText(tx)
+        }
+      }
+      ,
+      [response, loading]
+  )
 
   function handleSelectedText(selectedText) {
-
 
     console.log(0 + "   " + props.lemmaBegin);
     console.log(props.lemmaBegin + "   " + props.lemmaEnd);
@@ -45,7 +52,6 @@ function DocumentText(props) {
 
     const begin = text.indexOf(selectedText);
     const end = begin + selectedText.length;
-
 
     props.setLemmaBegin(begin);
     props.setLemmaEnd(end);
@@ -64,7 +70,8 @@ function DocumentText(props) {
         />
         <div>
           <span> {text.slice(0, props.lemmaBegin)}</span>
-          <span style={{backgroundColor: "yellow"}}> {text.slice(props.lemmaBegin, props.lemmaEnd)}</span>
+          <span style={{backgroundColor: "yellow"}}> {text.slice(
+              props.lemmaBegin, props.lemmaEnd)}</span>
           <span> {text.slice(props.lemmaEnd, text.length)}</span>
         </div>
       </>
