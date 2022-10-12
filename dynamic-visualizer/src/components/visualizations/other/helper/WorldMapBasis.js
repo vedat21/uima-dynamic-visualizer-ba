@@ -99,7 +99,7 @@ function WorldMapBasis(props) {
                       props.setTooltipContent("");
                     }}
                     key={marker.name} coordinates={marker.coordinates}>
-                  <circle r={marker.size < 0.25 ? 0.25 : marker.size} fill="#F00"/>
+                  <circle r={marker.size < 0.45 ? 0.45 : marker.size} fill="#F00"/>
                 </Marker>
             ))}
           </ZoomableGroup>

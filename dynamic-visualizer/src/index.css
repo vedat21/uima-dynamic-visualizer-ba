@@ -33,3 +33,12 @@ text {
 }
 
 
+.App {
+    font-family: sans-serif;
+    text-align: center;
+}
+
+.tooltip {
+    color: black;
+    background-color: white;
+}
