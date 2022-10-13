@@ -85,6 +85,11 @@ public class UimaDocumentController {
 
   ) {
 
+    // Für Orte
+    if (types.get().toLowerCase().contains("loc")) {
+      return this.getLocationSummation(names, limit, begin, end);
+    }
+
     String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
     String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
@@ -114,6 +119,7 @@ public class UimaDocumentController {
     }
 
     Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+
 
     return result;
   }

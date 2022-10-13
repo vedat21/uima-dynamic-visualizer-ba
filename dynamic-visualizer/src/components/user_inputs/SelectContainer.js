@@ -7,6 +7,7 @@ import {apiEndpoints} from "../../helper/envConst";
 
 // Alle möglichen Visualisierungskomponenten
 const optionsVisualization = [
+  {value: 'areachart', label: 'Area Chart'},
   {value: 'barchart', label: 'Bar Chart'},
   {value: 'bubblechart', label: 'Bubble Chart'},
   {value: 'doughnutchart', label: 'Doughnut Chart'},
@@ -20,6 +21,7 @@ const optionsVisualization = [
   {value: 'worldmapcities', label: 'World Map With Cities'},
   {value: 'worldmapcountries', label: 'World Map With Countries'},
   {value: 'worldmapareas', label: 'World Map With Areas'},
+  {value: 'wordcloud', label: 'Word Cloud'},
 ];
 
 /**
@@ -51,6 +53,8 @@ function SelectContainer(props) {
         optionsData.push(
             {value: type, label: label})
       })
+      // get location
+      optionsData.push({value: "location", label: "NamedEntity_Location"})
     }
   }, [response, optionsData, loading])
 
@@ -69,7 +73,7 @@ function SelectContainer(props) {
             isMulti={false}
         />
         <SelectField
-            options={!selectedVisualization.includes("chart")? [] : optionsData}
+            options={selectedVisualization.includes("chart") || selectedVisualization.includes("cloud") ? optionsData : []}
             selectedOption={selectedData}
             setSelectedOption={setSelectedData}
             isMulti={true}

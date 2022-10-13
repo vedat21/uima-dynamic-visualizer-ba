@@ -17,9 +17,12 @@ import DocumentText from "./text/DocumentText";
 import WorldMapMarkCities from "./other/WorldMapMarkCities";
 import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
 import WorldMapMarkCountries from "./other/WorldMapMarkCountries";
+import AreaChart from "./charts/AreaChart";
+import WordCloudComponent from "./text/WordCloudComponent";
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
 const components = {
+  "areachart": AreaChart,
   "barchart": BarChart,
   "bubblechart": BubbleChart,
   "doughnutchart": DoughnutChart,
@@ -32,7 +35,8 @@ const components = {
   "textcomponent": DocumentText,
   "worldmapcities": WorldMapMarkCities,
   "worldmapareas": WorldMapMarkAreas,
-  "worldmapcountries": WorldMapMarkCountries
+  "worldmapcountries": WorldMapMarkCountries,
+  "wordcloud" : WordCloudComponent,
 };
 
 /**
@@ -77,7 +81,8 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
 
       ]);
     } else {
-      return React.createElement("div", {key: uuid()}, [
+      console.log(visualization)
+      return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
         React.createElement(ChartTopBar, {
           key: uuid(),
           editable: editable,
@@ -96,7 +101,8 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
           limit: limit,
           selectedDocuments: selectedDocuments,
           lemmaBegin: lemmaBegin,
-          lemmaEnd: lemmaEnd
+          lemmaEnd: lemmaEnd,
+          editable: editable
         }),
 
       ]);

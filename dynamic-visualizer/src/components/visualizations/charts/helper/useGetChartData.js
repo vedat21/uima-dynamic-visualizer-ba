@@ -1,28 +1,32 @@
-import useGetData from "./useGetData";
-import {apiEndpoints} from "../helper/envConst"
-
+import useGetData from "../../../../api_crud/useGetData";
+import {apiEndpoints} from "../../../../helper/envConst"
 
 /**
  *
- * @param label is prop
- * @param url is prop
- * @returns {{datasets: [{backgroundColor: string[], borderColor: string[], data: [number], borderWidth: number, label: *}], labels: [string]}}
+ * @param label
+ * @param url
+ * @param limit
+ * @param selectedDocuments
+ * @param lemmaBegin
+ * @param lemmaEnd
+ * @param fill
+ * @returns {{datasets: [{backgroundColor: string[], borderColor: string[], data: *, borderWidth: number, label, fill}], labels: *}}
  */
-const useGetChartData = (label, url, limit, documents, lemmaBegin, lemmaEnd) => {
+const useGetChartData = (label, url, limit, selectedDocuments, lemmaBegin, lemmaEnd, fill) => {
 
-    let reqeustUrl = url  +   documents.join(",") + apiEndpoints.requestParamLimit + limit;
+    let requestUrl = url  +   selectedDocuments.join(",") + apiEndpoints.requestParamLimit + limit;
 
-    if (lemmaEnd != 0 && documents.length == 1){
-        reqeustUrl = reqeustUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
+    if (lemmaEnd != 0 && selectedDocuments.length == 1){
+        requestUrl = requestUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
     }
+    console.log(limit);
 
     // make request to get data
-    const {response, loading} = useGetData(reqeustUrl);
+    const {response, loading} = useGetData(requestUrl);
 
     const labels = (response.map(({id}) =>{
         return id
     }));
-
     const values = (response.map(({count}) =>{
         return count
     }));
@@ -49,6 +53,7 @@ const useGetChartData = (label, url, limit, documents, lemmaBegin, lemmaEnd) => 
     const dataForVisualization = {
         labels:  labels,
         datasets: [{
+            fill: fill,
             label: label,
             data: values,
             backgroundColor: backgroundColor,

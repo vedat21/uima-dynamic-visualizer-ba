@@ -1,18 +1,10 @@
-import React, {useEffect, useState} from "react";
-import ReactDOM from "react-dom";
-import ReactTooltip from "react-tooltip";
+import React from "react";
 
-import GeoTest from "./helper/WorldMapBasis";
+import WorldMapDetailed from "./helper/WorldMapDetailed";
 
 export default function WorldMapMarkAreas(props) {
 
-  const [content, setToolTipContent] = useState("");
-
-
   return (
-      <div>
-        <GeoTest markArea="administrative_area_level_1" setTooltipContent={setToolTipContent} {...props}/>
-        <ReactTooltip>{content}</ReactTooltip>
-      </div>
+      <WorldMapDetailed markArea="administrative_area_level_1" {...props}/>
   );
 }

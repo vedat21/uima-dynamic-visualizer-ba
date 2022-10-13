@@ -1,18 +1,10 @@
-import React, {useEffect, useState} from "react";
-import ReactDOM from "react-dom";
-import ReactTooltip from "react-tooltip";
+import React from "react";
 
-import WorldMapBasis from "./helper/WorldMapBasis";
+import WorldMapDetailed from "./helper/WorldMapDetailed";
 
 export default function WorldMapMarkCities(props) {
 
-  const [content, setContent] = useState("");
-
-
   return (
-      <div>
-        <WorldMapBasis markArea="locality"  setTooltipContent={setContent} {...props}/>
-        <ReactTooltip className="tooltip">{content}</ReactTooltip>
-      </div>
+      <WorldMapDetailed markArea="locality" {...props}/>
   );
 }

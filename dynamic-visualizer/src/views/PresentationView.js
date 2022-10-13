@@ -86,15 +86,15 @@ function PresentationView(props) {
         : selectedData;
 
     // difference between chart component and other
-    if (selectedVisualization.includes("chart")) {
+    if (selectedVisualization.includes("chart") || selectedVisualization.includes("cloud")) {
       const dataToAdd = {
         id: uuid(),
         component: selectedVisualization,
         // apiEndpoints.requestParamIds + "632351684ae9b57e41028424" der teil nicht in db speichern sondern von sidebar beziehen
         url: apiEndpoints.basis + apiEndpoints.sum + selectedData
             + apiEndpoints.requestParamNames,
-        limit: 5,
-        label: "Label",
+        limit: 50,
+        label: selectedData,
       };
       /* if bodydata is null then init list with only added data. else add to bodydata.
           (using concat to trigger rerender) */

@@ -3,7 +3,7 @@ import {
   ZoomableGroup,
   ComposableMap,
   Geographies,
-  Geography, Marker
+  Geography
 } from "react-simple-maps";
 
 import {apiEndpoints, countryCode2to3} from "../../../../helper/envConst";
@@ -62,6 +62,8 @@ function WorldMapBasisCountries(props) {
                 allMentionedCountryCodes => [...allMentionedCountryCodes,
                   countryCode2to3[jsonData.results[0].address_components[0].short_name]])
           }
+          setTimeout(function(){
+          }, 250);
         })
         .catch(error => {
           console.log(error);
