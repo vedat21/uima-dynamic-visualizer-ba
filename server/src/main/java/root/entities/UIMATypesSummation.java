@@ -13,6 +13,6 @@ public class UIMATypesSummation {
     String value;
     int count;
     String PosValue;
-    String group;
+    String date;
 
 }

@@ -49,6 +49,15 @@ public class UimaDocumentService {
     return uimaDocumentRepository.findById(id);
   }
 
+  public Optional<UIMADocument> findByNameGetOnlyDate(String name) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("name").is(name));
+    query.fields().include("date");
+    List<UIMADocument> uimaDocuments = mongoTemplate.find(query, UIMADocument.class);
+    return Optional.ofNullable(uimaDocuments.get(0));
+  }
+
+
 
   public Object getTextFromOne(String name) {
     Optional<UIMADocument> uimaDocument = uimaDocumentRepository.findByName(name);
@@ -64,7 +73,6 @@ public class UimaDocumentService {
     return "No Text";
   }
 
-
   public List<UIMADocument> getAllDocumentNamesAndGroups() {
     Query query = new Query();
     query.fields().include("name").include("group");
@@ -74,7 +82,6 @@ public class UimaDocumentService {
   public void removeCollection() {
     mongoTemplate.remove(new Query(), "uimadocuments");
   }
-
 
   /**
    * put new uima document in db
@@ -116,9 +123,9 @@ public class UimaDocumentService {
   }
 
 
-
   /**
    * same function as getTypesSummation but gets values of tokenValue instead of value
+   *
    * @param types
    * @param limit
    * @param names
@@ -164,19 +171,84 @@ public class UimaDocumentService {
     AggregationResults<UIMATypesSummation> results = mongoTemplate.aggregate(aggregation,
         "uimadocuments", UIMATypesSummation.class);
 
-    System.out.println(results.getMappedResults());
-
     return results.getMappedResults();
   }
 
+  /**
+   * to get aggregation that includes date
+   *
+   * @param types
+   * @param limit
+   * @param names
+   * @param begin
+   * @param end
+   * @param valueString
+   * @return
+   */
+  public List getTypesSummationByDate(String[] types, int limit, String[] names,
+      Optional<String> begin, Optional<String> end, String valueString) {
 
+    /*
+    param types is saved in two variable. One is a string and the other an array.
+    Because of build in aggregation "concatarray". All types are stored in objects types.
+    */
+    String firstType = "types." + types[0]; // first entered type
+    String[] remainingTypes = new String[types.length - 1]; // rest of them
+    for (int i = 0; i < remainingTypes.length; i++) {
+      remainingTypes[i] = "types." + types[i + 1];
+    }
+
+
+
+    // do aggregation for each document include date in aggregation
+    List result = new ArrayList();
+    for (int i = 0; i < names.length; i++) {
+
+      // to store all aggregate operations
+      List<AggregationOperation> operations = new ArrayList<>();
+      // query by name
+      operations.add(Aggregation.match(Criteria.where("name").in(names[i])));
+      // concat all selected types to one list named data
+      operations.add(
+          project("types").and(firstType).concatArrays(remainingTypes).as("data")
+      );
+      operations.add(unwind("data")); // unwind the list
+      // when one document is selected and part of text is selected
+      if (begin.isPresent() && end.isPresent()) {
+        operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
+        operations.add(match(new Criteria("data.begin").gt(
+            Integer.parseInt(begin.get())))); // include only lemma in begin and end
+      }
+      operations.add(group("data." + valueString).count().as("count"));
+      operations.add(match(new Criteria("count").gte(limit))); // limit
+      operations.add(sort(Sort.by(Sort.Direction.DESC, "count")));
+      operations.add(AddFieldsOperation.addField("date").withValue(this.findByNameGetOnlyDate(names[i]).get().getDate()).build()); // add date
+
+      Aggregation aggregation = newAggregation(operations);
+      AggregationResults<UIMATypesSummation> results = mongoTemplate.aggregate(aggregation,
+          "uimadocuments", UIMATypesSummation.class);
+      result.addAll(results.getMappedResults());
+    }
+
+    return result;
+  }
+
+
+  /**
+   * @param names
+   * @param limit
+   * @param begin
+   * @param end
+   * @return
+   */
   public List getLocationSummation(String[] names, int limit,
       Optional<String> begin, Optional<String> end) {
 
-    GeneralInfo generalInfo =  this.getGeneralInfo();
-    List<String> namedEntityTypes = generalInfo.getTypes().stream().filter(type -> type.toLowerCase().contains("entity") && !type.toLowerCase().contains("token")).collect(
-        Collectors.toList());
-
+    GeneralInfo generalInfo = this.getGeneralInfo();
+    List<String> namedEntityTypes = generalInfo.getTypes().stream().filter(
+            type -> type.toLowerCase().contains("entity") && !type.toLowerCase().contains("token"))
+        .collect(
+            Collectors.toList());
 
     // to store all aggregate operations
     List<AggregationOperation> operations = new ArrayList<>();
@@ -206,33 +278,5 @@ public class UimaDocumentService {
 
     return results.getMappedResults();
   }
-
-
-
-  /*
-  public List<UIMADocument> findAllWithKeys(List<String> types) {
-
-    // types has always only one element
-    // cast List to array because of include function (takes array as arg).
-    String[] typesAsArray = types.get(0).split(",");
-
-    Query query = new Query();
-    query.fields().include(typesAsArray[0]);
-
-    return mongoTemplate.find(query, UIMADocument.class);
-  }
-
-
-  public List<UIMADocument> findByIdWithKeys(List<String> types, String id) {
-    Query query = new Query();
-
-    String[] typesAsArray = types.get(0).split(",");
-    query.fields().include(typesAsArray); // only return included keys (types)
-    query.addCriteria(Criteria.where("_id").is(id)); // find document with id
-
-    return mongoTemplate.find(query, UIMADocument.class);
-  }
-
-   */
 
 }

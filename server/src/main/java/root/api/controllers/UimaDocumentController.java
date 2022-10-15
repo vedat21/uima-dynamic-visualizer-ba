@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import root.api.repositories.UimaDocumentRepository;
 import root.api.services.UimaDocumentService;
 import root.entities.GeneralInfo;
 import root.entities.UIMADocument;
@@ -27,25 +28,28 @@ public class UimaDocumentController {
 
   @Autowired
   private UimaDocumentService uimaDocumentService;
+  @Autowired
+  private UimaDocumentRepository uimaDocumentRepository;
 
   @PostMapping("/documents")
   public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
     return uimaDocumentService.putNewUimaDocument(uimaDocument);
   }
 
+  @GetMapping("/text/{name}")
+  public Object getTextFromOne(@PathVariable String name) {
+    return uimaDocumentService.getTextFromOne(name);
+  }
+
+
   /**
-   * To get all document names that are stored in db
+   * To get all document names that are stored in db with given groupname
    *
    * @return
    */
   @GetMapping("/documents/all/namesandgroup")
   public List<UIMADocument> getAllDocumentNamesAndGroups() {
     return uimaDocumentService.getAllDocumentNamesAndGroups();
-  }
-
-  @GetMapping("/text/{name}")
-  public Object getTextFromOne(@PathVariable String name) {
-    return uimaDocumentService.getTextFromOne(name);
   }
 
 
@@ -119,14 +123,62 @@ public class UimaDocumentController {
     }
 
     Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
-
-
     return result;
   }
 
   /**
    * to get summed data of the given types.
    *
+   * @param types
+   * @return
+   */
+  @GetMapping("/documents/sumbydate")
+  public List<UIMATypesSummation> getTypesSummationByDate(
+      @RequestParam Optional<String> types,
+      @RequestParam(defaultValue = "0") String limit,
+      @RequestParam Optional<String> names,
+      @RequestParam Optional<String> begin,
+      @RequestParam Optional<String> end
+
+  ) {
+
+
+    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+    // for posvalue saved as tokenValue
+    List<String> posValueTypes = new ArrayList<>();
+    // for value
+    List<String> allTypes = new ArrayList<>();
+
+    for (int i = 0; i < typesAsArray.length; i++) {
+      if (typesAsArray[i].endsWith("TokenValue")) {
+        posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
+      } else {
+        allTypes.add(typesAsArray[i]);
+      }
+    }
+
+    List<UIMATypesSummation> result = new ArrayList<>();
+    if (posValueTypes.size() != 0) {
+      result.addAll(uimaDocumentService.getTypesSummationByDate(
+          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
+          "tokenValue"));
+    }
+    if (allTypes.size() != 0) {
+      result.addAll(uimaDocumentService.getTypesSummationByDate(
+          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
+          "value"));
+    }
+
+    Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+
+    return result;
+  }
+
+  /**
+   * to get summed data of locations only.
+   * For World map visualization only
    * @return
    */
   @GetMapping("/documents/sum/locations")
@@ -144,37 +196,5 @@ public class UimaDocumentController {
         end);
   }
 
+
 }
-
-
-
-
-   /*
-   * returns document with given id. if params types is given then only data for these types(keys)
-   * is available. others are null
-   *
-
-  @GetMapping("/documents/{id}")
-  public List<UIMADocument> findByIdWithKeys(@RequestParam Optional<String> types,
-      @PathVariable String id) {
-    if (types.isEmpty()) {
-      return uimaDocumentService.findById(id).stream().collect(Collectors.toList());
-    } else {
-      return uimaDocumentService.findByIdWithKeys(types.stream().collect(Collectors.toList()), id);
-    }
-  }
-
-
-   * returns all documents. if params types is given then only data for these types(keys) is
-   * available. others are null
-   *
-  @GetMapping("/documents/all")
-  public List<UIMADocument> findAllWithKeys(@RequestParam Optional<String> types) {
-    if (types.isEmpty()) {
-      return uimaDocumentService.findAll();
-    } else {
-      return uimaDocumentService.findAllWithKeys(types.stream().collect(Collectors.toList()));
-    }
-  }
-  */
-

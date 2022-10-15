@@ -21,7 +21,12 @@ public interface UimaDocumentRepository extends MongoRepository<UIMADocument, St
     @Query(value = "{}", count = true)
     int countAll();
     Optional<UIMADocument> deleteByName(String name);
+
     Optional<UIMADocument> findByName(String name);
+
+    @Query(value = "{}", fields = "{ 'date' : 1 }")
+    Optional<UIMADocument> findByNameOrTypes(String name);
+
 }
 
 
