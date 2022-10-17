@@ -7,6 +7,8 @@ import {apiEndpoints} from "../../helper/envConst";
 
 // Alle möglichen Visualisierungskomponenten
 const optionsVisualization = [
+  {value: 'stackedareachart', label: 'Stacked Area Chart'},
+  {value: 'horizonchart', label: 'Horizon Chart'},
   {value: 'areachart', label: 'Area Chart'},
   {value: 'barchart', label: 'Bar Chart'},
   {value: 'bubblechart', label: 'Bubble Chart'},

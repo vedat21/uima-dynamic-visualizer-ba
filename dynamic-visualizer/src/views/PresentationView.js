@@ -87,11 +87,14 @@ function PresentationView(props) {
 
     // difference between chart component and other
     if (selectedVisualization.includes("chart") || selectedVisualization.includes("cloud")) {
+
+      const reqeuestParamSum = (selectedVisualization.includes("horizon") ||  selectedVisualization.includes("stackedarea"))  ? apiEndpoints.sumbydate : apiEndpoints.sum
+
       const dataToAdd = {
         id: uuid(),
         component: selectedVisualization,
-        // apiEndpoints.requestParamIds + "632351684ae9b57e41028424" der teil nicht in db speichern sondern von sidebar beziehen
-        url: apiEndpoints.basis + apiEndpoints.sum + selectedData
+        // bei visaulisierung mit 3 werten sumbydate wählen
+        url: apiEndpoints.basis + reqeuestParamSum + selectedData
             + apiEndpoints.requestParamNames,
         limit: 50,
         label: selectedData,

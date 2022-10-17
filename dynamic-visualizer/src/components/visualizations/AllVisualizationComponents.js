@@ -19,6 +19,11 @@ import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
 import WorldMapMarkCountries from "./other/WorldMapMarkCountries";
 import AreaChart from "./charts/AreaChart";
 import WordCloudComponent from "./text/WordCloudComponent";
+import TestBarChart from "../../test/newtest/TestBarChart";
+import HorizonAreaChart from "./charts/d3/HorizonAreaChart";
+import StackedAreaChart from "./charts/d3/StackedAreaChart";
+
+
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
 const components = {
@@ -37,6 +42,8 @@ const components = {
   "worldmapareas": WorldMapMarkAreas,
   "worldmapcountries": WorldMapMarkCountries,
   "wordcloud" : WordCloudComponent,
+  "horizonchart" : HorizonAreaChart,
+  "stackedareachart" : StackedAreaChart,
 };
 
 /**
@@ -81,7 +88,7 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
 
       ]);
     } else {
-      console.log(visualization)
+      // height muss 100% sein wegen world map
       return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
         React.createElement(ChartTopBar, {
           key: uuid(),
@@ -102,7 +109,7 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
           selectedDocuments: selectedDocuments,
           lemmaBegin: lemmaBegin,
           lemmaEnd: lemmaEnd,
-          editable: editable
+          editable: editable,
         }),
 
       ]);

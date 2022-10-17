@@ -10,6 +10,7 @@ export const apiEndpoints = {
     basis : "http://localhost:8080/",
     presentations : "presentations/",
     sum : "documents/sum?types=",
+    sumbydate : "documents/sumbydate?types=",
     sumLocation: "documents/sum/locations?",
     requestParamLimit : "&limit=",
     documents: "documents/",
