@@ -20,3 +20,5 @@ Präsentationen lassen sich öffnen indem auf das erste icon in der Reihe klickt
 Befindet man sich im Editormodus kann man neue Visualisierungen erstellen, dynamisch die Posistion und Größe der Visualisierungen.
 Man kann auch auswählen welche Dokumente für die jeweilige Präsentation berücksichtigt werden soll. Dafür kann in der Präsentation selber das Burger Icon klicken und die einzelnen Dokumente auswählen.
 
+Möchte man neue Visualisierungen auswählen dann können dafür die zwei Felder genutzt werden. Man kann auswählen welche Daten visualisiert werden soll und welche Visualisierung dafür genutzt werden soll.
+
