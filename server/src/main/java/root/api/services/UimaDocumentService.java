@@ -185,7 +185,7 @@ public class UimaDocumentService {
    * @param valueString
    * @return
    */
-  public List getTypesSummationByDate(String[] types, int limit, String[] names,
+  public List<UIMATypesSummation> getTypesSummationByDate(String[] types, int limit, String[] names,
       Optional<String> begin, Optional<String> end, String valueString) {
 
     /*
@@ -220,7 +220,7 @@ public class UimaDocumentService {
             Integer.parseInt(begin.get())))); // include only lemma in begin and end
       }
       operations.add(group("data." + valueString).count().as("count"));
-      operations.add(match(new Criteria("count").gte(limit))); // limit
+    //  operations.add(match(new Criteria("count").gte(limit))); // limit
       operations.add(sort(Sort.by(Sort.Direction.DESC, "count")));
       operations.add(AddFieldsOperation.addField("date").withValue(this.findByNameGetOnlyDate(names[i]).get().getDate()).build()); // add date
 
@@ -230,7 +230,24 @@ public class UimaDocumentService {
       result.addAll(results.getMappedResults());
     }
 
-    return result;
+    // get all that are less then limit
+    List<UIMATypesSummation> removeFromResult = result;
+    List<UIMATypesSummation> removeFromResultFinished = removeFromResult.stream().filter(x -> x.getCount() < limit).collect(Collectors.toList());
+    List<String> remove = removeFromResultFinished.stream().map(UIMATypesSummation::getId).collect(Collectors.toList());
+
+    // to return
+    List<UIMATypesSummation> resultWithType = result;
+    List<UIMATypesSummation> endResult = new ArrayList<>();
+
+    // remove all that are in removeFromResult
+    for (UIMATypesSummation uimaTypesSummation : resultWithType){
+      if(!remove.contains(uimaTypesSummation.getId())){
+        endResult.add(uimaTypesSummation);
+      }
+    }
+
+    System.out.println(endResult);
+    return endResult;
   }
 
 

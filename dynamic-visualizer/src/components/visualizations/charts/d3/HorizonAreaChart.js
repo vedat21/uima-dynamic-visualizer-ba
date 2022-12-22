@@ -73,8 +73,6 @@ export default function HorizonAreaChart(props) {
         // Omit any data not present in the z-domain.
         const I = d3.range(X.length).filter(i => zDomain.has(Z[i]));
 
-        console.log(Z)
-
         // Compute height.
         const height = zDomain.size * size + marginTop + marginBottom;
 
@@ -102,7 +100,7 @@ export default function HorizonAreaChart(props) {
         .attr("font-family", "sans-serif")
         .attr("font-size", 10);
 
-        const g = svg.selectAll("g")
+        const g = svg.append("g").selectAll("g")
         .data(d3.group(I, i => Z[i]))
         .join("g")
         .attr("transform", (_, i) => `translate(0,${i * size + marginTop})`);
@@ -150,9 +148,9 @@ export default function HorizonAreaChart(props) {
       [response]
   );
 
+
   return (
         <svg id={id} ref={ref}>
-          <g></g>
         </svg>
   )
 }

@@ -24,6 +24,7 @@ const optionsVisualization = [
   {value: 'worldmapcountries', label: 'World Map With Countries'},
   {value: 'worldmapareas', label: 'World Map With Areas'},
   {value: 'wordcloud', label: 'Word Cloud'},
+
 ];
 
 /**

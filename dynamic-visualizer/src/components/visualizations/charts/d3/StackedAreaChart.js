@@ -8,16 +8,21 @@ import useGetData from "../../../../api_crud/useGetData";
 // https://observablehq.com/@d3/stacked-area-chart
 export default function StackedAreaChart(props) {
 
-  let requestUrl = props.url  +   props.selectedDocuments.join(",") + apiEndpoints.requestParamLimit + props.limit;
-  if (props.lemmaEnd !== 0 && props.selectedDocuments.length === 1){
-    requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end=" + props.lemmaEnd;
+  let requestUrl = props.url + props.selectedDocuments.join(",")
+      + apiEndpoints.requestParamLimit + props.limit;
+  if (props.lemmaEnd !== 0 && props.selectedDocuments.length === 1) {
+    requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end="
+        + props.lemmaEnd;
   }
   // make request to get data
   const {response, loading} = useGetData(requestUrl);
 
   // create unique id to select with d3 and reference with react
   // const rnd from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript/15456423
-  const rnd = (len, chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') => [...Array(len)].map(() => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
+  const rnd = (len,
+      chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') => [...Array(
+      len)].map(
+      () => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
   const id = rnd(15);
 
   const x = d => d3.timeParse("%d.%m.%Y")(d.date);
@@ -30,23 +35,18 @@ export default function StackedAreaChart(props) {
   const width = 640; // outer width, in pixels
   const height = 400; // outer height, in pixels
   const xType = d3.scaleUtc // type of x-scale
-  let xDomain; // [xmin, xmax]
   const xRange = [marginLeft, width - marginRight]; // [left, right]
   const yType = d3.scaleLinear; // type of y-scale
-  let yDomain; // [ymin, ymax]
   const yRange = [height - marginBottom, marginTop]; // [bottom, top]
-  let zDomain;// array of z-values
   const offset = d3.stackOffsetDiverging; // stack offset method
   const order = d3.stackOrderNone; // stack order method
   let xFormat; // a format specifier string for the x-axis
   let yFormat; // a format specifier for the y-axis
-  let yLabel; // a label for the y-axis
+  let yLabel = props.url.split("sumbydate?types=")[1] !== null ?  props.url.split("sumbydate?types=")[1].split("&names")[0] : "Title" // a label for the y-axis
   const colors = d3.schemeTableau10; // array of colors for z
-
 
   const ref = useD3(
       (svg) => {
-
 
         // display only data that is in more then one dataset
         const data = response.filter(item => response.filter(x => x.id === item.id).length > 1);
@@ -56,13 +56,13 @@ export default function StackedAreaChart(props) {
         const Y = d3.map(data, y);
         const Z = d3.map(data, z);
 
+        console.log(X);
+        console.log(Y);
+        console.log(Z);
+
         // Compute default x- and z-domains, and unique the z-domain.
-        if (xDomain === undefined) {
-          xDomain = d3.extent(X);
-        }
-        if (zDomain === undefined) {
-          zDomain = Z;
-        }
+        const xDomain = d3.extent(X);
+        let zDomain = Z;
         zDomain = new d3.InternSet(zDomain);
 
         // Omit any data not present in the z-domain.
@@ -82,15 +82,15 @@ export default function StackedAreaChart(props) {
         .map(s => s.map(d => Object.assign(d, {i: d.data[1].get(s.key)})));
 
         // Compute the default y-domain. Note: diverging stacks can be negative.
-        if (yDomain === undefined) {
-          yDomain = d3.extent(series.flat(2));
-        }
+         const yDomain = d3.extent(series.flat(2));
+
 
         // Construct scales and axes.
         const xScale = xType(xDomain, xRange);
         const yScale = yType(yDomain, yRange);
         const color = d3.scaleOrdinal(zDomain, colors);
-        const xAxis = d3.axisBottom(xScale).ticks(width / 80, xFormat).tickSizeOuter(
+        const xAxis = d3.axisBottom(xScale).ticks(width / 80,
+            xFormat).tickSizeOuter(
             0);
         const yAxis = d3.axisLeft(yScale).ticks(height / 50, yFormat);
 
@@ -99,8 +99,7 @@ export default function StackedAreaChart(props) {
         .y0(([y1]) => yScale(y1))
         .y1(([, y2]) => yScale(y2));
 
-
-        svg = d3.select("#"+id)
+        svg = d3.select("#" + id)
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [0, 0, width, height])
@@ -133,12 +132,14 @@ export default function StackedAreaChart(props) {
         .attr("transform", `translate(0,${height - marginBottom})`)
         .call(xAxis);
 
+
+
       },
       [response]
   );
   return (
-        <svg id={id} ref={ref}>
-        </svg>
+      <svg id={id} ref={ref}>
+      </svg>
   )
 
 }

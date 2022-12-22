@@ -15,10 +15,8 @@ export default function WordCloudComponent(props) {
   const {response, loading} = useGetData(requestUrl);
 
   const labels = (response.map(({id, count}) =>{
-    return {text: id, value: count  *100}
+    return {text: id, value: count  *30}
   }));
-
-  console.log(response);
 
 
   return (
