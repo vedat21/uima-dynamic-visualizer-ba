@@ -19,7 +19,6 @@ import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
 import WorldMapMarkCountries from "./other/WorldMapMarkCountries";
 import AreaChart from "./charts/AreaChart";
 import WordCloudComponent from "./text/WordCloudComponent";
-import TestBarChart from "../../test/newtest/TestBarChart";
 import HorizonAreaChart from "./charts/d3/HorizonAreaChart";
 import StackedAreaChart from "./charts/d3/StackedAreaChart";
 
