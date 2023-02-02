@@ -8,16 +8,41 @@ import lombok.Data;
 @Data
 public class UIMATypeMapper {
 
-  Integer id;
-  Integer begin;
-  Integer end;
-  String coarseValue;
-  String lemma;
-  String language;
-  String documentId;
-  String documentBaseUri;
-  String value;
-  String pos;
-  String tokenValue;
-
+    Integer begin;
+    Integer end;
+    Integer id;
+    String coarseValue;
+    String comment;
+    String dateDay;
+    String dateMonth;
+    String dateYear;
+    String definiteness;
+    String degree;
+    String DependencyType;
+    String Dependent;
+    String documentBaseUri;
+    String documentId;
+    String documentTitle;
+    String documentUri;
+    String flavor;
+    String gender;
+    String Governor;
+    String isLastSegment;
+    String language;
+    String lemma;
+    String mood;
+    String morph;
+    String number;
+    String order;
+    String pos;
+    String PosValue;
+    String pronType;
+    String reference;
+    String subtitle;
+    String tense;
+    String timestamp;
+    String tokenValue;
+    String value;
+    String verbForm;
+    String version;
 }

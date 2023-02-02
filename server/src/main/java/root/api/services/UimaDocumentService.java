@@ -70,7 +70,7 @@ public class UimaDocumentService {
       }
     }
 
-    return "No Text";
+    return "No available Text";
   }
 
   public List<UIMADocument> getAllDocumentNamesAndGroups() {
@@ -96,7 +96,7 @@ public class UimaDocumentService {
 
   /**
    * to get general information about the documents in collection. e.g how many documents are
-   * stored, what are the available uima types
+   * stored, what are the available uima types etc.
    *
    * @return
    */
@@ -197,7 +197,6 @@ public class UimaDocumentService {
     for (int i = 0; i < remainingTypes.length; i++) {
       remainingTypes[i] = "types." + types[i + 1];
     }
-
 
 
     // do aggregation for each document include date in aggregation

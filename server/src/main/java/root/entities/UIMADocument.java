@@ -109,6 +109,7 @@ public class UIMADocument {
    * @param pCas
    * @return
    * @author Giuessepe Abrami
+   * @modified Vedat Yildiz
    */
   public Map<String, List<UIMATypeMapper>> getTypesFromJcas(JCas pCas) {
     Map<String, List<UIMATypeMapper>> result = new HashMap<>();
@@ -141,6 +142,7 @@ public class UIMADocument {
    * @param pTop
    * @return
    * @author Giuessepe Abrami
+   * @modified Vedat Yildiz
    */
   UIMATypeMapper getDataFromTypeObject(TOP pTop) {
 
@@ -202,6 +204,9 @@ public class UIMADocument {
     if (rObject.has("PosValue")) {
       rObject.put("value", rObject.get("PosValue"));
     }
+
+    System.out.println(rObject.keySet());
+
     return gson.fromJson(rObject.toString(), UIMATypeMapper.class);
   }
 
