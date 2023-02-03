@@ -7,21 +7,22 @@ export const usedColors = {
 
 // stores api endpoints
 export const apiEndpoints = {
+    all: "all/",
     basis : "http://localhost:8080/",
+    copy: "copy/",
+    delete : "delete/",
+    documents: "documents/",
+    general: "general/",
+    namesandgroup: "namesandgroup/",
     presentations : "presentations/",
+    requestParamAttribute: "&attribute=",
+    requestParamLimit : "&limit=",
+    requestParamNames: "&names=",
     sum : "documents/sum?types=",
     sumbydate : "documents/sumbydate?types=",
     sumLocation: "documents/sum/locations?",
-    requestParamLimit : "&limit=",
-    documents: "documents/",
-    delete : "delete/",
-    general: "general/",
-    requestParamNames: "&names=",
-    all: "all/",
-    namesandgroup: "namesandgroup/",
-    upload: "upload/",
     text: "text/",
-    copy: "copy/",
+    upload: "upload/",
 }
 
 

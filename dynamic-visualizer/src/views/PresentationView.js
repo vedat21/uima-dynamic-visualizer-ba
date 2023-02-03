@@ -79,11 +79,11 @@ function PresentationView(props) {
   /**
    * adds component to view
    */
-  function addVisualization(selectedVisualization, selectedData) {
+  function addVisualization(selectedTypes, selectedAttribute, selectedVisualization) {
     saveLayout();
-    // if selectedData only contains one element then dont join
-    selectedData = Array.isArray(selectedData) ? selectedData.join()
-        : selectedData;
+    // if selectedTypes only contains one element then dont join
+    selectedTypes = Array.isArray(selectedTypes) ? selectedTypes.join()
+        : selectedTypes;
 
     // difference between chart component and other
     if (selectedVisualization.includes("chart") || selectedVisualization.includes("cloud")) {
@@ -94,10 +94,10 @@ function PresentationView(props) {
         id: uuid(),
         component: selectedVisualization,
         // bei visaulisierung mit 3 werten sumbydate wählen
-        url: apiEndpoints.basis + reqeuestParamSum + selectedData
+        url: apiEndpoints.basis + reqeuestParamSum + selectedTypes + apiEndpoints.requestParamAttribute + selectedAttribute
             + apiEndpoints.requestParamNames,
         limit: 50,
-        label: selectedData,
+        label: selectedTypes,
       };
       /* if bodydata is null then init list with only added data. else add to bodydata.
           (using concat to trigger rerender) */

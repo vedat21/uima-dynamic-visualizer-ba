@@ -14,10 +14,11 @@ import java.util.List;
 @Document(collection = "presentations")
 public class Presentation {
 
+
+    private List documents;
+    private List layout;
+    private List visualizations;
     @Id
     private String id;
     private String title;
-    private List layout;
-    private List visualizations;
-    private List documents;
 }

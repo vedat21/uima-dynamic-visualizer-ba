@@ -8,11 +8,11 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 public class UIMATypesSummation {
 
+    private int count;
+    private String date;
     @Id
-    String id;
-    String value;
-    int count;
-    String PosValue;
-    String date;
+    private String id;
+    private String PosValue;
+    private String value;
 
 }
