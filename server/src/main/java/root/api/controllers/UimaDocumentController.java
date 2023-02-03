@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,181 +21,184 @@ import root.entities.GeneralInfo;
 import root.entities.UIMADocument;
 import root.entities.UIMATypesSummation;
 
-
 @RestController
 @RequestMapping()
 @CrossOrigin(origins = "http://localhost:3000")
 public class UimaDocumentController {
 
-  @Autowired
-  private UimaDocumentService uimaDocumentService;
-  @Autowired
-  private UimaDocumentRepository uimaDocumentRepository;
+    @Autowired
+    private UimaDocumentService uimaDocumentService;
+    @Autowired
+    private UimaDocumentRepository uimaDocumentRepository;
 
-  @PostMapping("/documents")
-  public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
-    return uimaDocumentService.putNewUimaDocument(uimaDocument);
-  }
-
-  @GetMapping("/text/{name}")
-  public Object getTextFromOne(@PathVariable String name) {
-    return uimaDocumentService.getTextFromOne(name);
-  }
-
-
-  /**
-   * To get all document names that are stored in db with given groupname
-   *
-   * @return
-   */
-  @GetMapping("/documents/all/namesandgroup")
-  public List<UIMADocument> getAllDocumentNamesAndGroups() {
-    return uimaDocumentService.getAllDocumentNamesAndGroups();
-  }
-
-
-  /**
-   * ® to delete the collection
-   */
-  @GetMapping("/documents/delete")
-  public void removeCollection() {
-    uimaDocumentService.removeCollection();
-  }
-
-
-  /**
-   * to tell the client which keys (types) can be requested from uima documents and gives some
-   * information about the structure of the data
-   *
-   * @return
-   */
-  @GetMapping("/general")
-  public GeneralInfo getGeneralInformation() {
-    return uimaDocumentService.getGeneralInfo();
-  }
-
-  /**
-   * to get summed data of the given types.
-   *
-   * @param types
-   * @return
-   */
-  @GetMapping("/documents/sum")
-  public List<UIMATypesSummation> getTypesSummation(
-      @RequestParam Optional<String> types,
-      @RequestParam(defaultValue = "0") String limit,
-      @RequestParam Optional<String> names,
-      @RequestParam Optional<String> begin,
-      @RequestParam Optional<String> end
-
-  ) {
-
-    // Für Orte
-    if (types.get().toLowerCase().contains("loc")) {
-      return this.getLocationSummation(names, limit, begin, end);
+    @PostMapping("/documents")
+    public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
+        return uimaDocumentService.putNewUimaDocument(uimaDocument);
     }
 
-    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
-    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
-
-    // for posvalue saved as tokenValue
-    List<String> posValueTypes = new ArrayList<>();
-    // for value
-    List<String> allTypes = new ArrayList<>();
-
-    for (int i = 0; i < typesAsArray.length; i++) {
-      if (typesAsArray[i].endsWith("TokenValue")) {
-        posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
-      } else {
-        allTypes.add(typesAsArray[i]);
-      }
+    @GetMapping("/text/{name}")
+    public Object getTextFromOne(@PathVariable String name) {
+        return uimaDocumentService.getTextFromOne(name);
     }
 
-    List<UIMATypesSummation> result = new ArrayList<>();
-    if (posValueTypes.size() != 0) {
-      result.addAll(uimaDocumentService.getTypesSummation(
-          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
-          "tokenValue"));
-    }
-    if (allTypes.size() != 0) {
-      result.addAll(uimaDocumentService.getTypesSummation(
-          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
-          "value"));
+    /**
+     * To get all document names that are stored in db with given groupname
+     *
+     * @return
+     */
+    @GetMapping("/documents/all/namesandgroup")
+    public List<UIMADocument> getAllDocumentNamesAndGroups() {
+        return uimaDocumentService.getAllDocumentNamesAndGroups();
     }
 
-    Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
-    return result;
-  }
-
-  /**
-   * to get summed data of the given types.
-   *
-   * @param types
-   * @return
-   */
-  @GetMapping("/documents/sumbydate")
-  public List<UIMATypesSummation> getTypesSummationByDate(
-      @RequestParam Optional<String> types,
-      @RequestParam(defaultValue = "0") String limit,
-      @RequestParam Optional<String> names,
-      @RequestParam Optional<String> begin,
-      @RequestParam Optional<String> end
-
-  ) {
-
-
-    String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
-    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
-
-    // for posvalue saved as tokenValue
-    List<String> posValueTypes = new ArrayList<>();
-    // for value
-    List<String> allTypes = new ArrayList<>();
-
-    for (int i = 0; i < typesAsArray.length; i++) {
-      if (typesAsArray[i].endsWith("TokenValue")) {
-        posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
-      } else {
-        allTypes.add(typesAsArray[i]);
-      }
+    /**
+     * to delete the collection
+     */
+    @GetMapping("/documents/delete")
+    public void removeCollection() {
+        uimaDocumentService.removeCollection();
     }
 
-    List<UIMATypesSummation> result = new ArrayList<>();
-    if (posValueTypes.size() != 0) {
-      result.addAll(uimaDocumentService.getTypesSummationByDate(
-          posValueTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
-          "tokenValue"));
+    /**
+     * to tell the client which keys (types) can be requested from uima documents and gives some
+     * information about the structure of the data
+     *
+     * @return
+     */
+    @GetMapping("/general")
+    public GeneralInfo getGeneralInformation() {
+        return uimaDocumentService.getGeneralInfo();
     }
-    if (allTypes.size() != 0) {
-      result.addAll(uimaDocumentService.getTypesSummationByDate(
-          allTypes.toArray(new String[0]), Integer.parseInt(limit), namesAsArray, begin, end,
-          "value"));
+
+    /**
+     * to get summed data of the given types.
+     *
+     * @param types
+     * @return
+     */
+    @GetMapping("/documents/sum")
+    public List<UIMATypesSummation> getTypesSummation(@RequestParam Optional<String> types,
+        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end,
+        @RequestParam Optional<String> attribute) {
+
+        // Für Orte
+        if (types.get().toLowerCase().contains("loc")) {
+            return this.getLocationSummation(names, limit, begin, end);
+        }
+
+        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+        return uimaDocumentService.getTypesSummationNew(typesAsArray, Integer.parseInt(limit), namesAsArray, begin, end,
+            attribute.get());
     }
 
-    Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+    /**
+     * to get summed data of the given types.
+     *
+     * @param types
+     * @return
+     */
+    @GetMapping("/documents/sumbydate")
+    public List<UIMATypesSummation> getTypesSummationByDate(@RequestParam Optional<String> types,
+        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
 
-    return result;
-  }
+        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
-  /**
-   * to get summed data of locations only.
-   * For World map visualization only
-   * @return
-   */
-  @GetMapping("/documents/sum/locations")
-  public List<UIMATypesSummation> getLocationSummation(
-      @RequestParam Optional<String> names,
-      @RequestParam(defaultValue = "0") String limit,
-      @RequestParam Optional<String> begin,
-      @RequestParam Optional<String> end
+        // for posvalue saved as tokenValue
+        List<String> posValueTypes = new ArrayList<>();
+        // for value
+        List<String> allTypes = new ArrayList<>();
 
-  ) {
+        for (int i = 0; i < typesAsArray.length; i++) {
+            if (typesAsArray[i].endsWith("TokenValue")) {
+                posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
+            } else {
+                allTypes.add(typesAsArray[i]);
+            }
+        }
 
-    String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+        List<UIMATypesSummation> result = new ArrayList<>();
+        if (posValueTypes.size() != 0) {
+            result.addAll(uimaDocumentService.getTypesSummationByDate(posValueTypes.toArray(new String[0]),
+                Integer.parseInt(limit), namesAsArray, begin, end, "tokenValue"));
+        }
+        if (allTypes.size() != 0) {
+            result.addAll(
+                uimaDocumentService.getTypesSummationByDate(allTypes.toArray(new String[0]), Integer.parseInt(limit),
+                    namesAsArray, begin, end, "value"));
+        }
 
-    return uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin,
-        end);
-  }
+        Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
 
+        return result;
+    }
+
+    /**
+     * to get summed data of locations only.
+     * For World map visualization only
+     *
+     * @return
+     */
+    @GetMapping("/documents/sum/locations")
+    public List<UIMATypesSummation> getLocationSummation(@RequestParam Optional<String> names,
+        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
+        @RequestParam Optional<String> end) {
+
+        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+        return uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin, end);
+    }
+
+
+
+
+    /*
+
+    @GetMapping("/documents/sum")
+    public List<UIMATypesSummation> getTypesSummation(@RequestParam Optional<String> types,
+        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
+
+        // Für Orte
+        if (types.get().toLowerCase().contains("loc")) {
+            return this.getLocationSummation(names, limit, begin, end);
+        }
+
+        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+        // for posvalue saved as tokenValue
+        List<String> posValueTypes = new ArrayList<>();
+        // for value
+        List<String> allTypes = new ArrayList<>();
+
+        for (int i = 0; i < typesAsArray.length; i++) {
+            if (typesAsArray[i].endsWith("TokenValue")) {
+                posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
+            } else {
+                allTypes.add(typesAsArray[i]);
+            }
+        }
+
+        List<UIMATypesSummation> result = new ArrayList<>();
+        if (posValueTypes.size() != 0) {
+            result.addAll(
+                uimaDocumentService.getTypesSummation(posValueTypes.toArray(new String[0]), Integer.parseInt(limit),
+                    namesAsArray, begin, end, "tokenValue"));
+        }
+        if (allTypes.size() != 0) {
+            result.addAll(
+                uimaDocumentService.getTypesSummation(allTypes.toArray(new String[0]), Integer.parseInt(limit),
+                    namesAsArray, begin, end, "value"));
+        }
+
+        Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+        return result;
+    }
+    */
 
 }
