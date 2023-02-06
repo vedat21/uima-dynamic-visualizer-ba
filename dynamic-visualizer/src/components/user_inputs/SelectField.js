@@ -3,7 +3,6 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
 
-
 /**
  * @param props
  * @returns {JSX.Element}
@@ -20,12 +19,11 @@ function SelectForm(props) {
      */
     function handleChange(selectedData) {
         // if multiple data is selected than save only the values in a list
-        if (props.isMulti){
+        if (props.isMulti) {
             props.setSelectedOption(selectedData.map(({value}) => {
                 return value
             }));
-        }
-        else{
+        } else {
             props.setSelectedOption(selectedData.value);
         }
     }
