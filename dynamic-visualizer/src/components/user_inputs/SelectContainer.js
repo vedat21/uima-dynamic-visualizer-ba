@@ -7,12 +7,11 @@ import {apiEndpoints} from "../../helper/envConst";
 
 // Alle möglichen Visualisierungskomponenten
 const optionsVisualization = [
-    {value: 'stackedareachart', label: 'Stacked Area Chart'},
-    {value: 'horizonchart', label: 'Horizon Chart'},
     {value: 'areachart', label: 'Area Chart'},
     {value: 'barchart', label: 'Bar Chart'},
     {value: 'bubblechart', label: 'Bubble Chart'},
     {value: 'doughnutchart', label: 'Doughnut Chart'},
+    {value: 'horizonchart', label: 'Horizon Chart'},
     {value: 'linechart', label: 'Line Chart'},
     {value: 'piechart', label: 'Pie Chart'},
     {value: 'polarareachart', label: 'Polar Area Chart'},
@@ -20,12 +19,20 @@ const optionsVisualization = [
     {value: 'radarchart', label: 'Radar Chart'},
     {value: 'textcomponent', label: 'Text'},
     {value: 'richtexteditor', label: 'Rich Text Editor'},
+    {value: 'stackedareachart', label: 'Stacked Area Chart'},
     {value: 'worldmapcities', label: 'World Map With Cities'},
     {value: 'worldmapcountries', label: 'World Map With Countries'},
     {value: 'worldmapareas', label: 'World Map With Areas'},
     {value: 'wordcloud', label: 'Word Cloud'},
 
 ];
+
+const optionsCategory = [
+    {value: 'summe', label: 'Summierte Visualisierung'},
+    {value: 'text', label: 'Text Visualisierung'},
+    {value: 'world', label: 'World Map Visualisierung'},
+    {value: 'zeit', label: 'Zeit Visualisierung'},
+]
 
 /**
  * container for number of input select.
@@ -39,9 +46,10 @@ function SelectContainer(props) {
         apiEndpoints.basis + apiEndpoints.general);
 
     // darin wird userauswahl gespeichert
-    const [selectedVisualization, setSelectedVisualization] = useState("");
     const [selectedTypes, setSelectedTypes] = useState("");
-    const [selectedAttribute, setSelectedAttribute] = useState("");
+    const [selectedAttributes, setSelectedAttributes] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedVisualization, setSelectedVisualization] = useState("");
 
 
     // lade optionen für daten die vom server bereitgestellt werden
@@ -54,29 +62,33 @@ function SelectContainer(props) {
         if (!loading && optionsType.length == 0) {
 
             response["types"].forEach((type) => {
+                /*
                 let label = type.split("_type_")[1]
                 // um schönere Label bei POS anzeigen
                 if (label.startsWith("pos_")) {
                     label = label.substring(4);
                 }
+                 */
 
-                optionsType.push({value: type, label: label})
+                optionsType.push({value: type, label: type.toUpperCase()})
+                optionsType.sort()
             })
 
             setOptionsAttribute(response["attributes"]);
-
-            // get location
-            optionsType.push({value: "location", label: "NamedEntity_Location"})
         }
     }, [response, optionsType, loading])
 
     function addVisualization() {
-        if (selectedTypes.length !== 0 || !selectedVisualization.includes("chart")) {
-            props.addVisualization(selectedTypes, selectedAttribute, selectedVisualization)
+        if (enableButton()) {
+            props.addVisualization(selectedTypes, selectedAttributes, selectedCategory, selectedVisualization)
         }
     }
 
-    function getAttributes() {
+    function enableButton() {
+        return selectedTypes.length !== 0 && selectedAttributes.length !== 0 && selectedCategory !== "" && selectedVisualization !== "";
+    }
+
+    function getMatchingAttributes() {
         let optionsAttributeFiltered = [];
         let optionsAttributeFilteredResult = [];
 
@@ -86,7 +98,7 @@ function SelectContainer(props) {
             }
         }
 
-        optionsAttributeFiltered = [...new Set(optionsAttributeFiltered)];
+        optionsAttributeFiltered = [...new Set(optionsAttributeFiltered)].sort();
         optionsAttributeFiltered.forEach((value) => {
             optionsAttributeFilteredResult.push({value: value, label: value})
         })
@@ -104,16 +116,28 @@ function SelectContainer(props) {
                 isMulti={true}
             />
             {
-                selectedTypes != "" && <SelectField
+                selectedTypes != "" &&
+                <SelectField
                     key={"attributes"}
-                    options={getAttributes()}
-                    selectedOption={selectedAttribute}
-                    setSelectedOption={setSelectedAttribute}
+                    options={getMatchingAttributes()}
+                    selectedOption={selectedAttributes}
+                    setSelectedOption={setSelectedAttributes}
+                    isMulti={true}
+                />
+            }
+            {
+                selectedAttributes != "" && selectedTypes != "" &&
+                <SelectField
+                    key={"category"}
+                    options={optionsCategory}
+                    selectedOption={selectedCategory}
+                    setSelectedOption={setSelectedCategory}
                     isMulti={false}
                 />
             }
             {
-                selectedAttribute != "" && selectedTypes != "" && <SelectField
+                selectedAttributes != "" && selectedTypes != "" && selectedCategory != "" &&
+                <SelectField
                     key={"visualizations"}
                     options={optionsVisualization}
                     selectedOption={selectedVisualization}
@@ -122,7 +146,7 @@ function SelectContainer(props) {
                 />
             }
             <Tooltip title={'Create new Visualization'}>
-                <Button color="inherit" onClick={addVisualization}>+CREATE</Button>
+                <Button color="inherit" onClick={addVisualization} disabled={!enableButton()}>+CREATE</Button>
             </Tooltip>
         </Box>
     )

@@ -8,13 +8,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import root.api.repositories.UimaDocumentRepository;
 import root.api.services.UimaDocumentService;
 import root.entities.GeneralInfo;
@@ -77,21 +73,31 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/sum")
-    public List<UIMATypesSummation> getTypesSummation(@RequestParam Optional<String> types,
+    public ResponseEntity<Object> getTypesSummation(@RequestParam Optional<String> types,
         @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
-        @RequestParam Optional<String> begin, @RequestParam Optional<String> end,
-        @RequestParam Optional<String> attribute) {
+        @RequestParam Optional<String> attributes, @RequestParam Optional<String> begin,
+        @RequestParam Optional<String> end) {
+
+
+        if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] atrributsAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
 
         // Für Orte
         if (types.get().toLowerCase().contains("loc")) {
-            return this.getLocationSummation(names, limit, begin, end);
+            return ResponseEntity.status(HttpStatus.OK).body(this.getLocationSummation(names, limit, begin, end));
         }
 
-        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
-        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+        System.out.println(uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), namesAsArray, atrributsAsArray,
+            begin, end));
 
-        return uimaDocumentService.getTypesSummationNew(typesAsArray, Integer.parseInt(limit), namesAsArray, begin, end,
-            attribute.get());
+        return ResponseEntity.status(HttpStatus.OK).body(
+            uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), namesAsArray, atrributsAsArray,
+                begin, end));
+
     }
 
     /**

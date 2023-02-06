@@ -33,7 +33,13 @@ function SelectForm(props) {
     return (
         <Select
             className="select"
-            defaultValue={props.options[0]} // default is first option
+            styles={{
+                control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: !state.menuIsOpen ? 'grey' : 'red',
+
+                }),
+            }}
             onChange={handleChange}
             options={props.options}
             isMulti={props.isMulti}

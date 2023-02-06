@@ -2,6 +2,7 @@ package root.api.services;
 
 import java.util.stream.Collectors;
 
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -108,14 +109,15 @@ public class UimaDocumentService {
         // gets all types from types key
         uimaDocuments.forEach((uimaDocument -> {
             uimaDocument.getTypesNames().forEach((type) -> {
-                if ((type.toLowerCase().contains("pos") || type.toLowerCase().contains("entity") || type.toLowerCase()
-                    .contains("lemma")) && (!allKeys.contains(type))) {
+                if (!allKeys.contains(type)) {
                     allKeys.add(type);
                 }
             });
         }));
 
-        return new GeneralInfo(uimaDocumentRepository.countAll(), allKeys, uimaDocuments.get(0).getTypesAttributes());
+        return new GeneralInfo(
+            uimaDocumentRepository.countAll(), allKeys.stream().sorted().collect(Collectors.toList()),
+            uimaDocuments.get(0).getTypesAttributes());
     }
 
     /**
@@ -126,14 +128,14 @@ public class UimaDocumentService {
      * @param end
      * @return
      */
-    public List getTypesSummationNew(String[] types, int limit, String[] names, Optional<String> begin,
-        Optional<String> end, String attribute) {
+    public List getTypesSummation(String[] types, int limit, String[] names, String[] attributes,
+        Optional<String> begin, Optional<String> end) {
 
 
-    /*
-    param types is saved in two variable. One is a string and the other an array.
-    Because of build in aggregation "concatarray". All types are stored in objects types.
-    */
+        /*
+        param types is saved in two variable. One is a string and the other an array.
+        Because of build in aggregation "concatarray". All types are stored in objects types.
+        */
         String firstType = "types." + types[0]; // first entered type
         String[] remainingTypes = new String[types.length - 1]; // rest of them
         for (int i = 0; i < remainingTypes.length; i++) {
@@ -148,15 +150,27 @@ public class UimaDocumentService {
         // concat all selected types to one list named data
         operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
         operations.add(unwind("data")); // unwind the list
-        // when one document is selected and part of text is selected
+
+        // only when exactly one document is selected and part of text is selected
         if (begin.isPresent() && end.isPresent()) {
-            operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
+            operations.add(match(new Criteria("data.end").lte(Integer.parseInt(end.get()))));
             operations.add(match(
-                new Criteria("data.begin").gt(Integer.parseInt(begin.get())))); // include only lemma in begin and end
+                new Criteria("data.begin").gte(Integer.parseInt(begin.get())))); // include only lemma in begin and end
         }
-        operations.add(group("data." + attribute).count().as("count")); // count
+
+        // Only When Counts the Length of Token, Sentence, ..
+        if (attributes.length == 2 && Arrays.asList(attributes).contains("begin") && Arrays.asList(attributes)
+            .contains("end")) {
+            operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
+            operations.add(group("length").count().as("count"));
+        }
+        // Standard Summation
+        else {
+            operations.add(group("data." + attributes[0]).count().as("count"));
+        }
+
         operations.add(match(new Criteria("count").gte(limit))); // limit
-        operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
+        operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
 
         Aggregation aggregation = newAggregation(operations);
         AggregationResults<UIMATypesSummation> results =

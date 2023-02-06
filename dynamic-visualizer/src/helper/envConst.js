@@ -15,7 +15,7 @@ export const apiEndpoints = {
     general: "general/",
     namesandgroup: "namesandgroup/",
     presentations : "presentations/",
-    requestParamAttribute: "&attribute=",
+    requestParamAttribute: "&attributes=",
     requestParamLimit : "&limit=",
     requestParamNames: "&names=",
     sum : "documents/sum?types=",
