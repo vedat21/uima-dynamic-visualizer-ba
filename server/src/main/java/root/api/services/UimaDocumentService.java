@@ -163,14 +163,15 @@ public class UimaDocumentService {
             .contains("end")) {
             operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
             operations.add(group("length").count().as("count"));
+            operations.add(sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
         }
         // Standard Summation
         else {
             operations.add(group("data." + attributes[0]).count().as("count"));
+            operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
         }
 
         operations.add(match(new Criteria("count").gte(limit))); // limit
-        operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
 
         Aggregation aggregation = newAggregation(operations);
         AggregationResults<UIMATypesSummation> results =

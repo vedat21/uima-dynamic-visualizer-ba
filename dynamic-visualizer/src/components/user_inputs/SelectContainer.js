@@ -3,7 +3,16 @@ import {Box, Button, Tooltip} from "@mui/material";
 import SelectField from "./SelectField";
 
 import useGetData from "../../api_crud/useGetData";
-import {apiEndpoints} from "../../helper/envConst";
+import {apiEndpoints, visualizationsValues} from "../../helper/envConst";
+
+
+const optionsCategory = [
+    {value: 'summe', label: 'Summierte Visualisierung'},
+    {value: 'text', label: 'Text Visualisierung'},
+    {value: 'rest', label: 'World Map Visualisierung'},
+    {value: 'zeit', label: 'Zeit Visualisierung'},
+]
+
 
 // Alle möglichen Visualisierungskomponenten
 const optionsVisualization = [
@@ -24,15 +33,31 @@ const optionsVisualization = [
     {value: 'worldmapcountries', label: 'World Map With Countries'},
     {value: 'worldmapareas', label: 'World Map With Areas'},
     {value: 'wordcloud', label: 'Word Cloud'},
-
 ];
 
-const optionsCategory = [
-    {value: 'summe', label: 'Summierte Visualisierung'},
-    {value: 'text', label: 'Text Visualisierung'},
-    {value: 'world', label: 'World Map Visualisierung'},
-    {value: 'zeit', label: 'Zeit Visualisierung'},
-]
+const optionsVisualizationSum = [
+    {value: 'areachart', label: 'Area Chart'},
+    {value: 'barchart', label: 'Bar Chart'},
+    {value: 'doughnutchart', label: 'Doughnut Chart'},
+    {value: 'linechart', label: 'Line Chart'},
+    {value: 'piechart', label: 'Pie Chart'},
+    {value: 'polarareachart', label: 'Polar Area Chart'},
+    {value: 'radarchart', label: 'Radar Chart'},
+];
+const optionsVisualizationText = [
+    {value: 'textcomponent', label: 'Text'},
+    {value: 'richtexteditor', label: 'Rich Text Editor'},
+    {value: 'wordcloud', label: 'Word Cloud'},
+];
+const optionsVisualizationTimes = [
+    {value: 'horizonchart', label: 'Horizon Chart'},
+    {value: 'stackedareachart', label: 'Stacked Area Chart'},
+];
+const optionsVisualizationRest = [
+    {value: 'worldmapcities', label: 'World Map With Cities'},
+    {value: 'worldmapcountries', label: 'World Map With Countries'},
+    {value: 'worldmapareas', label: 'World Map With Areas'},
+];
 
 /**
  * container for number of input select.
@@ -55,7 +80,6 @@ function SelectContainer(props) {
     // lade optionen für daten die vom server bereitgestellt werden
     let optionsType = [];
     const [optionsAttribute, setOptionsAttribute] = useState([]);
-    let optionsRelation = [];
 
     // packe daten von response in options*
     useEffect(async () => {
@@ -90,7 +114,7 @@ function SelectContainer(props) {
 
     function getMatchingAttributes() {
         let optionsAttributeFiltered = [];
-        let optionsAttributeFilteredResult = [];
+        let optionsMatchingAttributes = [];
 
         for (const [key, value] of Object.entries(optionsAttribute)) {
             if (selectedTypes.includes(key)) {
@@ -100,10 +124,23 @@ function SelectContainer(props) {
 
         optionsAttributeFiltered = [...new Set(optionsAttributeFiltered)].sort();
         optionsAttributeFiltered.forEach((value) => {
-            optionsAttributeFilteredResult.push({value: value, label: value})
+            optionsMatchingAttributes.push({value: value, label: value})
         })
 
-        return optionsAttributeFilteredResult
+        return optionsMatchingAttributes
+    }
+
+    function getMatchingVisualizations() {
+        if (selectedCategory === "summe") {
+            return optionsVisualizationSum;
+        } else if (selectedCategory === "text") {
+            return optionsVisualizationText;
+        } else if (selectedCategory === "zeit") {
+            return optionsVisualizationTimes;
+        } else {
+            return optionsVisualizationRest;
+        }
+
     }
 
     return (
@@ -139,7 +176,7 @@ function SelectContainer(props) {
                 selectedAttributes != "" && selectedTypes != "" && selectedCategory != "" &&
                 <SelectField
                     key={"visualizations"}
-                    options={optionsVisualization}
+                    options={getMatchingVisualizations()}
                     selectedOption={selectedVisualization}
                     setSelectedOption={setSelectedVisualization}
                     isMulti={false}
