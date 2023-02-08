@@ -92,7 +92,7 @@ public class UimaDocumentController {
         }
         String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
-        String[] atrributsAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] attributesAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
 
         // Für Orte
         if (types.get().toLowerCase().contains("loc")) {
@@ -100,8 +100,8 @@ public class UimaDocumentController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, atrributsAsArray, Integer.parseInt(limit),
-                begin, end));
+            uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, attributesAsArray,
+                Integer.parseInt(limit), begin, end));
 
     }
 
@@ -112,40 +112,27 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/sumbydate")
-    public List<UIMATypesSummation> getTypesSummationByDate(@RequestParam Optional<String> types,
-        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
-        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
+    public ResponseEntity<Object> getTypesSummationByDate(@RequestParam Optional<String> names,
+        @RequestParam Optional<String> types, @RequestParam Optional<String> attributes,
+        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
+        @RequestParam Optional<String> end) {
+
+        if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
         String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] attributesAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
 
-        // for posvalue saved as tokenValue
-        List<String> posValueTypes = new ArrayList<>();
         // for value
-        List<String> allTypes = new ArrayList<>();
-
-        for (int i = 0; i < typesAsArray.length; i++) {
-            if (typesAsArray[i].endsWith("TokenValue")) {
-                posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
-            } else {
-                allTypes.add(typesAsArray[i]);
-            }
-        }
-
-        List<UIMATypesSummation> result = new ArrayList<>();
-        if (posValueTypes.size() != 0) {
-            result.addAll(uimaDocumentService.getTypesSummationByDate(posValueTypes.toArray(new String[0]),
-                Integer.parseInt(limit), namesAsArray, begin, end, "tokenValue"));
-        }
-        if (allTypes.size() != 0) {
-            result.addAll(
-                uimaDocumentService.getTypesSummationByDate(allTypes.toArray(new String[0]), Integer.parseInt(limit),
-                    namesAsArray, begin, end, "value"));
-        }
+        List<UIMATypesSummation> result =
+            uimaDocumentService.getTypesSummationByDate(namesAsArray, typesAsArray, attributesAsArray,
+                Integer.parseInt(limit), begin, end);
 
         Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
 
-        return result;
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     /**

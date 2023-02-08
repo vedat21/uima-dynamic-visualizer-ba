@@ -214,11 +214,10 @@ public class UimaDocumentService {
      * @param names
      * @param begin
      * @param end
-     * @param valueString
      * @return
      */
-    public List<UIMATypesSummation> getTypesSummationByDate(String[] types, int limit, String[] names,
-        Optional<String> begin, Optional<String> end, String valueString) {
+    public List<UIMATypesSummation> getTypesSummationByDate(String[] names, String[] types, String[] attributes,
+        int limit, Optional<String> begin, Optional<String> end) {
 
     /*
     param types is saved in two variable. One is a string and the other an array.
@@ -241,13 +240,29 @@ public class UimaDocumentService {
             // concat all selected types to one list named data
             operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
             operations.add(unwind("data")); // unwind the list
+
             // when one document is selected and part of text is selected
             if (begin.isPresent() && end.isPresent()) {
                 operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
                 operations.add(match(new Criteria("data.begin").gt(
                     Integer.parseInt(begin.get())))); // include only lemma in begin and end
             }
-            operations.add(group("data." + valueString).count().as("count"));
+
+            // Only When Counts the Length of Token, Sentence, ..
+            if (attributes.length == 2 && Arrays.asList(attributes).contains("begin") && Arrays.asList(attributes)
+                .contains("end")) {
+                operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
+                operations.add(group("length").count().as("count"));
+                operations.add(
+                    sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
+
+            }
+            // Standard Summation
+            else {
+                operations.add(group("data." + attributes[0]).count().as("count"));
+                operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
+            }
+
             //  operations.add(match(new Criteria("count").gte(limit))); // limit
             operations.add(sort(Sort.by(Sort.Direction.DESC, "count")));
             operations.add(
@@ -260,7 +275,7 @@ public class UimaDocumentService {
             result.addAll(results.getMappedResults());
         }
 
-        // get all that are less then limit
+        // get all that are less than limit
         List<UIMATypesSummation> removeFromResult = result;
         List<UIMATypesSummation> removeFromResultFinished =
             removeFromResult.stream().filter(x -> x.getCount() < limit).collect(Collectors.toList());
