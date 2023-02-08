@@ -115,9 +115,36 @@ public class UimaDocumentService {
             });
         }));
 
-        return new GeneralInfo(
-            uimaDocumentRepository.countAll(), allKeys.stream().sorted().collect(Collectors.toList()),
-            uimaDocuments.get(0).getTypesAttributes());
+        return new GeneralInfo(uimaDocumentRepository.countAll(),
+            allKeys.stream().sorted().collect(Collectors.toList()), uimaDocuments.get(0).getTypesAttributes());
+    }
+
+    public List getTypes(String[] types, String[] names) {
+
+      /*
+        param types is saved in two variable. One is a string and the other an array.
+        Because of build in aggregation "concatarray". All types are stored in objects types.
+        */
+        String firstType = "types." + types[0]; // first entered type
+        String[] remainingTypes = new String[types.length - 1]; // rest of them
+        for (int i = 0; i < remainingTypes.length; i++) {
+            remainingTypes[i] = "types." + types[i + 1];
+        }
+
+        // to store all aggregate operations
+        List<AggregationOperation> operations = new ArrayList<>();
+
+        // query by name
+        operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
+        // concat all selected types to one list named data
+        operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
+        operations.add(unwind("data")); // unwind the list
+
+        operations.add(group("data.tokenValue").count().as("count"));
+        AggregationResults<UIMATypesSummation> results =
+            mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSummation.class);
+
+        return results.getMappedResults();
     }
 
     /**
@@ -128,9 +155,8 @@ public class UimaDocumentService {
      * @param end
      * @return
      */
-    public List getTypesSummation(String[] types, int limit, String[] names, String[] attributes,
+    public List getTypesSummation(String[] names, String[] types, String[] attributes, int limit,
         Optional<String> begin, Optional<String> end) {
-
 
         /*
         param types is saved in two variable. One is a string and the other an array.
@@ -163,7 +189,8 @@ public class UimaDocumentService {
             .contains("end")) {
             operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
             operations.add(group("length").count().as("count"));
-            operations.add(sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
+            operations.add(
+                sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
         }
         // Standard Summation
         else {
@@ -173,9 +200,8 @@ public class UimaDocumentService {
 
         operations.add(match(new Criteria("count").gte(limit))); // limit
 
-        Aggregation aggregation = newAggregation(operations);
         AggregationResults<UIMATypesSummation> results =
-            mongoTemplate.aggregate(aggregation, "uimadocuments", UIMATypesSummation.class);
+            mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSummation.class);
 
         return results.getMappedResults();
     }

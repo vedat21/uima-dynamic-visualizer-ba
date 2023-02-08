@@ -66,6 +66,15 @@ public class UimaDocumentController {
         return uimaDocumentService.getGeneralInfo();
     }
 
+    @GetMapping("/documents/single")
+    public ResponseEntity<Object> getTypes(@RequestParam Optional<String> types, @RequestParam Optional<String> names) {
+
+        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
+
+        return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.getTypes(typesAsArray, namesAsArray));
+    }
+
     /**
      * to get summed data of the given types.
      *
@@ -77,7 +86,6 @@ public class UimaDocumentController {
         @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
         @RequestParam Optional<String> attributes, @RequestParam Optional<String> begin,
         @RequestParam Optional<String> end) {
-
 
         if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -91,11 +99,8 @@ public class UimaDocumentController {
             return ResponseEntity.status(HttpStatus.OK).body(this.getLocationSummation(names, limit, begin, end));
         }
 
-        System.out.println(uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), namesAsArray, atrributsAsArray,
-            begin, end));
-
         return ResponseEntity.status(HttpStatus.OK).body(
-            uimaDocumentService.getTypesSummation(typesAsArray, Integer.parseInt(limit), namesAsArray, atrributsAsArray,
+            uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, atrributsAsArray, Integer.parseInt(limit),
                 begin, end));
 
     }
@@ -158,9 +163,6 @@ public class UimaDocumentController {
 
         return uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin, end);
     }
-
-
-
 
     /*
 

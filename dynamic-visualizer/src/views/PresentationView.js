@@ -83,9 +83,9 @@ function PresentationView(props) {
         selectedTypes = Array.isArray(selectedTypes) ? selectedTypes.join() : selectedTypes;
 
         // difference between chart component and other
-        if (selectedVisualization.includes("chart") || selectedVisualization.includes("cloud")) {
+        if (selectedCategory !== "text") {
 
-            const reqeuestParamSum = (selectedVisualization.includes("horizon") || selectedVisualization.includes("stackedarea")) ? apiEndpoints.sumbydate : apiEndpoints.sum
+            const reqeuestParamSum = selectedCategory === "zeit"  ? apiEndpoints.sumbydate : apiEndpoints.sum
 
             const dataToAdd = {
                 id: uuid(),
@@ -102,7 +102,9 @@ function PresentationView(props) {
             const dataToAdd = {
                 id: uuid(),
                 component: selectedVisualization,
-                content: "x"
+                content: "x",
+                url: apiEndpoints.basis + apiEndpoints.sum + selectedTypes + apiEndpoints.requestParamAttribute + selectedAttribute
+                    + apiEndpoints.requestParamNames,
             };
             /* if bodydata is null then init list with only added data. else add to bodydata.
                (using concat to trigger rerender) */

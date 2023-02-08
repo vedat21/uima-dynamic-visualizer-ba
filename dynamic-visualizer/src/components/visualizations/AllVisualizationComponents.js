@@ -21,6 +21,7 @@ import AreaChart from "./charts/AreaChart";
 import WordCloudComponent from "./text/WordCloudComponent";
 import HorizonAreaChart from "./charts/d3/HorizonAreaChart";
 import StackedAreaChart from "./charts/d3/StackedAreaChart";
+import TextHighlighted from "./text/TextHighlighted";
 
 
 
@@ -37,6 +38,7 @@ const components = {
   "radarchart": RadarChart,
   "richtexteditor": RichTextEditor,
   "textcomponent": DocumentText,
+  "highlightedtextcomponent": TextHighlighted,
   "worldmapcities": WorldMapMarkCities,
   "worldmapareas": WorldMapMarkAreas,
   "worldmapcountries": WorldMapMarkCountries,
@@ -82,7 +84,8 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
           lemmaBegin: lemmaBegin,
           setLemmaBegin: setLemmaBegin,
           setLemmaEnd: setLemmaEnd,
-          lemmaEnd: lemmaEnd
+          lemmaEnd: lemmaEnd,
+          url: visualization.url
         }),
 
       ]);

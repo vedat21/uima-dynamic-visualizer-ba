@@ -19,7 +19,6 @@ const useGetChartData = (label, url, limit, selectedDocuments, lemmaBegin, lemma
     if (lemmaEnd != 0 && selectedDocuments.length == 1){
         requestUrl = requestUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
     }
-    console.log(limit);
 
     // make request to get data
     const {response, loading} = useGetData(requestUrl);

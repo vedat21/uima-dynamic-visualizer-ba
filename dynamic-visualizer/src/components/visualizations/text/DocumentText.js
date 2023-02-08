@@ -43,13 +43,6 @@ function DocumentText(props) {
   )
 
   function handleSelectedText(selectedText) {
-
-    console.log(0 + "   " + props.lemmaBegin);
-    console.log(props.lemmaBegin + "   " + props.lemmaEnd);
-    console.log(props.lemmaEnd + "   " + text.length);
-
-    console.log(selectedText)
-
     const begin = text.indexOf(selectedText);
     const end = begin + selectedText.length;
 

@@ -4,6 +4,7 @@ import SelectField from "./SelectField";
 
 import useGetData from "../../api_crud/useGetData";
 import {apiEndpoints, visualizationsValues} from "../../helper/envConst";
+import TextHighlighted from "../visualizations/text/TextHighlighted";
 
 
 const optionsCategory = [
@@ -45,6 +46,7 @@ const optionsVisualizationSum = [
     {value: 'radarchart', label: 'Radar Chart'},
 ];
 const optionsVisualizationText = [
+    {value: 'highlightedtextcomponent', label: 'Highlighted Text'},
     {value: 'textcomponent', label: 'Text'},
     {value: 'richtexteditor', label: 'Rich Text Editor'},
     {value: 'wordcloud', label: 'Word Cloud'},
