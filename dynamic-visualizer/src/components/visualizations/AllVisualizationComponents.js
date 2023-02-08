@@ -24,27 +24,26 @@ import StackedAreaChart from "./charts/d3/StackedAreaChart";
 import TextHighlighted from "./text/TextHighlighted";
 
 
-
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
 const components = {
-  "areachart": AreaChart,
-  "barchart": BarChart,
-  "bubblechart": BubbleChart,
-  "doughnutchart": DoughnutChart,
-  "linechart": LineChart,
-  "piechart": PieChart,
-  "polarareachart": PolarAreaChart,
-  "scatterchart": ScatterChart,
-  "radarchart": RadarChart,
-  "richtexteditor": RichTextEditor,
-  "textcomponent": TextComponent,
-  "highlightedtextcomponent": TextHighlighted,
-  "worldmapcities": WorldMapMarkCities,
-  "worldmapareas": WorldMapMarkAreas,
-  "worldmapcountries": WorldMapMarkCountries,
-  "wordcloud" : WordCloudComponent,
-  "horizonchart" : HorizonAreaChart,
-  "stackedareachart" : StackedAreaChart,
+    "areachart": AreaChart,
+    "barchart": BarChart,
+    "bubblechart": BubbleChart,
+    "doughnutchart": DoughnutChart,
+    "linechart": LineChart,
+    "piechart": PieChart,
+    "polarareachart": PolarAreaChart,
+    "scatterchart": ScatterChart,
+    "radarchart": RadarChart,
+    "richtexteditor": RichTextEditor,
+    "textcomponent": TextComponent,
+    "highlightedtextcomponent": TextHighlighted,
+    "worldmapcities": WorldMapMarkCities,
+    "worldmapareas": WorldMapMarkAreas,
+    "worldmapcountries": WorldMapMarkCountries,
+    "wordcloud": WordCloudComponent,
+    "horizonchart": HorizonAreaChart,
+    "stackedareachart": StackedAreaChart,
 };
 
 /**
@@ -61,61 +60,61 @@ const components = {
  * @returns {React.ReactElement<{key}>}
  */
 export default (visualization, editable, onDeleteComponentClicked, limit, label,
-    changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
-    editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd) => {
+                changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
+                editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd) => {
 
-  if (typeof components[visualization.component] !== "undefined") {
-    // entweder erstell komponenten die texttopbar oder charttopbar entählt.
-    // hier texttopbar
-    if (visualization.component.includes("text")) {
-      return React.createElement("div", {key: uuid()}, [
-        React.createElement(TextTopBar, {
-          key: uuid(),
-          editable: editable,
-          onDeleteComponentClicked: onDeleteComponentClicked,
-        }),
-        React.createElement(components[visualization.component], {
-          key: uuid(),
-          label: label,
-          editable: editable,
-          content: richTextContent,
-          editRichtext: editRichtext,
-          selectedDocuments: selectedDocuments,
-          lemmaBegin: lemmaBegin,
-          setLemmaBegin: setLemmaBegin,
-          setLemmaEnd: setLemmaEnd,
-          lemmaEnd: lemmaEnd,
-          url: visualization.url
-        }),
+    if (typeof components[visualization.component] !== "undefined") {
+        // entweder erstell komponenten die texttopbar oder charttopbar entählt.
+        // hier texttopbar
+        if (visualization.component.includes("text")) {
+            return React.createElement("div", {key: uuid()}, [
+                React.createElement(TextTopBar, {
+                    key: uuid(),
+                    editable: editable,
+                    onDeleteComponentClicked: onDeleteComponentClicked,
+                }),
+                React.createElement(components[visualization.component], {
+                    key: uuid(),
+                    label: label,
+                    editable: editable,
+                    content: richTextContent,
+                    editRichtext: editRichtext,
+                    selectedDocuments: selectedDocuments,
+                    lemmaBegin: lemmaBegin,
+                    setLemmaBegin: setLemmaBegin,
+                    setLemmaEnd: setLemmaEnd,
+                    lemmaEnd: lemmaEnd,
+                    url: visualization.url,
+                }),
 
-      ]);
-    } else {
-      // height muss 100% sein wegen world map
-      return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
-        React.createElement(ChartTopBar, {
-          key: uuid(),
-          editable: editable,
-          onDeleteComponentClicked: onDeleteComponentClicked,
-          changeLimit: changeLimit,
-          editLabel: inputLabelAndLimit,
-          label: label,
-          limit: limit,
-          reverseEditLabel: handleOnClickInput,
-          changeLabel: changeLabel,
-        }),
-        React.createElement(components[visualization.component], {
-          key: uuid(),
-          label: label,
-          url: visualization.url,
-          limit: limit,
-          selectedDocuments: selectedDocuments,
-          lemmaBegin: lemmaBegin,
-          lemmaEnd: lemmaEnd,
-          editable: editable,
-        }),
+            ]);
+        } else {
+            // height muss 100% sein wegen world map
+            return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
+                React.createElement(ChartTopBar, {
+                    key: uuid(),
+                    editable: editable,
+                    onDeleteComponentClicked: onDeleteComponentClicked,
+                    changeLimit: changeLimit,
+                    editLabel: inputLabelAndLimit,
+                    label: label,
+                    limit: limit,
+                    reverseEditLabel: handleOnClickInput,
+                    changeLabel: changeLabel,
+                }),
+                React.createElement(components[visualization.component], {
+                    key: uuid(),
+                    label: label,
+                    url: visualization.url,
+                    limit: limit,
+                    selectedDocuments: selectedDocuments,
+                    lemmaBegin: lemmaBegin,
+                    lemmaEnd: lemmaEnd,
+                    editable: editable,
+                }),
 
-      ]);
+            ]);
+        }
+
     }
-
-  }
 }

@@ -14,7 +14,7 @@ function LayoutComponent(props) {
   const [limit, setLimit] = useState(
       props.visualization.limit ? props.visualization.limit : DEFAULTLIMIT);
   const [richTextContent, setRichTextContent] = useState(
-      props.visualization.content ? props.visualization.content : " ");
+      props.visualization.content ? props.visualization.content : "x");
   const [inputLabelAndLimit, setInputLabelAndLimit] = useState(false);
 
 

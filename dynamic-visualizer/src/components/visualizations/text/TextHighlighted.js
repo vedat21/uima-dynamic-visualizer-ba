@@ -12,7 +12,7 @@ export default function TextHighlighted(props) {
         props.selectedDocuments.toString());
 
     const {response: responseData} = useGetData(
-         props.url +
+        props.url +
         props.selectedDocuments.toString());
 
     const [wordsToHighlight, setWordsToHighlight] = useState([])
@@ -35,6 +35,7 @@ export default function TextHighlighted(props) {
                 let tx = ""
                 let lastLemmaEnd = responseText[0]["begin"];
                 responseText.forEach((lemma) => {
+                    // to get the correct whitespace betweenn token
                     for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
                         tx = tx + " ";
                     }
@@ -46,7 +47,7 @@ export default function TextHighlighted(props) {
 
 
                 responseData.forEach((data) => {
-                   wordsToHighlight.push(data.id)
+                    wordsToHighlight.push(data.id)
                 })
             }
         },
@@ -54,14 +55,16 @@ export default function TextHighlighted(props) {
     )
 
     return (
-        <Highlight
-            highlightClassName="highlight"
-            searchWords={loading ? [] : wordsToHighlight}
-            autoEscape={true}
-            caseSensitive={true}
-            textToHighlight={loading ? [] : text}
-            unhighlightStyle={{fontFamily: "sans-serif"}}
-            highlightedStyle={{fontFamily: "sans-serif"}}
-        />
+        <div className="textBorder">
+            <Highlight
+                highlightClassName="highlight"
+                searchWords={loading ? [] : wordsToHighlight}
+                autoEscape={true}
+                caseSensitive={true}
+                textToHighlight={loading ? [] : text}
+                unhighlightStyle={{fontFamily: "sans-serif"}}
+                highlightedStyle={{fontFamily: "sans-serif"}}
+            />
+        </div>
     )
 }

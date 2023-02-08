@@ -28,7 +28,8 @@ function TextComponent(props) {
           let tx = ""
           let lastLemmaEnd = response[0]["begin"];
           response.forEach((lemma) => {
-            for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
+              // to get the correct whitespace betweenn token
+              for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
               tx = tx + " ";
             }
             tx = tx + lemma.value;
@@ -61,7 +62,7 @@ function TextComponent(props) {
               }
             ]}
         />
-        <div>
+        <div className="textBorder">
           <span> {text.slice(0, props.lemmaBegin)}</span>
           <span style={{backgroundColor: "yellow"}}> {text.slice(
               props.lemmaBegin, props.lemmaEnd)}</span>

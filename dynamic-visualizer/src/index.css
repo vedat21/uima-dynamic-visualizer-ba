@@ -15,20 +15,20 @@ text {
     background-color: #faf9f7;
 }
 
-.top-bar{
+.top-bar {
     margin-bottom: 50px;
 }
 
-.select{
+.select {
     width: 100%;
     color: black;
 }
 
-.layout_editable{
+.layout_editable {
     margin-top: 110px;
 }
 
-.layout{
+.layout {
     margin-top: 10px;
 }
 
@@ -46,5 +46,12 @@ text {
 
 .highlight {
     background-color: greenyellow;
+}
+
+.textBorder {
+    border: 5px solid;
+    border-color: #7CB9E8;
+    padding: 15px;
+    border-radius: 10px;
 }
 
