@@ -21,34 +21,35 @@ import root.entities.UIMATypesSummation;
 @RequestMapping()
 @CrossOrigin(origins = "http://localhost:3000")
 public class UimaDocumentController {
-
     @Autowired
     private UimaDocumentService uimaDocumentService;
     @Autowired
     private UimaDocumentRepository uimaDocumentRepository;
 
+    /**
+     * To tell the client which types and attributes can be requested from uima documents and gives some
+     * information about the structure of the dataset.
+     *
+     * @return
+     */
+    @GetMapping("/general")
+    public GeneralInfo getGeneralInformation() {
+        return uimaDocumentService.getGeneralInfo();
+    }
+
+    /**
+     * To put a new UIMA Document in the database.
+     *
+     * @param uimaDocument
+     * @return
+     */
     @PostMapping("/documents")
     public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
         return uimaDocumentService.putNewUimaDocument(uimaDocument);
     }
 
-    @GetMapping("/text/{name}")
-    public Object getTextFromOne(@PathVariable String name) {
-        return uimaDocumentService.getTextFromOne(name);
-    }
-
     /**
-     * To get all document names that are stored in db with given groupname
-     *
-     * @return
-     */
-    @GetMapping("/documents/all/namesandgroup")
-    public List<UIMADocument> getAllDocumentNamesAndGroups() {
-        return uimaDocumentService.getAllDocumentNamesAndGroups();
-    }
-
-    /**
-     * to delete the collection
+     * To delete the collection.
      */
     @GetMapping("/documents/delete")
     public void removeCollection() {
@@ -56,14 +57,24 @@ public class UimaDocumentController {
     }
 
     /**
-     * to tell the client which keys (types) can be requested from uima documents and gives some
-     * information about the structure of the data
+     * To get the text from one document.
+     *
+     * @param name
+     * @return
+     */
+    @GetMapping("/text/{name}")
+    public Object getTextFromOne(@PathVariable String name) {
+        return uimaDocumentService.getTextFromOne(name);
+    }
+
+    /**
+     * To tell the client the documents that are stored in db with the given groupname.
      *
      * @return
      */
-    @GetMapping("/general")
-    public GeneralInfo getGeneralInformation() {
-        return uimaDocumentService.getGeneralInfo();
+    @GetMapping("/documents/all/namesandgroup")
+    public List<UIMADocument> getAllDocumentNamesAndGroups() {
+        return uimaDocumentService.getAllDocumentNamesAndGroups();
     }
 
     @GetMapping("/documents/single")
@@ -76,7 +87,7 @@ public class UimaDocumentController {
     }
 
     /**
-     * to get summed data of the given types.
+     * To get summed data of UIMA Documents.
      *
      * @param types
      * @return
@@ -106,7 +117,7 @@ public class UimaDocumentController {
     }
 
     /**
-     * to get summed data of the given types.
+     * To get summed data of UIMA Documents by date.
      *
      * @param types
      * @return
@@ -150,50 +161,4 @@ public class UimaDocumentController {
 
         return uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin, end);
     }
-
-    /*
-
-    @GetMapping("/documents/sum")
-    public List<UIMATypesSummation> getTypesSummation(@RequestParam Optional<String> types,
-        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
-        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
-
-        // Für Orte
-        if (types.get().toLowerCase().contains("loc")) {
-            return this.getLocationSummation(names, limit, begin, end);
-        }
-
-        String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
-        String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
-
-        // for posvalue saved as tokenValue
-        List<String> posValueTypes = new ArrayList<>();
-        // for value
-        List<String> allTypes = new ArrayList<>();
-
-        for (int i = 0; i < typesAsArray.length; i++) {
-            if (typesAsArray[i].endsWith("TokenValue")) {
-                posValueTypes.add(typesAsArray[i].replace("_TokenValue", ""));
-            } else {
-                allTypes.add(typesAsArray[i]);
-            }
-        }
-
-        List<UIMATypesSummation> result = new ArrayList<>();
-        if (posValueTypes.size() != 0) {
-            result.addAll(
-                uimaDocumentService.getTypesSummation(posValueTypes.toArray(new String[0]), Integer.parseInt(limit),
-                    namesAsArray, begin, end, "tokenValue"));
-        }
-        if (allTypes.size() != 0) {
-            result.addAll(
-                uimaDocumentService.getTypesSummation(allTypes.toArray(new String[0]), Integer.parseInt(limit),
-                    namesAsArray, begin, end, "value"));
-        }
-
-        Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
-        return result;
-    }
-    */
-
 }

@@ -3,7 +3,7 @@ import useGetData from "../../../api_crud/useGetData";
 import {apiEndpoints} from "../../../helper/envConst";
 import TextSelector from 'text-selection-react'
 
-function DocumentText(props) {
+function TextComponent(props) {
 
   const {response, loading} = useGetData(
       apiEndpoints.basis + apiEndpoints.text +
@@ -71,4 +71,4 @@ function DocumentText(props) {
   )
 }
 
-export default DocumentText;
+export default TextComponent;

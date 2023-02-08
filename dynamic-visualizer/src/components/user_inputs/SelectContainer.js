@@ -111,7 +111,7 @@ function SelectContainer(props) {
     }
 
     function enableButton() {
-        return selectedTypes.length !== 0 && selectedAttributes.length !== 0 && selectedCategory !== "" && selectedVisualization !== "";
+        return selectedTypes.length !== 0 && selectedAttributes.length !== 0 && selectedVisualization !== "";
     }
 
     function getMatchingAttributes() {
@@ -124,25 +124,23 @@ function SelectContainer(props) {
             }
         }
 
+        optionsAttributeFiltered.push("date")
         optionsAttributeFiltered = [...new Set(optionsAttributeFiltered)].sort();
         optionsAttributeFiltered.forEach((value) => {
             optionsMatchingAttributes.push({value: value, label: value})
         })
 
-        return optionsMatchingAttributes
+        return optionsMatchingAttributes.sort();
     }
 
     function getMatchingVisualizations() {
-        if (selectedCategory === "summe") {
+        if (selectedAttributes.length === 1) {
+            return optionsVisualizationSum.concat(optionsVisualizationText).concat(optionsVisualizationRest);
+        } else if (selectedAttributes.length === 2 && selectedAttributes.includes("begin") && selectedAttributes.includes("end")) {
             return optionsVisualizationSum;
-        } else if (selectedCategory === "text") {
-            return optionsVisualizationText;
-        } else if (selectedCategory === "zeit") {
+        } else if (selectedAttributes.length === 2 && selectedAttributes.includes("date")) {
             return optionsVisualizationTimes;
-        } else {
-            return optionsVisualizationRest;
         }
-
     }
 
     return (
@@ -166,16 +164,6 @@ function SelectContainer(props) {
             }
             {
                 selectedAttributes != "" && selectedTypes != "" &&
-                <SelectField
-                    key={"category"}
-                    options={optionsCategory}
-                    selectedOption={selectedCategory}
-                    setSelectedOption={setSelectedCategory}
-                    isMulti={false}
-                />
-            }
-            {
-                selectedAttributes != "" && selectedTypes != "" && selectedCategory != "" &&
                 <SelectField
                     key={"visualizations"}
                     options={getMatchingVisualizations()}

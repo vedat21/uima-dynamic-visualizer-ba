@@ -33,8 +33,14 @@ export default function TextHighlighted(props) {
 
             if (!loading) {
                 let tx = ""
+                let lastLemmaEnd = responseText[0]["begin"];
                 responseText.forEach((lemma) => {
-                    tx = tx + " " + lemma.value;
+                    for (let i = 0; i < (lemma.begin - lastLemmaEnd); i++) {
+                        tx = tx + " ";
+                    }
+                    tx = tx + lemma.value;
+
+                    lastLemmaEnd = lemma.end;
                 })
                 setText(tx)
 

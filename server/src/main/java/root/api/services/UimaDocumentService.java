@@ -24,8 +24,6 @@ import root.entities.UIMADocument;
 
 @Service
 public class UimaDocumentService {
-
-    // both variables are used for crud operation on mongodb
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
@@ -72,18 +70,24 @@ public class UimaDocumentService {
         return "No available Text";
     }
 
+    /**
+     * @return
+     */
     public List<UIMADocument> getAllDocumentNamesAndGroups() {
         Query query = new Query();
         query.fields().include("name").include("group");
         return mongoTemplate.find(query, UIMADocument.class);
     }
 
+    /**
+     * To delete the collection.
+     */
     public void removeCollection() {
         mongoTemplate.remove(new Query(), "uimadocuments");
     }
 
     /**
-     * put new uima document in db
+     * To put a new UIMA Document in the database.
      *
      * @param uimaDocument
      * @return
@@ -93,7 +97,7 @@ public class UimaDocumentService {
     }
 
     /**
-     * to get general information about the documents in collection. e.g how many documents are
+     * To get general information about the documents in collection. e.g how many documents are
      * stored, what are the available uima types etc.
      *
      * @return
@@ -119,6 +123,13 @@ public class UimaDocumentService {
             allKeys.stream().sorted().collect(Collectors.toList()), uimaDocuments.get(0).getTypesAttributes());
     }
 
+    /**
+     * To get all information of a given type.
+     *
+     * @param types
+     * @param names
+     * @return
+     */
     public List getTypes(String[] types, String[] names) {
 
       /*
@@ -148,6 +159,8 @@ public class UimaDocumentService {
     }
 
     /**
+     * To get the summed data of the given parameters.
+     *
      * @param types
      * @param limit
      * @param names
@@ -207,7 +220,7 @@ public class UimaDocumentService {
     }
 
     /**
-     * to get aggregation that includes date
+     * To get the summed data by date of the given parameters .
      *
      * @param types
      * @param limit
@@ -253,8 +266,8 @@ public class UimaDocumentService {
                 .contains("end")) {
                 operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
                 operations.add(group("length").count().as("count"));
-                operations.add(
-                    sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
+                operations.add(sort(
+                    Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
 
             }
             // Standard Summation
@@ -336,42 +349,4 @@ public class UimaDocumentService {
 
         return results.getMappedResults();
     }
-
-    /*
-    public List getTypesSummation(String[] types, int limit, String[] names, Optional<String> begin,
-        Optional<String> end, String valueString) {
-
-
-        String firstType = "types." + types[0]; // first entered type
-        String[] remainingTypes = new String[types.length - 1]; // rest of them
-        for (int i = 0; i < remainingTypes.length; i++) {
-            remainingTypes[i] = "types." + types[i + 1];
-        }
-
-        // to store all aggregate operations
-        List<AggregationOperation> operations = new ArrayList<>();
-
-        // query by name
-        operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
-        // concat all selected types to one list named data
-        operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
-        operations.add(unwind("data")); // unwind the list
-        // when one document is selected and part of text is selected
-        if (begin.isPresent() && end.isPresent()) {
-            operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
-            operations.add(match(
-                new Criteria("data.begin").gt(Integer.parseInt(begin.get())))); // include only lemma in begin and end
-        }
-        operations.add(group("data." + valueString).count().as("count")); // count
-        operations.add(match(new Criteria("count").gte(limit))); // limit
-        operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
-
-        Aggregation aggregation = newAggregation(operations);
-        AggregationResults<UIMATypesSummation> results =
-            mongoTemplate.aggregate(aggregation, "uimadocuments", UIMATypesSummation.class);
-
-        return results.getMappedResults();
-    }
-*/
-
 }

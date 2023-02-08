@@ -13,7 +13,7 @@ import ScatterChart from "./charts/ScatterChart";
 import RichTextEditor from "./text/RichTextEditor";
 import ChartTopBar from "./topbars/ChartTopBar";
 import TextTopBar from "./topbars/TextTopBar";
-import DocumentText from "./text/DocumentText";
+import TextComponent from "./text/TextComponent";
 import WorldMapMarkCities from "./other/WorldMapMarkCities";
 import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
 import WorldMapMarkCountries from "./other/WorldMapMarkCountries";
@@ -37,7 +37,7 @@ const components = {
   "scatterchart": ScatterChart,
   "radarchart": RadarChart,
   "richtexteditor": RichTextEditor,
-  "textcomponent": DocumentText,
+  "textcomponent": TextComponent,
   "highlightedtextcomponent": TextHighlighted,
   "worldmapcities": WorldMapMarkCities,
   "worldmapareas": WorldMapMarkAreas,
