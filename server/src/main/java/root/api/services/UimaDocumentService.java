@@ -169,7 +169,7 @@ public class UimaDocumentService {
      * @return
      */
     public List getTypesSummation(String[] names, String[] types, String[] attributes, int limit,
-        Optional<String> begin, Optional<String> end) {
+        Optional<String> begin, Optional<String> end, boolean isLocation) {
 
         /*
         param types is saved in two variable. One is a string and the other an array.
@@ -207,9 +207,13 @@ public class UimaDocumentService {
         }
         // Standard Summation
         else {
+            if (isLocation){
+                operations.add(match(new Criteria("data.value").is("LOC"))); // only named entity locations
+            }
             operations.add(group("data." + attributes[0]).count().as("count"));
             operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
         }
+
 
         operations.add(match(new Criteria("count").gte(limit))); // limit
 
@@ -268,7 +272,6 @@ public class UimaDocumentService {
                 operations.add(group("length").count().as("count"));
                 operations.add(sort(
                     Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
-
             }
             // Standard Summation
             else {
@@ -319,34 +322,17 @@ public class UimaDocumentService {
     public List getLocationSummation(String[] names, int limit, Optional<String> begin, Optional<String> end) {
 
         GeneralInfo generalInfo = this.getGeneralInfo();
+        String[] remainingTypes = new String[0]; // rest of them
         List<String> namedEntityTypes = generalInfo.getTypes().stream()
             .filter(type -> type.toLowerCase().contains("entity") && !type.toLowerCase().contains("token"))
             .collect(Collectors.toList());
 
-        // to store all aggregate operations
-        List<AggregationOperation> operations = new ArrayList<>();
+        String[] attributes = new String[1];
+        attributes[0] = "tokenValue";
 
-        // query by name
-        operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
-        // concat all selected types to one list named data
-        operations.add(project("types").and("types." + namedEntityTypes.get(0)).as("data"));
-        operations.add(unwind("data")); // unwind the list
-        // when one document is selected and part of text is selected
-        if (begin.isPresent() && end.isPresent()) {
-            operations.add(match(new Criteria("data.end").lt(Integer.parseInt(end.get()))));
-            operations.add(match(
-                new Criteria("data.begin").gt(Integer.parseInt(begin.get())))); // include only lemma in begin and end
-        }
-        operations.add(match(new Criteria("data.value").is("LOC"))); // only named entity locations
+        System.out.println(namedEntityTypes.get(0));
 
-        operations.add(group("data." + "tokenValue").count().as("count")); // count
-        operations.add(match(new Criteria("count").gte(limit))); // limit
-        operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sort
+        return this.getTypesSummation(names, namedEntityTypes.toArray(String[]::new), attributes, limit, begin, end, true);
 
-        Aggregation aggregation = newAggregation(operations);
-        AggregationResults<UIMATypesSummation> results =
-            mongoTemplate.aggregate(aggregation, "uimadocuments", UIMATypesSummation.class);
-
-        return results.getMappedResults();
     }
 }

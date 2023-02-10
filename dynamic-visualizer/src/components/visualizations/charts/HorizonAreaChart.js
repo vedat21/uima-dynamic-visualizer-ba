@@ -1,17 +1,17 @@
 import * as d3 from "d3";
-import useD3 from "../helper/useD3";
-import {apiEndpoints} from "../../../../helper/envConst";
-import useGetData from "../../../../api_crud/useGetData";
+import useD3 from "./helper/useD3";
+import {apiEndpoints} from "../../../helper/envConst";
+import useGetData from "../../../api_crud/useGetData";
 
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/stacked-area-chart
-// angepasst zu react komponente
+// Angepasst zu einer React Komponente
 export default function HorizonAreaChart(props) {
 
   let requestUrl = props.url  +   props.selectedDocuments.join(",") + apiEndpoints.requestParamLimit + props.limit;
-  if (props.lemmaEnd != 0 && props.selectedDocuments.length == 1){
+  if (props.lemmaEnd !== 0 && props.selectedDocuments.length === 1){
     requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end=" + props.lemmaEnd;
   }
   // make request to get data
@@ -150,7 +150,6 @@ export default function HorizonAreaChart(props) {
 
 
   return (
-        <svg id={id} ref={ref}>
-        </svg>
+        <svg id={id} ref={ref}/>
   )
 }

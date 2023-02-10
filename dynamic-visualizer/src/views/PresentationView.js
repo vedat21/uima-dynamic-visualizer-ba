@@ -76,16 +76,17 @@ function PresentationView(props) {
     /**
      * adds component to view
      */
-    function addVisualization(selectedTypes, selectedAttribute, selectedCategory, selectedVisualization) {
+    function addVisualization(selectedTypes, selectedAttribute, selectedVisualization, isText) {
 
         saveLayout();
         // if selectedTypes only contains one element then do not join
         selectedTypes = Array.isArray(selectedTypes) ? selectedTypes.join() : selectedTypes;
 
         // difference between chart component and other
-        if (selectedCategory !== "text") {
+        if (!isText) {
 
-            const reqeuestParamSum = selectedCategory === "zeit"  ? apiEndpoints.sumbydate : apiEndpoints.sum
+            const reqeuestParamSum = selectedVisualization === "horizonchart" || selectedVisualization === "stackedareachart" || selectedVisualization === "stackedbarchart" || selectedVisualization === "stackedhorizontalbarchart"
+                ? apiEndpoints.sumbydate : apiEndpoints.sum
 
             const dataToAdd = {
                 id: uuid(),
@@ -93,8 +94,8 @@ function PresentationView(props) {
                 // bei visaulisierung mit 3 werten sumbydate wählen
                 url: apiEndpoints.basis + reqeuestParamSum + selectedTypes + apiEndpoints.requestParamAttribute + selectedAttribute
                     + apiEndpoints.requestParamNames,
-                limit: 50,
-                label: selectedTypes,
+                limit: 10,
+                label: "↑ Frequency",
             };
             /* if bodydata is null then init list with only added data. else add to bodydata. (using concat to trigger rerender) */
             visualizations === null ? setVisualizations([dataToAdd]) : setVisualizations(visualizations.concat([dataToAdd]))

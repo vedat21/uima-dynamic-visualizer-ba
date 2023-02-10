@@ -1,7 +1,7 @@
 import * as d3 from "d3";
-import useD3 from "../helper/useD3";
-import {apiEndpoints} from "../../../../helper/envConst";
-import useGetData from "../../../../api_crud/useGetData";
+import useD3 from "./helper/useD3";
+import {apiEndpoints} from "../../../helper/envConst";
+import useGetData from "../../../api_crud/useGetData";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
@@ -42,23 +42,20 @@ export default function StackedAreaChart(props) {
   const order = d3.stackOrderNone; // stack order method
   let xFormat; // a format specifier string for the x-axis
   let yFormat; // a format specifier for the y-axis
-  let yLabel = props.url.split("sumbydate?types=")[1] !== null ?  props.url.split("sumbydate?types=")[1].split("&names")[0] : "Title" // a label for the y-axis
-  const colors = d3.schemeTableau10; // array of colors for z
+ // let yLabel = props.url.split("sumbydate?types=")[1] !== null ?  props.url.split("sumbydate?types=")[1].split("&names")[0] : "Title" // a label for the y-axis
+  let yLabel = props.label
+    const colors = d3.schemeTableau10; // array of colors for z
 
   const ref = useD3(
       (svg) => {
 
-        // display only data that is in more then one dataset
+        // display only data that is in more than one dataset
         const data = response.filter(item => response.filter(x => x.id === item.id).length > 1);
 
         // Compute values.
         const X = d3.map(data, x);
         const Y = d3.map(data, y);
         const Z = d3.map(data, z);
-
-        console.log(X);
-        console.log(Y);
-        console.log(Z);
 
         // Compute default x- and z-domains, and unique the z-domain.
         const xDomain = d3.extent(X);
@@ -138,8 +135,7 @@ export default function StackedAreaChart(props) {
       [response]
   );
   return (
-      <svg id={id} ref={ref}>
-      </svg>
+      <svg id={id} ref={ref}/>
   )
 
 }

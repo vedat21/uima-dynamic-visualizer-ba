@@ -2,11 +2,11 @@ import React from "react";
 import {v4 as uuid} from 'uuid';
 
 // custom modules
-import BarChart from "./charts/BarChart"
+import BarChartOld from "./notused/BarChartOld"
 import BubbleChart from "./charts/BubbleChart";
-import DoughnutChart from "./charts/DoughnutChart"
+import DoughnutChartOld from "./notused/DoughnutChartOld"
 import LineChart from "./charts/LineChart"
-import PieChart from "./charts/PieChart";
+import PieChartOld from "./notused/PieChartOld";
 import PolarAreaChart from "./charts/PolarAreaChart";
 import RadarChart from "./charts/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
@@ -19,9 +19,15 @@ import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
 import WorldMapMarkCountries from "./other/WorldMapMarkCountries";
 import AreaChart from "./charts/AreaChart";
 import WordCloudComponent from "./text/WordCloudComponent";
-import HorizonAreaChart from "./charts/d3/HorizonAreaChart";
-import StackedAreaChart from "./charts/d3/StackedAreaChart";
+import HorizonAreaChart from "./charts/HorizonAreaChart";
+import StackedAreaChart from "./charts/StackedAreaChart";
 import TextHighlighted from "./text/TextHighlighted";
+import PieChart from "./charts/PieChart";
+import DoughnutChart from "./charts/DoughnutChart";
+import BarChart from "./charts/BarChart";
+import StackedBarChart from "./charts/StackedBarChart";
+import HorizontalBarChart from "./charts/HorizontalBarChart";
+import StackedHorizontalBarChart from "./charts/StackedHorizontalBarChart";
 
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
@@ -30,20 +36,23 @@ const components = {
     "barchart": BarChart,
     "bubblechart": BubbleChart,
     "doughnutchart": DoughnutChart,
+    "highlightedtextcomponent": TextHighlighted,
+    "horizonchart": HorizonAreaChart,
+    "horizontalbarchart" : HorizontalBarChart,
     "linechart": LineChart,
     "piechart": PieChart,
     "polarareachart": PolarAreaChart,
-    "scatterchart": ScatterChart,
     "radarchart": RadarChart,
     "richtexteditor": RichTextEditor,
-    "textcomponent": TextComponent,
-    "highlightedtextcomponent": TextHighlighted,
-    "worldmapcities": WorldMapMarkCities,
-    "worldmapareas": WorldMapMarkAreas,
-    "worldmapcountries": WorldMapMarkCountries,
-    "wordcloud": WordCloudComponent,
-    "horizonchart": HorizonAreaChart,
+    "scatterchart": ScatterChart,
     "stackedareachart": StackedAreaChart,
+    "stackedbarchart": StackedBarChart,
+    "stackedhorizontalbarchart": StackedHorizontalBarChart,
+    "textcomponent": TextComponent,
+    "wordcloud": WordCloudComponent,
+    "worldmapareas": WorldMapMarkAreas,
+    "worldmapcities": WorldMapMarkCities,
+    "worldmapcountries": WorldMapMarkCountries,
 };
 
 /**

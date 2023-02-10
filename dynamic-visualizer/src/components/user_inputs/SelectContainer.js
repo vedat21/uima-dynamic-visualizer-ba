@@ -8,61 +8,47 @@ import TextHighlighted from "../visualizations/text/TextHighlighted";
 
 
 const optionsCategory = [
-    {value: 'summe', label: 'Summierte Visualisierung'},
+    {value: 'chart', label: 'Chart Visualisierung'},
     {value: 'text', label: 'Text Visualisierung'},
-    {value: 'rest', label: 'World Map Visualisierung'},
-    {value: 'zeit', label: 'Zeit Visualisierung'},
 ]
-
-
-// Alle möglichen Visualisierungskomponenten
-const optionsVisualization = [
-    {value: 'areachart', label: 'Area Chart'},
-    {value: 'barchart', label: 'Bar Chart'},
-    {value: 'bubblechart', label: 'Bubble Chart'},
-    {value: 'doughnutchart', label: 'Doughnut Chart'},
-    {value: 'horizonchart', label: 'Horizon Chart'},
-    {value: 'linechart', label: 'Line Chart'},
-    {value: 'piechart', label: 'Pie Chart'},
-    {value: 'polarareachart', label: 'Polar Area Chart'},
-    {value: 'scatterchart', label: 'Scatter Chart'},
-    {value: 'radarchart', label: 'Radar Chart'},
-    {value: 'textcomponent', label: 'Text'},
-    {value: 'richtexteditor', label: 'Rich Text Editor'},
-    {value: 'stackedareachart', label: 'Stacked Area Chart'},
-    {value: 'worldmapcities', label: 'World Map With Cities'},
-    {value: 'worldmapcountries', label: 'World Map With Countries'},
-    {value: 'worldmapareas', label: 'World Map With Areas'},
-    {value: 'wordcloud', label: 'Word Cloud'},
-];
 
 const optionsVisualizationSum = [
     {value: 'areachart', label: 'Area Chart'},
     {value: 'barchart', label: 'Bar Chart'},
+    {value: 'bubblechart', label: 'Bubble Chart'},
     {value: 'doughnutchart', label: 'Doughnut Chart'},
+    {value: 'horizontalbarchart', label: 'Horizontal Bar Chart'},
     {value: 'linechart', label: 'Line Chart'},
     {value: 'piechart', label: 'Pie Chart'},
     {value: 'polarareachart', label: 'Polar Area Chart'},
     {value: 'radarchart', label: 'Radar Chart'},
+    {value: 'scatterchart', label: 'Scatter Chart'},
+];
+const optionsVisualizationSumByGroup = [
+    {value: 'stackedhorizontalbarchart', label: 'Stacked Horizontal Bar Chart'},
+    {value: 'stackedbarchart', label: 'Stacked Bar Chart'},
+];
+const optionsVisualizationSumByTime = [
+    {value: 'horizonchart', label: 'Horizon Chart'},
+    {value: 'stackedareachart', label: 'Stacked Area Chart'},
 ];
 const optionsVisualizationText = [
-    {value: 'highlightedtextcomponent', label: 'Highlighted Text'},
     {value: 'textcomponent', label: 'Text'},
     {value: 'richtexteditor', label: 'Rich Text Editor'},
     {value: 'wordcloud', label: 'Word Cloud'},
 ];
-const optionsVisualizationTimes = [
-    {value: 'horizonchart', label: 'Horizon Chart'},
-    {value: 'stackedareachart', label: 'Stacked Area Chart'},
+const optionsVisualizationsTextHighlight = [
+    {value: 'highlightedtextcomponent', label: 'Highlighted Text'},
 ];
-const optionsVisualizationRest = [
+
+const optionsVisualizationMaps = [
     {value: 'worldmapcities', label: 'World Map With Cities'},
     {value: 'worldmapcountries', label: 'World Map With Countries'},
     {value: 'worldmapareas', label: 'World Map With Areas'},
 ];
 
 /**
- * container for number of input select.
+ * container for number of select inputs.
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -88,14 +74,6 @@ function SelectContainer(props) {
         if (!loading && optionsType.length == 0) {
 
             response["types"].forEach((type) => {
-                /*
-                let label = type.split("_type_")[1]
-                // um schönere Label bei POS anzeigen
-                if (label.startsWith("pos_")) {
-                    label = label.substring(4);
-                }
-                 */
-
                 optionsType.push({value: type, label: type.toUpperCase()})
                 optionsType.sort()
             })
@@ -105,8 +83,9 @@ function SelectContainer(props) {
     }, [response, optionsType, loading])
 
     function addVisualization() {
+        const isText = selectedVisualization === "highlightedtextcomponent" || selectedVisualization === "textcomponent" || selectedVisualization === "richtexteditor";
         if (enableButton()) {
-            props.addVisualization(selectedTypes, selectedAttributes, selectedCategory, selectedVisualization)
+            props.addVisualization(selectedTypes, selectedAttributes, selectedVisualization, isText)
         }
     }
 
@@ -135,18 +114,24 @@ function SelectContainer(props) {
 
     function getMatchingVisualizations() {
         if (selectedAttributes.length === 1) {
-            return optionsVisualizationSum.concat(optionsVisualizationText).concat(optionsVisualizationRest);
+            // Dann sollte World Map dabei sein.
+            if (selectedTypes.includes("de_tudarmstadt_ukp_dkpro_core_api_ner_type_NamedEntity") && selectedAttributes.includes("tokenValue")) {
+                return optionsVisualizationSum.concat(optionsVisualizationText).concat(optionsVisualizationMaps);
+            }
+            return optionsVisualizationSum.concat(optionsVisualizationText);
         } else if (selectedAttributes.length === 2 && selectedAttributes.includes("begin") && selectedAttributes.includes("end")) {
             return optionsVisualizationSum;
-        } else if (selectedAttributes.length === 2 && selectedAttributes.includes("date")) {
-            return optionsVisualizationTimes;
+        } else if (selectedAttributes.length === 2 && selectedAttributes.includes("date") || selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("date")) {
+            return optionsVisualizationSumByTime.concat(optionsVisualizationSumByGroup);
+        } else if (selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && !selectedAttributes.includes("date")) {
+            return optionsVisualizationsTextHighlight;
         }
     }
 
     return (
         <Box display="flex" sx={{m: 2}}>
             <SelectField
-                key={"types"}
+                key="types"
                 options={optionsType}
                 selectedOption={selectedTypes}
                 setSelectedOption={setSelectedTypes}
@@ -155,7 +140,7 @@ function SelectContainer(props) {
             {
                 selectedTypes != "" &&
                 <SelectField
-                    key={"attributes"}
+                    key="attributes"
                     options={getMatchingAttributes()}
                     selectedOption={selectedAttributes}
                     setSelectedOption={setSelectedAttributes}
@@ -165,7 +150,7 @@ function SelectContainer(props) {
             {
                 selectedAttributes != "" && selectedTypes != "" &&
                 <SelectField
-                    key={"visualizations"}
+                    key="visualizations"
                     options={getMatchingVisualizations()}
                     selectedOption={selectedVisualization}
                     setSelectedOption={setSelectedVisualization}

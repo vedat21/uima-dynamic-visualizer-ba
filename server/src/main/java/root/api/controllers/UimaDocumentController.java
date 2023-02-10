@@ -1,6 +1,5 @@
 package root.api.controllers;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -112,7 +111,7 @@ public class UimaDocumentController {
 
         return ResponseEntity.status(HttpStatus.OK).body(
             uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, attributesAsArray,
-                Integer.parseInt(limit), begin, end));
+                Integer.parseInt(limit), begin, end, false));
 
     }
 
@@ -153,7 +152,7 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/sum/locations")
-    public List<UIMATypesSummation> getLocationSummation(@RequestParam Optional<String> names,
+    public List getLocationSummation(@RequestParam Optional<String> names,
         @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
         @RequestParam Optional<String> end) {
 

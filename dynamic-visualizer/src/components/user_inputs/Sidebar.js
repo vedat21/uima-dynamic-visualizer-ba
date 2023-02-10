@@ -62,7 +62,7 @@ function SideBar(props) {
         {
             props.useCase == "navigation" &&
             <Menu styles={stylesNavigation}>
-              <input type="file" id="ctrl" webkitdirectory="true" directory multiple
+              <input type="file" id="ctrl" webkitdirectory directory multiple
                      onChange={handleChange}
               />
               <Tooltip placement="bottom"
