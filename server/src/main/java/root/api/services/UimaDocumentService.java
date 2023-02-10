@@ -2,7 +2,6 @@ package root.api.services;
 
 import java.util.stream.Collectors;
 
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -48,10 +47,10 @@ public class UimaDocumentService {
         return uimaDocumentRepository.findById(id);
     }
 
-    public Optional<UIMADocument> findByNameGetOnlyDate(String name) {
+    public Optional<UIMADocument> findByNameGetOnlyDate(String name, String group) {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").is(name));
-        query.fields().include("date");
+        query.fields().include(group);
         List<UIMADocument> uimaDocuments = mongoTemplate.find(query, UIMADocument.class);
         return Optional.ofNullable(uimaDocuments.get(0));
     }
@@ -233,7 +232,7 @@ public class UimaDocumentService {
      * @param end
      * @return
      */
-    public List<UIMATypesSummation> getTypesSummationByDate(String[] names, String[] types, String[] attributes,
+    public List<UIMATypesSummation> getTypesSummationByGroup(String[] names, String[] types, String[] attributes,
         int limit, Optional<String> begin, Optional<String> end) {
 
     /*
@@ -281,9 +280,16 @@ public class UimaDocumentService {
 
             //  operations.add(match(new Criteria("count").gte(limit))); // limit
             operations.add(sort(Sort.by(Sort.Direction.DESC, "count")));
-            operations.add(
-                AddFieldsOperation.addField("date").withValue(this.findByNameGetOnlyDate(names[i]).get().getDate())
-                    .build()); // add date
+            if(Objects.equals(attributes[1], "date")){
+                operations.add(
+                    AddFieldsOperation.addField(attributes[1]).withValue(this.findByNameGetOnlyDate(names[i], attributes[1]).get().getDate())
+                        .build()); // add date
+            }
+            else if(Objects.equals(attributes[1], "name")){
+                operations.add(
+                    AddFieldsOperation.addField("date").withValue(this.findByNameGetOnlyDate(names[i], attributes[1]).get().getName())
+                        .build()); // add date
+            }
 
             Aggregation aggregation = newAggregation(operations);
             AggregationResults<UIMATypesSummation> results =
@@ -308,6 +314,9 @@ public class UimaDocumentService {
                 endResult.add(uimaTypesSummation);
             }
         }
+
+        Collections.sort(endResult, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+
 
         return endResult;
     }

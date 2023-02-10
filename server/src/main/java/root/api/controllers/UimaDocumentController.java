@@ -122,7 +122,7 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/sumbydate")
-    public ResponseEntity<Object> getTypesSummationByDate(@RequestParam Optional<String> names,
+    public ResponseEntity<Object> getTypesSummationByGroup(@RequestParam Optional<String> names,
         @RequestParam Optional<String> types, @RequestParam Optional<String> attributes,
         @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
         @RequestParam Optional<String> end) {
@@ -135,14 +135,9 @@ public class UimaDocumentController {
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
         String[] attributesAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
 
-        // for value
-        List<UIMATypesSummation> result =
-            uimaDocumentService.getTypesSummationByDate(namesAsArray, typesAsArray, attributesAsArray,
-                Integer.parseInt(limit), begin, end);
-
-        Collections.sort(result, Comparator.comparing(UIMATypesSummation::getCount).reversed());
-
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            uimaDocumentService.getTypesSummationByGroup(namesAsArray, typesAsArray, attributesAsArray,
+                Integer.parseInt(limit), begin, end));
     }
 
     /**

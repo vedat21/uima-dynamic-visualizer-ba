@@ -60,7 +60,7 @@ function SelectContainer(props) {
 
     // darin wird userauswahl gespeichert
     const [selectedTypes, setSelectedTypes] = useState("");
-    const [selectedAttributes, setSelectedAttributes] = useState("");
+    const [selectedAttributes, setSelectedAttributes] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedVisualization, setSelectedVisualization] = useState("");
 
@@ -104,6 +104,7 @@ function SelectContainer(props) {
         }
 
         optionsAttributeFiltered.push("date")
+        optionsAttributeFiltered.push("name")
         optionsAttributeFiltered = [...new Set(optionsAttributeFiltered)].sort();
         optionsAttributeFiltered.forEach((value) => {
             optionsMatchingAttributes.push({value: value, label: value})
@@ -122,8 +123,10 @@ function SelectContainer(props) {
         } else if (selectedAttributes.length === 2 && selectedAttributes.includes("begin") && selectedAttributes.includes("end")) {
             return optionsVisualizationSum;
         } else if (selectedAttributes.length === 2 && selectedAttributes.includes("date") || selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("date")) {
-            return optionsVisualizationSumByTime.concat(optionsVisualizationSumByGroup);
-        } else if (selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && !selectedAttributes.includes("date")) {
+            return optionsVisualizationSumByTime;
+        } else if (selectedAttributes.length === 2 && selectedAttributes.includes("name") || selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("name")) {
+            return optionsVisualizationSumByGroup;
+        } else if (selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("tokenValue")) {
             return optionsVisualizationsTextHighlight;
         }
     }

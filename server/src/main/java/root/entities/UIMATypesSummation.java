@@ -14,5 +14,4 @@ public class UIMATypesSummation {
     private String id;
     private String PosValue;
     private String value;
-
 }

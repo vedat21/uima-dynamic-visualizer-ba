@@ -25,7 +25,7 @@ export default function StackedBarChart(props) {
 
     let x = d => d.id // given d in data, returns the (categorical) z-value
     let y = d => d.count // given d in data, returns the (quantitative) y-value
-    let z = d => d3.timeParse("%d.%m.%Y")(d.date); // given d in data, returns the (ordinal) x-value
+    let z = d => d.date; // given d in data, returns the (ordinal) x-value
     let title // given d in data, returns the title text
     let marginTop = 30 // top margin, in pixels
     let marginRight = 0 // right margin, in pixels
@@ -134,7 +134,7 @@ export default function StackedBarChart(props) {
                 .text(({i}) => title(i));
 
             svg.append("g")
-                .attr("transform", `translate(0,${yScale(0)})`)
+                .attr("transform", `translate(0,${770})`)
                 .call(xAxis);
 
             return Object.assign(svg.node(), {scales: {color}});
