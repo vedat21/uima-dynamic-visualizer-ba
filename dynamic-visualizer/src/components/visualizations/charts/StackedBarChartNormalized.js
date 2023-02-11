@@ -23,8 +23,8 @@ export default function StackedBarChartNormalized(props) {
     let marginTop = 30 // top margin, in pixels
     let marginRight = 20 // right margin, in pixels
     let marginBottom = 0 // bottom margin, in pixels
-    let marginLeft = 40 // left margin, in pixels
-    let width = 640 // outer width, in pixels
+    let marginLeft = 100 // left margin, in pixels
+    let width = 1300 // outer width, in pixels
     let height = 800 // outer height, in pixels
     let xType = d3.scaleLinear // type of x-scale
     let xDomain // [xmin, xmax]
@@ -87,8 +87,7 @@ export default function StackedBarChartNormalized(props) {
 
             // Compute titles.
             if (title === undefined) {
-                const formatValue = xScale.tickFormat(100, xFormat);
-                title = i => `${Y[i]}\n${Z[i]}\n${formatValue(X[i])}`;
+                title = i => `${Y[i]}\n${Z[i]}\n${X[i]}`;
             } else {
                 const O = d3.map(data, d => d);
                 const T = title;
@@ -129,7 +128,7 @@ export default function StackedBarChartNormalized(props) {
                     .text(xLabel));
 
             svg.append("g")
-                .attr("transform", `translate(40,0)`)
+                .attr("transform", `translate(100,0)`)
                 .call(yAxis);
 
             return Object.assign(svg.node(), {scales: {color}});

@@ -23,7 +23,7 @@ export default function StackedHorizontalBarChart(props) {
     let marginTop = 30; // top margin, in pixels
     let marginRight = 10; // right margin, in pixels
     let marginBottom = 0; // bottom margin, in pixels
-    let marginLeft = 80; // left margin, in pixels
+    let marginLeft = 100; // left margin, in pixels
     let width = 1300; // outer width, in pixels
     let height = 800; // outer height, in pixels
     let xType = d3.scaleLinear; // type of x-scale
@@ -130,7 +130,7 @@ export default function StackedHorizontalBarChart(props) {
                 .text(({i}) => title(i));
 
             svg.append("g")
-                .attr("transform", `translate(80,0)`)
+                .attr("transform", `translate(100,0)`)
                 .call(yAxis);
 
             return Object.assign(svg.node(), {scales: {color}});
