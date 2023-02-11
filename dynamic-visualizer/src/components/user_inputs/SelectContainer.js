@@ -25,8 +25,9 @@ const optionsVisualizationSum = [
     {value: 'scatterchart', label: 'Scatter Chart'},
 ];
 const optionsVisualizationSumByGroup = [
-    {value: 'stackedhorizontalbarchart', label: 'Stacked Horizontal Bar Chart'},
     {value: 'stackedbarchart', label: 'Stacked Bar Chart'},
+    {value: 'stackedbarchartnormalized', label: 'Stacked Bar Chart Normalized'},
+    {value: 'stackedhorizontalbarchart', label: 'Stacked Horizontal Bar Chart'},
 ];
 const optionsVisualizationSumByTime = [
     {value: 'horizonchart', label: 'Horizon Chart'},

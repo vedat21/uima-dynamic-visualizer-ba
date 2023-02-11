@@ -85,7 +85,7 @@ function PresentationView(props) {
         // difference between chart component and other
         if (!isText) {
 
-            const reqeuestParamSum = selectedVisualization === "horizonchart" || selectedVisualization === "stackedareachart" || selectedVisualization === "stackedbarchart" || selectedVisualization === "stackedhorizontalbarchart"
+            const reqeuestParamSum = selectedVisualization === "horizonchart" || selectedVisualization === "stackedbarchartnormalized" ||  selectedVisualization === "areachart" || selectedVisualization === "stackedareachart" || selectedVisualization === "stackedbarchart" || selectedVisualization === "stackedhorizontalbarchart"
                 ? apiEndpoints.sumbydate : apiEndpoints.sum
 
             const dataToAdd = {

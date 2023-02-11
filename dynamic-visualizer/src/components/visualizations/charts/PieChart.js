@@ -1,28 +1,21 @@
 import * as d3 from "d3";
 
 import useD3 from "./helper/useD3";
-import {apiEndpoints} from "../../../helper/envConst";
 import useGetData from "../../../api_crud/useGetData";
+import {getRequestUrl, uniqueId} from "../../../helper/generalHelper";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/pie-chart
-// Angepasst zu einer React Komponente
+// Wurde angepasst zu einer React Komponente.
 export default function PieChart(props) {
 
-    let requestUrl = props.url + props.selectedDocuments.join(",") + apiEndpoints.requestParamLimit + props.limit;
-    if (props.lemmaEnd != 0 && props.selectedDocuments.length == 1) {
-        requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end=" + props.lemmaEnd;
-    }
-    // make request to get data
-    const {response, loading} = useGetData(requestUrl);
+    // Data
+    const {response, loading} = useGetData(getRequestUrl(props));
+    const data = response;
+    const id = uniqueId();
 
-    // create unique id to select with d3 and reference with react
-    // const rnd from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript/15456423
-    const rnd = (len, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') => [...Array(len)].map(() => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
-    const id = rnd(15);
-
-
+    // Configurations
     let name = x => x.id; // given d in data, returns the (ordinal) label
     let value = y => y.count; // given d in data, returns the (quantitative) value
     let title; // given d in data, returns the title text
@@ -42,8 +35,6 @@ export default function PieChart(props) {
 
     const ref = useD3(
         (svg) => {
-
-            const data = response
 
             // Compute values.
             const N = d3.map(data, name);

@@ -28,6 +28,7 @@ import BarChart from "./charts/BarChart";
 import StackedBarChart from "./charts/StackedBarChart";
 import HorizontalBarChart from "./charts/HorizontalBarChart";
 import StackedHorizontalBarChart from "./charts/StackedHorizontalBarChart";
+import StackedBarChartNormalized from "./charts/StackedBarChartNormalized";
 
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
@@ -47,6 +48,7 @@ const components = {
     "scatterchart": ScatterChart,
     "stackedareachart": StackedAreaChart,
     "stackedbarchart": StackedBarChart,
+    "stackedbarchartnormalized": StackedBarChartNormalized,
     "stackedhorizontalbarchart": StackedHorizontalBarChart,
     "textcomponent": TextComponent,
     "wordcloud": WordCloudComponent,

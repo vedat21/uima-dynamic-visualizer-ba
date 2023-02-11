@@ -1,28 +1,21 @@
 import * as d3 from "d3";
 
 import useD3 from "./helper/useD3";
-import {apiEndpoints} from "../../../helper/envConst";
 import useGetData from "../../../api_crud/useGetData";
+import {getRequestUrl, uniqueId} from "../../../helper/generalHelper";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/bar-chart
-// Angepasst zu einer React Komponente
+// Wurde angepasst zu einer React Komponente.
 export default function BarChart(props) {
 
-    let requestUrl = props.url + props.selectedDocuments.join(",") + apiEndpoints.requestParamLimit + props.limit;
-    if (props.lemmaEnd != 0 && props.selectedDocuments.length == 1) {
-        requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end=" + props.lemmaEnd;
-    }
-    // make request to get data
-    const {response, loading} = useGetData(requestUrl);
+    // Data
+    const {response, loading} = useGetData(getRequestUrl(props));
+    const data = response;
+    const id = uniqueId();
 
-
-    // create unique id to select with d3 and reference with react
-    // const rnd from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript/15456423
-    const rnd = (len, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz') => [...Array(len)].map(() => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
-    const id = rnd(15);
-
+    // Configurations
     let x = x => x.id // given d in data, returns the (ordinal) x-value
     let y = y => y.count // given d in data, returns the (quantitative) y-value
     let title // given d in data, returns the title text
@@ -42,37 +35,36 @@ export default function BarChart(props) {
     let yLabel = props.label // a label for the y-axis
     let color = "steelblue" // bar fill color
 
-    const data = response;
-
-    // Compute values.
-    const X = d3.map(data, x);
-    const Y = d3.map(data, y);
-
-    // Compute default domains, and unique the x-domain.
-    if (xDomain === undefined) xDomain = X;
-    if (yDomain === undefined) yDomain = [0, d3.max(Y)];
-    xDomain = new d3.InternSet(xDomain);
-
-    // Omit any data not present in the x-domain.
-    const I = d3.range(X.length).filter(i => xDomain.has(X[i]));
-
-    // Construct scales, axes, and formats.
-    const xScale = d3.scaleBand(xDomain, xRange).padding(xPadding);
-    const yScale = yType(yDomain, yRange);
-    const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
-    const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
-
-    // Compute titles.
-    if (title === undefined) {
-        const formatValue = yScale.tickFormat(100, yFormat);
-        title = i => `${X[i]}\n${formatValue(Y[i])}`;
-    } else {
-        const O = d3.map(data, d => d);
-        const T = title;
-        title = i => T(O[i], i, data);
-    }
     const ref = useD3(
         (svg) => {
+
+            // Compute values.
+            const X = d3.map(data, x);
+            const Y = d3.map(data, y);
+
+            // Compute default domains, and unique the x-domain.
+            if (xDomain === undefined) xDomain = X;
+            if (yDomain === undefined) yDomain = [0, d3.max(Y)];
+            xDomain = new d3.InternSet(xDomain);
+
+            // Omit any data not present in the x-domain.
+            const I = d3.range(X.length).filter(i => xDomain.has(X[i]));
+
+            // Construct scales, axes, and formats.
+            const xScale = d3.scaleBand(xDomain, xRange).padding(xPadding);
+            const yScale = yType(yDomain, yRange);
+            const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+            const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
+
+            // Compute titles.
+            if (title === undefined) {
+                const formatValue = yScale.tickFormat(100, yFormat);
+                title = i => `${X[i]}\n${formatValue(Y[i])}`;
+            } else {
+                const O = d3.map(data, d => d);
+                const T = title;
+                title = i => T(O[i], i, data);
+            }
 
             svg = d3.select("#" + id)
                 .attr("width", width)
