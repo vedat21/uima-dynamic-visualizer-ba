@@ -1,14 +1,14 @@
 import * as d3 from "d3";
 
-import useD3 from "./helper/useD3";
-import useGetData from "../../../api_crud/useGetData";
-import {getRequestUrl, uniqueId} from "../../../helper/generalHelper";
+import useD3 from "../helper/useD3";
+import useGetData from "../../../../api_crud/useGetData";
+import {getRequestUrl, uniqueId} from "../../../../helper/generalHelper";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/pie-chart
 // Wurde angepasst zu einer React Komponente.
-export default function PieChart(props) {
+export default function DoughnutChart(props) {
 
     // Data
     const {response, loading} = useGetData(getRequestUrl(props));
@@ -21,9 +21,9 @@ export default function PieChart(props) {
     let title; // given d in data, returns the title text
     let width = 1200; // outer width, in pixels
     let height = 800; // outer height, in pixels
-    let innerRadius = 0; // inner radius of pie, in pixels (non-zero for donut)
+    let innerRadius = 200; // inner radius of pie, in pixels (non-zero for donut)
     let outerRadius = Math.min(width, height) / 2; // outer radius of pie, in pixels
-    let labelRadius = (innerRadius * 0.2 + outerRadius * 0.8); // center radius of labels
+    let labelRadius = (innerRadius * 0.2 + outerRadius * 0.7); // center radius of labels
     let format = ","; // a format specifier for values (in the label)
     let names; // array of names (the domain of the color scale)
     let colors; // array of colors for names
@@ -111,6 +111,5 @@ export default function PieChart(props) {
 
     return (
         <svg id={id} ref={ref}/>
-
     )
 }

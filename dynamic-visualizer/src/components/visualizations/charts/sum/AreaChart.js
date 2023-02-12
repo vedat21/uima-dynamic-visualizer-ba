@@ -1,6 +1,6 @@
 import React from "react";
 import {Line} from "react-chartjs-2"
-import useGetChartData from "./helper/useGetChartData"; // ohne diesen import werden die charts nicht geladen
+import useGetChartData from "../helper/useGetChartData"; // ohne diesen import werden die charts nicht geladen
 
 // Custom Modules
 

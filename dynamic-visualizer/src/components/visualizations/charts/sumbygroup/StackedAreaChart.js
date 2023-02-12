@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 
-import useD3 from "./helper/useD3";
-import useGetData from "../../../api_crud/useGetData";
-import {getRequestUrl, uniqueId} from "../../../helper/generalHelper";
+import useD3 from "../helper/useD3";
+import useGetData from "../../../../api_crud/useGetData";
+import {getRequestUrl, uniqueId} from "../../../../helper/generalHelper";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
@@ -16,7 +16,7 @@ export default function StackedAreaChart(props) {
     const id = uniqueId();
 
     // Configurations
-    const x = d => d3.timeParse("%d.%m.%Y")(d.date);
+    const x = d => d3.timeParse("%d.%m.%Y")(d.group);
     const y = d => d.count;
     const z = d => d.id;
     const marginTop = 20; // top margin, in pixels

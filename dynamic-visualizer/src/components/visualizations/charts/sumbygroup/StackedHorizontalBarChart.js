@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 
-import useD3 from "./helper/useD3";
-import useGetData from "../../../api_crud/useGetData";
-import {getRequestUrl, uniqueId} from "../../../helper/generalHelper";
+import useD3 from "../helper/useD3";
+import useGetData from "../../../../api_crud/useGetData";
+import {getRequestUrl, uniqueId} from "../../../../helper/generalHelper";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
@@ -18,7 +18,7 @@ export default function StackedHorizontalBarChart(props) {
     // Configurations
     let x = d => d.count // given d in data, returns the (categorical) z-value
     let y = d => d.id // given d in data, returns the (quantitative) y-value
-    let z = d => d.date; // given d in data, returns the (ordinal) x-value
+    let z = d => d.group; // given d in data, returns the (ordinal) x-value
     let title; // given d in data, returns the title text
     let marginTop = 30; // top margin, in pixels
     let marginRight = 10; // right margin, in pixels

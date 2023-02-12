@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 
-import useD3 from "./helper/useD3";
-import useGetData from "../../../api_crud/useGetData";
-import {getRequestUrl, uniqueId} from "../../../helper/generalHelper";
+import useD3 from "../helper/useD3";
+import useGetData from "../../../../api_crud/useGetData";
+import {getRequestUrl, uniqueId} from "../../../../helper/generalHelper";
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
