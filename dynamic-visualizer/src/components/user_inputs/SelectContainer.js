@@ -72,10 +72,10 @@ function SelectContainer(props) {
 
     // packe daten von response in options*
     useEffect(async () => {
-        if (!loading && optionsType.length == 0) {
+        if (!loading && optionsType.length === 0) {
 
             response["types"].forEach((type) => {
-                optionsType.push({value: type, label: type.toUpperCase()})
+                optionsType.push({value: type, label: type.replaceAll("_", " ").toUpperCase()})
                 optionsType.sort()
             })
 
@@ -104,6 +104,7 @@ function SelectContainer(props) {
             }
         }
 
+
         optionsAttributeFiltered.push("date")
         optionsAttributeFiltered.push("name")
         optionsAttributeFiltered = [...new Set(optionsAttributeFiltered)].sort();
@@ -125,7 +126,7 @@ function SelectContainer(props) {
             return optionsVisualizationSum;
         } else if (selectedAttributes.length === 2 && selectedAttributes.includes("date") || selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("date")) {
             return optionsVisualizationSumByTime;
-        } else if (selectedAttributes.length === 2 && selectedAttributes.includes("name") || selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("name")) {
+        } else if (selectedAttributes.length === 2 && !selectedAttributes.includes("begin") && !selectedAttributes.includes("end") || selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end")) {
             return optionsVisualizationSumByGroup;
         } else if (selectedAttributes.length === 3 && selectedAttributes.includes("begin") && selectedAttributes.includes("end") && selectedAttributes.includes("tokenValue")) {
             return optionsVisualizationsTextHighlight;

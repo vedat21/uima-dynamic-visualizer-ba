@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 public class UIMATypesSummation {
 
     private int count;
-    private String date;
+    private String group;
     @Id
     private String id;
     private String PosValue;

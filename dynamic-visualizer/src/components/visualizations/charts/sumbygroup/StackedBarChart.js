@@ -47,6 +47,10 @@ export default function StackedBarChart(props) {
             const Y = d3.map(data, y);
             const Z = d3.map(data, z);
 
+            console.log("X: ",X);
+            console.log("Y: ",Y);
+            console.log("Z: ",Z);
+
             // Compute default x- and z-domains, and unique them.
             if (xDomain === undefined) xDomain = X;
             if (zDomain === undefined) zDomain = Z;

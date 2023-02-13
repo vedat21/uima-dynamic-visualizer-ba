@@ -1,8 +1,6 @@
 package root.api.controllers;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -10,11 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import root.api.repositories.UimaDocumentRepository;
 import root.api.services.UimaDocumentService;
-import root.entities.GeneralInfo;
 import root.entities.UIMADocument;
-import root.entities.UIMATypesSummation;
 
 @RestController
 @RequestMapping()
@@ -22,8 +17,6 @@ import root.entities.UIMATypesSummation;
 public class UimaDocumentController {
     @Autowired
     private UimaDocumentService uimaDocumentService;
-    @Autowired
-    private UimaDocumentRepository uimaDocumentRepository;
 
     /**
      * To tell the client which types and attributes can be requested from uima documents and gives some
@@ -32,8 +25,8 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/general")
-    public GeneralInfo getGeneralInformation() {
-        return uimaDocumentService.getGeneralInfo();
+    public ResponseEntity<Object> getGeneralInformation() {
+        return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.getGeneralInfo());
     }
 
     /**
@@ -43,16 +36,17 @@ public class UimaDocumentController {
      * @return
      */
     @PostMapping("/documents")
-    public UIMADocument newUIMADocument(UIMADocument uimaDocument) {
-        return uimaDocumentService.putNewUimaDocument(uimaDocument);
+    public ResponseEntity<Object> newUIMADocument(UIMADocument uimaDocument) {
+        return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.putNewUimaDocument(uimaDocument));
     }
 
     /**
      * To delete the collection.
      */
     @GetMapping("/documents/delete")
-    public void removeCollection() {
+    public ResponseEntity<Object> removeCollection() {
         uimaDocumentService.removeCollection();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
@@ -62,8 +56,8 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/text/{name}")
-    public Object getTextFromOne(@PathVariable String name) {
-        return uimaDocumentService.getTextFromOne(name);
+    public ResponseEntity<Object> getTextFromOne(@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.getTextFromOne(name));
     }
 
     /**
@@ -72,8 +66,8 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/all/namesandgroup")
-    public List<UIMADocument> getAllDocumentNamesAndGroups() {
-        return uimaDocumentService.getAllDocumentNamesAndGroups();
+    public ResponseEntity<Object> getAllDocumentNamesAndGroups() {
+        return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.getAllDocumentNamesAndGroups());
     }
 
     @GetMapping("/documents/single")
@@ -122,7 +116,7 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/sumbydate")
-    public ResponseEntity<Object> getTypesSummationByGroup(@RequestParam Optional<String> names,
+    public ResponseEntity<Object> getTypesSummationByDateOrName(@RequestParam Optional<String> names,
         @RequestParam Optional<String> types, @RequestParam Optional<String> attributes,
         @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
         @RequestParam Optional<String> end) {
@@ -135,9 +129,15 @@ public class UimaDocumentController {
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
         String[] attributesAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-            uimaDocumentService.getTypesSummationByGroup(namesAsArray, typesAsArray, attributesAsArray,
-                Integer.parseInt(limit), begin, end));
+        if (Arrays.asList(attributesAsArray).contains("date") || Arrays.asList(attributesAsArray).contains("name")) {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                uimaDocumentService.getTypesSummationByDateOrName(namesAsArray, typesAsArray, attributesAsArray,
+                    Integer.parseInt(limit), begin, end));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                uimaDocumentService.getTypesSummationByGroup(namesAsArray, typesAsArray, attributesAsArray,
+                    Integer.parseInt(limit), begin, end));
+        }
     }
 
     /**
@@ -147,12 +147,17 @@ public class UimaDocumentController {
      * @return
      */
     @GetMapping("/documents/sum/locations")
-    public List getLocationSummation(@RequestParam Optional<String> names,
+    public ResponseEntity<Object> getLocationSummation(@RequestParam Optional<String> names,
         @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
         @RequestParam Optional<String> end) {
 
+        if (names.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
-        return uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin, end);
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin, end));
     }
 }

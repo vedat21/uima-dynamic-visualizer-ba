@@ -39,13 +39,14 @@ public class UIMADocument {
 
     @JsonIgnore
     @Transient
-    Gson gson; // ignoriere jcas in api und datenbank
+    Gson gson;
     @JsonIgnore
     @Transient
-    private JCas jCas; // ignoriere jcas in api und datenbank
+    private JCas jCas;
     @JsonIgnore
     @Transient
-    private MultipartFile xmlDocument; // ignoriere jcas in api und datenbank
+    private MultipartFile xmlDocument;
+
     @Id
     private String id;
     private String name;
@@ -78,21 +79,23 @@ public class UIMADocument {
             // for splitting large documents into half till it doesnt exceed 16mb per document
             int numberCopy = number;
             for (Entry<String, List<UIMATypeMapper>> entry : allTypes.entrySet()) {
+
+                // get date of document from metadata with regex
+                if (entry.getKey().toLowerCase().contains("documentmetadata")) {
+                    System.out.println(entry.getValue().get(0));
+                    Pattern p = Pattern.compile("\\d{2}.\\d{2}.\\d{4}");
+                    Matcher m = p.matcher(entry.getValue().get(0).getDocumentId().toString());
+
+                    if (m.find()) {
+                        this.date = m.group(0);
+                    }
+                }
+
                 if (numberCopy == split) {
                     this.types.put(entry.getKey(), entry.getValue());
                     this.setTypesNamesAndTypesAttributes(this.types);
                     numberCopy = 1;
 
-                    // get date of document from metadata with regex
-                    if (entry.getKey().toLowerCase().contains("documentmetadata")) {
-                        System.out.println(entry.getValue().get(0));
-                        Pattern p = Pattern.compile("\\d{2}.\\d{2}.\\d{4}");
-                        Matcher m = p.matcher(entry.getValue().get(0).getDocumentId().toString());
-
-                        if (m.find()) {
-                            this.date = m.group(0);
-                        }
-                    }
                 } else {
                     numberCopy++;
                 }
@@ -131,6 +134,7 @@ public class UIMADocument {
 
         Map<String, List<UIMATypeMapper>> resultMapChangedKeys = new HashMap<>();
 
+        // For saving in DB
         for (String key : result.keySet()) {
             resultMapChangedKeys.put(key.replace(".", "_"), result.get(key));
         }
@@ -200,18 +204,16 @@ public class UIMADocument {
             }
         });
 
-        // to have standards in db
+        // to have standards in DB
         if (rObject.has("PosValue")) {
             rObject.put("value", rObject.get("PosValue"));
         }
-
-        //     System.out.println(rObject.keySet());
 
         return gson.fromJson(rObject.toString(), UIMATypeMapper.class);
     }
 
     /**
-     * for pos types add tokenValue as key
+     * To add tokenValue as key (POS)
      *
      * @param result
      * @return Map
@@ -246,10 +248,9 @@ public class UIMADocument {
     }
 
     /**
-     * to know which types are included in the uima document
+     * To know which types are included in the UIMA document.
      *
      * @param types
-     * @return
      */
     public void setTypesNamesAndTypesAttributes(Map<String, List<UIMATypeMapper>> types) {
         Set<String> typesNames = new HashSet<>();
