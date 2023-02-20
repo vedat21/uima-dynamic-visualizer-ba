@@ -17,6 +17,11 @@
       <option name="url" value="https://nexus.shared.aws.degbank.local/repository/ib-build/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="ib-snapshots" />
+      <option name="name" value="ib-snapshots" />
+      <option name="url" value="https://nexus.shared.aws.degbank.local/repository/ib-snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="gi-maven" />
       <option name="name" value="GI repository" />
       <option name="url" value="https://iteragit.iteratec.de/api/v4/groups/1096/-/packages/maven" />
