@@ -86,7 +86,7 @@ function SelectionContainer(props) {
      */
     function editVisualization() {
         const isText = selectedVisualization === "highlightedtextcomponent" || selectedVisualization === "textcomponent" || selectedVisualization === "richtexteditor";
-        props.editVisualization(props.visualizationId, selectedTypes, selectedAttributes, selectedVisualization, selectedCondition, isText, selectedMinOccurrence, selectedMaxOccurrence,selectedLabel);
+        props.editVisualization(props.visualizationId, selectedTypes, selectedAttributes, selectedVisualization, selectedCondition, isText, selectedMinOccurrence, selectedMaxOccurrence, selectedLabel);
         props.closeModal();
     }
 
@@ -240,11 +240,11 @@ function SelectionContainer(props) {
                     />
                 </Box>
             }
-            <Box key="create-and-close-buttons" display="flex" sx={{m: 3}}>
+            <Box key="create-and-close-buttons" display="flex" sx={{m: 3}} justifyContent="center">
                 <Tooltip title={'Create new Visualization'}>
-                    <Button onClick={props.isEdit ? editVisualization : addVisualization} disabled={!isButtonEnabled()}>{props.text}</Button>
+                    <Button variant="outlined" onClick={props.isEdit ? editVisualization : addVisualization} disabled={!isButtonEnabled()}>{props.text}</Button>
                 </Tooltip>
-                <Button onClick={props.closeModal}>Close Window</Button>
+                <Button variant="outlined" onClick={props.closeModal}>Close Window</Button>
             </Box>
         </>
     )
