@@ -2,11 +2,8 @@ import React from "react";
 import {v4 as uuid} from 'uuid';
 
 // custom modules
-import BarChartOld from "./notused/BarChartOld"
 import BubbleChart from "./charts/BubbleChart";
-import DoughnutChartOld from "./notused/DoughnutChartOld"
 import LineChart from "./charts/sum/LineChart"
-import PieChartOld from "./notused/PieChartOld";
 import PolarAreaChart from "./charts/sum/PolarAreaChart";
 import RadarChart from "./charts/sum/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
@@ -39,7 +36,7 @@ const components = {
     "doughnutchart": DoughnutChart,
     "highlightedtextcomponent": TextHighlighted,
     "horizonchart": HorizonAreaChart,
-    "horizontalbarchart" : HorizontalBarChart,
+    "horizontalbarchart": HorizontalBarChart,
     "linechart": LineChart,
     "piechart": PieChart,
     "polarareachart": PolarAreaChart,
@@ -58,43 +55,45 @@ const components = {
 };
 
 /**
- * return react component
+ * To return react component
  * @param visualization
  * @param editable
  * @param onDeleteComponentClicked
- * @param limit
  * @param label
- * @param changeLimit
- * @param changeLabel
- * @param inputLabelAndLimit
- * @param handleOnClickInput
- * @returns {React.ReactElement<{key}>}
+ * @param editRichtext
+ * @param richTextContent
+ * @param selectedDocuments
+ * @param lemmaBegin
+ * @param setLemmaBegin
+ * @param lemmaEnd
+ * @param setLemmaEnd
+ * @param editVisualization
+ * @returns {React.ReactElement<{key}>|React.DetailedReactHTMLElement<{style: {height: string}, key}, HTMLElement>}
  */
-export default (visualization, editable, onDeleteComponentClicked, limit, label,
-                changeLimit, changeLabel, inputLabelAndLimit, handleOnClickInput,
-                editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd) => {
+export default (visualization, editable, onDeleteComponentClicked, label,
+                editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd, editVisualization) => {
 
-    if (typeof components[visualization.component] !== "undefined") {
+    if (typeof components[visualization.selectedVisualization] !== "undefined") {
         // entweder erstell komponenten die texttopbar oder charttopbar entählt.
         // hier texttopbar
-        if (visualization.component.includes("text")) {
+        if (visualization.selectedVisualization.includes("text")) {
             return React.createElement("div", {key: uuid()}, [
                 React.createElement(TextTopBar, {
-                    key: uuid(),
                     editable: editable,
+                    key: uuid(),
                     onDeleteComponentClicked: onDeleteComponentClicked,
                 }),
-                React.createElement(components[visualization.component], {
+                React.createElement(components[visualization.selectedVisualization], {
+                    content: richTextContent,
+                    editable: editable,
+                    editRichtext: editRichtext,
                     key: uuid(),
                     label: label,
-                    editable: editable,
-                    content: richTextContent,
-                    editRichtext: editRichtext,
-                    selectedDocuments: selectedDocuments,
                     lemmaBegin: lemmaBegin,
+                    lemmaEnd: lemmaEnd,
+                    selectedDocuments: selectedDocuments,
                     setLemmaBegin: setLemmaBegin,
                     setLemmaEnd: setLemmaEnd,
-                    lemmaEnd: lemmaEnd,
                     url: visualization.url,
                 }),
 
@@ -103,25 +102,31 @@ export default (visualization, editable, onDeleteComponentClicked, limit, label,
             // height muss 100% sein wegen world map
             return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
                 React.createElement(ChartTopBar, {
-                    key: uuid(),
                     editable: editable,
+                    editVisualization: editVisualization,
+                    id: visualization.id,
+                    key: uuid(),
                     onDeleteComponentClicked: onDeleteComponentClicked,
-                    changeLimit: changeLimit,
-                    editLabel: inputLabelAndLimit,
-                    label: label,
-                    limit: limit,
-                    reverseEditLabel: handleOnClickInput,
-                    changeLabel: changeLabel,
+                    selectedAttributes: visualization.selectedAttributes,
+                    selectedConditions: visualization.selectedConditions,
+                    selectedLabel: label,
+                    selectedMaxOccurrence: visualization.selectedMaxOccurrence,
+                    selectedMinOccurrence: visualization.selectedMinOccurrence,
+                    selectedTypes: visualization.selectedTypes,
+                    selectedVisualization: visualization.selectedVisualization,
                 }),
-                React.createElement(components[visualization.component], {
+                React.createElement(components[visualization.selectedVisualization], {
+                    editable: editable,
                     key: uuid(),
                     label: label,
-                    url: visualization.url,
-                    limit: limit,
-                    selectedDocuments: selectedDocuments,
                     lemmaBegin: lemmaBegin,
                     lemmaEnd: lemmaEnd,
-                    editable: editable,
+                    limit: visualization.limit,
+                    selectedDocuments: selectedDocuments,
+                    selectedMaxOccurrence: visualization.selectedMaxOccurrence,
+                    selectedMinOccurrence: visualization.selectedMinOccurrence,
+                    types: visualization.types,
+                    url: visualization.url,
                 }),
 
             ]);

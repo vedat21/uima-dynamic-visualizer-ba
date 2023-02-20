@@ -87,8 +87,9 @@ public class UimaDocumentController {
      */
     @GetMapping("/documents/sum")
     public ResponseEntity<Object> getTypesSummation(@RequestParam Optional<String> types,
-        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> names,
-        @RequestParam Optional<String> attributes, @RequestParam Optional<String> begin,
+        @RequestParam Optional<String> names, @RequestParam Optional<String> attributes,
+        @RequestParam Optional<String> conditions, @RequestParam(defaultValue = "0") String minOccurrence,
+        @RequestParam Optional<String> maxOccurrence, @RequestParam Optional<String> begin,
         @RequestParam Optional<String> end) {
 
         if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
@@ -97,15 +98,18 @@ public class UimaDocumentController {
         String[] typesAsArray = types.stream().collect(Collectors.toList()).get(0).split(",");
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
         String[] attributesAsArray = attributes.stream().collect(Collectors.toList()).get(0).split(",");
+        //     String[] conditionsAsArray = conditions.stream().collect(Collectors.toList()).get(0).split(",");
+        String[] conditionsAsArray = new String[0];
 
         // Für Orte
         if (types.get().toLowerCase().contains("loc")) {
-            return ResponseEntity.status(HttpStatus.OK).body(this.getLocationSummation(names, limit, begin, end));
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(this.getLocationSummation(names, minOccurrence, maxOccurrence,begin, end));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, attributesAsArray,
-                Integer.parseInt(limit), begin, end, false));
+            uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, attributesAsArray, conditionsAsArray,
+                minOccurrence, maxOccurrence, begin, end, false));
 
     }
 
@@ -118,8 +122,8 @@ public class UimaDocumentController {
     @GetMapping("/documents/sumbydate")
     public ResponseEntity<Object> getTypesSummationByDateOrName(@RequestParam Optional<String> names,
         @RequestParam Optional<String> types, @RequestParam Optional<String> attributes,
-        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
-        @RequestParam Optional<String> end) {
+        @RequestParam Optional<String> conditions, @RequestParam(defaultValue = "0") String limit,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
 
         if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -140,16 +144,10 @@ public class UimaDocumentController {
         }
     }
 
-    /**
-     * to get summed data of locations only.
-     * For World map visualization only
-     *
-     * @return
-     */
     @GetMapping("/documents/sum/locations")
     public ResponseEntity<Object> getLocationSummation(@RequestParam Optional<String> names,
-        @RequestParam(defaultValue = "0") String limit, @RequestParam Optional<String> begin,
-        @RequestParam Optional<String> end) {
+        @RequestParam(defaultValue = "0") String minOccurrence, @RequestParam Optional<String> maxOccurrence,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
 
         if (names.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -158,6 +156,7 @@ public class UimaDocumentController {
         String[] namesAsArray = names.stream().collect(Collectors.toList()).get(0).split(",");
 
         return ResponseEntity.status(HttpStatus.OK)
-            .body(uimaDocumentService.getLocationSummation(namesAsArray, Integer.parseInt(limit), begin, end));
+            .body(uimaDocumentService.getLocationSummation(namesAsArray, minOccurrence, maxOccurrence, begin, end));
     }
+
 }

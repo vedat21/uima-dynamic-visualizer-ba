@@ -22,8 +22,6 @@ function savePresentation(presentation){
         .catch(function (error) {
             console.log(error);
         });
-
-
 }
 
 export default savePresentation;

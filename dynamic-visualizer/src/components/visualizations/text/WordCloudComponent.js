@@ -5,7 +5,7 @@ import useGetData from "../../../api_crud/useGetData";
 
 export default function WordCloudComponent(props) {
 
-  let requestUrl = props.url  +  props.selectedDocuments.join(",") + apiEndpoints.requestParamLimit + props.limit;
+  let requestUrl = props.url  +  props.selectedDocuments.join(",") + apiEndpoints.requestParamMinOccurrence + props.selectedMinOccurrence;
 
   if (props.lemmaEnd != 0 && props.selectedDocuments.length == 1){
     requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end=" + props.lemmaEnd;

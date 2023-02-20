@@ -2,6 +2,7 @@ package root.api.services;
 
 import java.util.stream.Collectors;
 
+import com.mongodb.BasicDBObject;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -169,14 +170,15 @@ public class UimaDocumentService {
      * @param names      Selected documents
      * @param types      Selected types
      * @param attributes Selected attributes
-     * @param limit
+     * @param minOccurrence
+     * @param maxOccurrence
      * @param begin
      * @param end
      * @param isLocation
      * @return
      */
-    public List<UIMATypesSummation> getTypesSummation(String[] names, String[] types, String[] attributes, int limit,
-        Optional<String> begin, Optional<String> end, boolean isLocation) {
+    public List<UIMATypesSummation> getTypesSummation(String[] names, String[] types, String[] attributes,
+        String[] conditions, String minOccurrence, Optional<String> maxOccurrence, Optional<String> begin, Optional<String> end, boolean isLocation) {
 
         /*
         param types is saved in two variable. One is a string and the other an array.
@@ -204,13 +206,20 @@ public class UimaDocumentService {
                 new Criteria("data.begin").gte(Integer.parseInt(begin.get())))); // include only lemma in begin and end
         }
 
-        // Only When Counts the Length of Token, Sentence, ..
+        /*
+        if (conditions.length != 0) {
+            for (String condition : conditions) {
+                operations.add(match(new Criteria("data." + condition).gte(Integer.parseInt(begin.get()))));
+            }
+        }
+         */
+
+        // Only When Counts the Length of Token, Sentence, etc
         if (attributes.length == 2 && Arrays.asList(attributes).contains("begin") && Arrays.asList(attributes)
             .contains("end")) {
             operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
             operations.add(group("length").count().as("count"));
-            operations.add(
-                sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
+            operations.add(sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count"))));
         }
         // Standard Summation
         else {
@@ -218,10 +227,13 @@ public class UimaDocumentService {
                 operations.add(match(new Criteria("data.value").is("LOC"))); // only named entity locations
             }
             operations.add(group("data." + attributes[0]).count().as("count"));
-            operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
+            operations.add(sort(Sort.by(Sort.Direction.DESC, "count")));
         }
 
-        operations.add(match(new Criteria("count").gte(limit))); // limit
+        // Limit
+        operations.add(match(new Criteria("count").gte(Integer.parseInt(minOccurrence))));
+        operations.add(match(new Criteria("count").lte(Double.parseDouble(maxOccurrence.orElse("Infinity")))));
+
 
         AggregationResults<UIMATypesSummation> results =
             mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSummation.class);
@@ -241,6 +253,7 @@ public class UimaDocumentService {
     public List<UIMATypesSummation> getTypesSummationByGroup(String[] names, String[] types, String[] attributes,
         int limit, Optional<String> begin, Optional<String> end) {
 
+
         /*
         param types is saved in two variable. One is a string and the other an array.
         Because of build in aggregation "concatarray". All types are stored in objects types.
@@ -251,13 +264,28 @@ public class UimaDocumentService {
             remainingTypes[i] = "types." + types[i + 1];
         }
 
-        // to store all aggregate operations
         List<AggregationOperation> operations = new ArrayList<>();
-        // query by name
-        operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
+        operations.add(match(Criteria.where("name").in(Arrays.stream(names).toArray())));
         // concat all selected types to one list named data
         operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
-        operations.add(unwind("data")); // unwind the list
+        // to merge all objects that have same value for begin.
+        operations.add(unwind("data"));
+        operations.add(
+            group("data.begin").first("data.begin").as("begin")
+                .addToSet("data.end").as("end")
+                .addToSet("data." + attributes[0]).as(attributes[0])
+                .addToSet("data." + attributes[1]).as(attributes[1]));
+        operations.add(project("begin", "end",attributes[0], attributes[1]));
+        operations.add(group().push(new BasicDBObject("begin", "$begin").append(attributes[0],"$" + attributes[0])
+            .append(attributes[1], "$" + attributes[1]).append("end", "$end")).as("mergedObjects"));
+        operations.add(project().and("mergedObjects").concatArrays().as("data"));
+        operations.add(unwind("data"));
+        operations.add(unwind("data." + attributes[0], false));
+        operations.add(unwind("data." + attributes[1], false));
+        operations.add(unwind("data.end"));
+        operations.add(replaceRoot("data"));
+
+
 
         // when one document is selected and part of text is selected
         if (begin.isPresent() && end.isPresent()) {
@@ -269,14 +297,14 @@ public class UimaDocumentService {
         // Only when counts the length of Token, Sentence, ..
         if (attributes.length == 3 && Arrays.asList(attributes).contains("begin") && Arrays.asList(attributes)
             .contains("end")) {
-            operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
+            operations.add(project("end", "begin").and("end").minus("begin").as("length"));
             operations.add(group("length").count().as("count"));
             operations.add(
                 sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
         }
         // Standard Summation
         else {
-            operations.add(group("data." + attributes[0], "data." + attributes[1]).count().as("count"));
+            operations.add(group(attributes[0], attributes[1]).count().as("count"));
             operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
         }
 
@@ -351,6 +379,7 @@ public class UimaDocumentService {
                 attributeGroup = 2;
 
                 operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
+                //         operations.add(match(new Criteria("length").lte(5)));
                 operations.add(group("length").count().as("count"));
                 operations.add(sort(
                     Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
@@ -402,16 +431,18 @@ public class UimaDocumentService {
     }
 
     /**
+     *
      * @param names
-     * @param limit
+     * @param minOccurrence
+     * @param maxOccurrence
      * @param begin
      * @param end
      * @return
      */
-    public List getLocationSummation(String[] names, int limit, Optional<String> begin, Optional<String> end) {
+    public List getLocationSummation(String[] names, String minOccurrence, Optional<String> maxOccurrence,Optional<String> begin, Optional<String> end) {
 
         GeneralInfo generalInfo = this.getGeneralInfo();
-        String[] remainingTypes = new String[0]; // rest of them
+        String[] emptyString = new String[0]; // rest of them
         List<String> namedEntityTypes = generalInfo.getTypes().stream()
             .filter(type -> type.toLowerCase().contains("entity") && !type.toLowerCase().contains("token"))
             .collect(Collectors.toList());
@@ -422,7 +453,7 @@ public class UimaDocumentService {
         System.out.println(namedEntityTypes.get(0));
 
         return this.getTypesSummation(
-            names, namedEntityTypes.toArray(String[]::new), attributes, limit, begin, end, true);
+            names, namedEntityTypes.toArray(String[]::new), attributes, emptyString, minOccurrence, maxOccurrence,begin, end, true);
 
     }
 }

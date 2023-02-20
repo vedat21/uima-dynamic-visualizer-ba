@@ -1,6 +1,6 @@
-import React from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+
 
 
 /**
@@ -8,10 +8,11 @@ import makeAnimated from 'react-select/animated';
  * @returns {JSX.Element}
  * @constructor
  */
-function SelectForm(props) {
+function SelectField(props) {
 
     // for animation when selected option is removed
     const animated = makeAnimated();
+    const defaultValue = []
 
     /**
      * updates the selected values.
@@ -28,8 +29,22 @@ function SelectForm(props) {
         }
     }
 
+    // When a visualization is edited, to fill the selections
+    if (props.selectedOption.length !== 0 && props.options) {
+        if (props.isMulti) {
+            props.selectedOption.forEach((option) => {
+                defaultValue.push({value: option, label: option})
+            })
+        } else {
+            const value = props.options.find(option => option.value === props.selectedOption)
+            defaultValue.push(value);
+        }
+
+    }
+
     return (
         <Select
+            defaultValue={defaultValue}
             className="select"
             styles={{
                 control: (baseStyles, state) => ({
@@ -42,9 +57,10 @@ function SelectForm(props) {
             options={props.options}
             isMulti={props.isMulti}
             components={animated}
+            placeholder={props.placeholder}
         >
         </Select>
     );
 }
 
-export default SelectForm;
+export default SelectField;

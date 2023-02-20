@@ -32,7 +32,7 @@ export const uniqueId = () => {
 
 // To get the requestUrl from props
 export const getRequestUrl = (props) => {
-    let requestUrl = props.url + props.selectedDocuments.join(",") + apiEndpoints.requestParamLimit + props.limit;
+    let requestUrl = props.url + props.selectedDocuments.join(",") + apiEndpoints.requestParamMinOccurrence + props.selectedMinOccurrence + apiEndpoints.requestParamMaxOccurrence + props.selectedMaxOccurrence;
     if (props.lemmaEnd !== 0 && props.selectedDocuments.length === 1) {
         requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end=" + props.lemmaEnd;
     }
