@@ -22,8 +22,8 @@ function WorldMapBasisCountries(props) {
 
   let requestUrl = apiEndpoints.basis + apiEndpoints.sumLocation
       + apiEndpoints.requestParamNames +
-      props.selectedDocuments.toString() + apiEndpoints.requestParamLimit
-      + props.limit;
+      props.selectedDocuments.toString() + apiEndpoints.requestParamMinOccurrence
+      + props.selectedMinOccurrence;
 
   if (props.lemmaEnd != 0 && props.selectedDocuments.length == 1) {
     requestUrl = requestUrl + "&begin=" + props.lemmaBegin + "&end="

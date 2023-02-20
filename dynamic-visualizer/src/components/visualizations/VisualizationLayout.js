@@ -33,7 +33,7 @@ function VisualizationLayout(props) {
     return _.map(_.map(props.visualizations), function (visualization) {
       return (
           <div
-              className={visualization.component.includes("text")
+              className={visualization.selectedVisualization.includes("text")
                   ? "scrollable-text" : "chart"}
               data-grid={getComponentConfiguration(visualization.component)}
               key={visualization.id}

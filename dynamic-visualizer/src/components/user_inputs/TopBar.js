@@ -5,16 +5,15 @@ import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Slide from '@mui/material/Slide';
-import {Box, Button, IconButton, TextField, Tooltip} from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
+import {Box, Button, TextField, Tooltip} from "@mui/material";
 
 import html2canvas from 'html2canvas';
 import {jsPDF} from 'jspdf';
 
 // custom modules
-import SelectContainer from "./SelectContainer";
 import {usedColors} from "../../helper/envConst";
 import SideBar from "./SideBar";
+import PopUpWindow from "../../views/PopUpWindow";
 
 /**
  * Quelle: https://mui.com/material-ui/react-app-bar/
@@ -85,7 +84,6 @@ function TopBar(props) {
                     useCase="presentation" sx={{flexGrow: 1}}
                 />
             }
-            {/* topbar */}
             <Toolbar>
               {!props.editable &&
                   <Box
@@ -151,12 +149,10 @@ function TopBar(props) {
               }
             </Toolbar>
             {/* input area for creating new visualization */}
-            {props.editable && <SelectContainer
-                addVisualization={props.addVisualization}
-            />}
+            {props.editable &&  <PopUpWindow edit={false} addVisualization={props.addVisualization}></PopUpWindow>}
           </AppBar>
         </HideOnScroll>
-        <Toolbar/> {/* Damit Header unteren content nicht überdeckt */}
+        <Toolbar/>
       </React.Fragment>
   );
 }

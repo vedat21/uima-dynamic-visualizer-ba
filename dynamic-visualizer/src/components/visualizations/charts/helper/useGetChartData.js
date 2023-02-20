@@ -14,7 +14,7 @@ import {apiEndpoints} from "../../../../helper/envConst"
  */
 const useGetChartData = (label, url, limit, selectedDocuments, lemmaBegin, lemmaEnd, fill) => {
 
-    let requestUrl = url  +   selectedDocuments.join(",") + apiEndpoints.requestParamLimit + limit;
+    let requestUrl = url  +   selectedDocuments.join(",") + apiEndpoints.requestParamMinOccurrence + limit;
 
     if (lemmaEnd != 0 && selectedDocuments.length == 1){
         requestUrl = requestUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
