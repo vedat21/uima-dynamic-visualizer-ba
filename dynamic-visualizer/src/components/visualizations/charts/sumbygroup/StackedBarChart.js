@@ -15,10 +15,11 @@ export default function StackedBarChart(props) {
     const data = response;
     const id = uniqueId();
 
+
     // Configurations
-    let x = d => d.id // given d in data, returns the (categorical) z-value
+    let x = d => d.id // given d in data, returns the (ordinal) x-value
     let y = d => d.count // given d in data, returns the (quantitative) y-value
-    let z = d => d.group; // given d in data, returns the (ordinal) x-value
+    let z = d => d.group; // given d in data, returns the (categorical) z-value
     let title // given d in data, returns the title text
     let marginTop = 30 // top margin, in pixels
     let marginRight = 0 // right margin, in pixels
@@ -36,8 +37,8 @@ export default function StackedBarChart(props) {
     let offset = d3.stackOffsetDiverging // stack offset method
     let order = d3.stackOrderNone // stack order method
     let yFormat // a format specifier string for the y-axis
-    let yLabel = props.label // a label for the y-axis
-    let colors = d3.schemeTableau10 // array of colors
+    let yLabel = props.selectedYLabel // a label for the y-axis
+    let colors = props.selectedColors.length ? props.selectedColors : d3.schemeTableau10; // array of colors
 
     const ref = useD3(
         (svg) => {
@@ -47,9 +48,6 @@ export default function StackedBarChart(props) {
             const Y = d3.map(data, y);
             const Z = d3.map(data, z);
 
-            console.log("X: ",X);
-            console.log("Y: ",Y);
-            console.log("Z: ",Z);
 
             // Compute default x- and z-domains, and unique them.
             if (xDomain === undefined) xDomain = X;
@@ -84,6 +82,7 @@ export default function StackedBarChart(props) {
             const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
             const yAxis = d3.axisLeft(yScale).ticks(height / 60, yFormat);
 
+
             // Compute titles.
             if (title === undefined) {
                 const formatValue = yScale.tickFormat(100, yFormat);
@@ -98,7 +97,7 @@ export default function StackedBarChart(props) {
                 .attr("width", width)
                 .attr("height", height)
                 .attr("viewBox", [0, 0, width, height])
-                .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+                .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
 
             svg.append("g")
                 .attr("transform", `translate(${marginLeft},0)`)
@@ -118,7 +117,7 @@ export default function StackedBarChart(props) {
                 .selectAll("g")
                 .data(series)
                 .join("g")
-                .attr("fill", ([{i}]) => color(Z[i]))
+                    .attr("fill", ([{i}]) => color(Z[i]))
                 .selectAll("rect")
                 .data(d => d)
                 .join("rect")
@@ -128,14 +127,11 @@ export default function StackedBarChart(props) {
                 .attr("width", xScale.bandwidth());
 
             if (title) bar.append("title")
-                .text(({i}) => title(i));
+                .text(({i}) => title(i))
 
             svg.append("g")
                 .attr("transform", `translate(0,${770})`)
                 .call(xAxis);
-
-            return Object.assign(svg.node(), {scales: {color}});
-
         },
         [response]
     );

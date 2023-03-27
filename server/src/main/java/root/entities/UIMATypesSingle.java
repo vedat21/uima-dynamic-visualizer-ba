@@ -1,14 +1,14 @@
 package root.entities;
 
+import com.mongodb.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor
-public class UIMATypesSummation {
+public class UIMATypesSingle {
 
-    private int count;
     private String group;
     @Id
     private String id;
@@ -16,5 +16,9 @@ public class UIMATypesSummation {
     private String value;
     private String begin;
     private String end;
-
+    private String gender;
+    private String pos;
+    private String sentiment;
+    private String sentimentCategory;
+    private int count;
 }

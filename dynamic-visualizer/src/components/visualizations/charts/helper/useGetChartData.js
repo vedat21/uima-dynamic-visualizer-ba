@@ -16,6 +16,8 @@ const useGetChartData = (label, url, limit, selectedDocuments, lemmaBegin, lemma
 
     let requestUrl = url  +   selectedDocuments.join(",") + apiEndpoints.requestParamMinOccurrence + limit;
 
+    console.log(requestUrl)
+
     if (lemmaEnd != 0 && selectedDocuments.length == 1){
         requestUrl = requestUrl + "&begin=" + lemmaBegin + "&end=" + lemmaEnd;
     }

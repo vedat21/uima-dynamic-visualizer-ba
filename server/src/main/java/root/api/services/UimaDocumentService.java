@@ -17,9 +17,7 @@ import java.util.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 import root.api.repositories.UimaDocumentRepository;
-import root.entities.GeneralInfo;
-import root.entities.UIMATypesSummation;
-import root.entities.UIMADocument;
+import root.entities.*;
 
 @Service
 public class UimaDocumentService {
@@ -76,6 +74,16 @@ public class UimaDocumentService {
         Query query = new Query();
         query.fields().include("name").include("group");
         return mongoTemplate.find(query, UIMADocument.class);
+    }
+
+    public UIMADocument getTest() {
+        Query query = new Query();
+        query.fields().include("types");
+        List<UIMADocument> uimaDocuments = mongoTemplate.find(query, UIMADocument.class);
+
+        List<UIMATypeMapper> iwas = new ArrayList<>();
+
+        return uimaDocuments.get(0);
     }
 
     /**
@@ -155,21 +163,47 @@ public class UimaDocumentService {
         operations.add(Aggregation.match(Criteria.where("name").in(Arrays.stream(names).toArray())));
         // concat all selected types to one list named data
         operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
-        operations.add(unwind("data")); // unwind the list
+        operations.add(unwind("data"));
+        operations.add(group("data").count().as("count"));
 
-        operations.add(group("data.tokenValue").count().as("count"));
-        AggregationResults<UIMATypesSummation> results =
-            mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSummation.class);
 
-        return results.getMappedResults();
+        AggregationResults<UIMATypesSingle> results =
+            mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSingle.class);
+
+        results.forEach((result) -> {
+            JSONObject jsonObject = new JSONObject(result.getId());
+            int id = jsonObject.getInt("_id");
+            int begin = jsonObject.has("begin") ? jsonObject.getInt("begin") : -1;
+            int end = jsonObject.getInt("end");
+            double sentiment = jsonObject.has("sentiment") ? jsonObject.getDouble("sentiment") : 1000000;
+
+            result.setId(String.valueOf(id));
+            result.setBegin(String.valueOf(begin));
+            result.setEnd(String.valueOf(end));
+            result.setSentiment(String.valueOf(sentiment));
+            result.setCount(begin);
+
+            if (sentiment == 0) {
+                result.setSentimentCategory("0");
+            } else if (sentiment > 0) {
+                result.setSentimentCategory("1");
+            } else if (sentiment < 0) {
+                result.setSentimentCategory("2");
+            }
+        });
+
+        List<UIMATypesSingle> endResult = new ArrayList<>(results.getMappedResults());
+        Collections.sort(endResult, Comparator.comparing(UIMATypesSingle::getCount));
+
+        return endResult;
     }
 
     /**
      * To get the summed data of the given parameters.
      *
-     * @param names      Selected documents
-     * @param types      Selected types
-     * @param attributes Selected attributes
+     * @param names         Selected documents
+     * @param types         Selected types
+     * @param attributes    Selected attributes
      * @param minOccurrence
      * @param maxOccurrence
      * @param begin
@@ -178,8 +212,10 @@ public class UimaDocumentService {
      * @return
      */
     public List<UIMATypesSummation> getTypesSummation(String[] names, String[] types, String[] attributes,
-        String[] conditions, String minOccurrence, Optional<String> maxOccurrence, Optional<String> begin, Optional<String> end, boolean isLocation) {
+        String[] conditions, String minOccurrence, Optional<String> maxOccurrence, String sorting,
+        Optional<String> begin, Optional<String> end, boolean isLocation) {
 
+        Sort.Direction sortDirection = sorting.equals("true") ? Sort.Direction.DESC : Sort.Direction.ASC;
         /*
         param types is saved in two variable. One is a string and the other an array.
         Because of build in aggregation "concatarray". All types are stored in objects types.
@@ -219,7 +255,7 @@ public class UimaDocumentService {
             .contains("end")) {
             operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
             operations.add(group("length").count().as("count"));
-            operations.add(sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count"))));
+            operations.add(sort(Sort.by(sortDirection, "length").and(Sort.by(sortDirection, "count"))));
         }
         // Standard Summation
         else {
@@ -227,13 +263,12 @@ public class UimaDocumentService {
                 operations.add(match(new Criteria("data.value").is("LOC"))); // only named entity locations
             }
             operations.add(group("data." + attributes[0]).count().as("count"));
-            operations.add(sort(Sort.by(Sort.Direction.DESC, "count")));
+            operations.add(sort(Sort.by(sortDirection, "count")));
         }
 
         // Limit
         operations.add(match(new Criteria("count").gte(Integer.parseInt(minOccurrence))));
         operations.add(match(new Criteria("count").lte(Double.parseDouble(maxOccurrence.orElse("Infinity")))));
-
 
         AggregationResults<UIMATypesSummation> results =
             mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSummation.class);
@@ -245,14 +280,15 @@ public class UimaDocumentService {
      * @param names      Selected documents
      * @param types      Selected types
      * @param attributes Selected attributes
-     * @param limit
      * @param begin
      * @param end
      * @return
      */
     public List<UIMATypesSummation> getTypesSummationByGroup(String[] names, String[] types, String[] attributes,
-        int limit, Optional<String> begin, Optional<String> end) {
+        String minOccurrence, Optional<String> maxOccurrence, String sorting, Optional<String> begin,
+        Optional<String> end, String preserveNullAndEmptyArrays) {
 
+        Sort.Direction sortDirection = sorting.equals("true") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         /*
         param types is saved in two variable. One is a string and the other an array.
@@ -270,22 +306,17 @@ public class UimaDocumentService {
         operations.add(project("types").and(firstType).concatArrays(remainingTypes).as("data"));
         // to merge all objects that have same value for begin.
         operations.add(unwind("data"));
-        operations.add(
-            group("data.begin").first("data.begin").as("begin")
-                .addToSet("data.end").as("end")
-                .addToSet("data." + attributes[0]).as(attributes[0])
-                .addToSet("data." + attributes[1]).as(attributes[1]));
-        operations.add(project("begin", "end",attributes[0], attributes[1]));
-        operations.add(group().push(new BasicDBObject("begin", "$begin").append(attributes[0],"$" + attributes[0])
+        operations.add(group("data.begin").first("data.begin").as("begin").addToSet("data.end").as("end")
+            .addToSet("data." + attributes[0]).as(attributes[0]).addToSet("data." + attributes[1]).as(attributes[1]));
+        operations.add(project("begin", "end", attributes[0], attributes[1]));
+        operations.add(group().push(new BasicDBObject("begin", "$begin").append(attributes[0], "$" + attributes[0])
             .append(attributes[1], "$" + attributes[1]).append("end", "$end")).as("mergedObjects"));
         operations.add(project().and("mergedObjects").concatArrays().as("data"));
         operations.add(unwind("data"));
-        operations.add(unwind("data." + attributes[0], false));
-        operations.add(unwind("data." + attributes[1], false));
+        operations.add(unwind("data." + attributes[0], preserveNullAndEmptyArrays.equals("true")));
+        operations.add(unwind("data." + attributes[1], preserveNullAndEmptyArrays.equals("true")));
         operations.add(unwind("data.end"));
         operations.add(replaceRoot("data"));
-
-
 
         // when one document is selected and part of text is selected
         if (begin.isPresent() && end.isPresent()) {
@@ -299,16 +330,17 @@ public class UimaDocumentService {
             .contains("end")) {
             operations.add(project("end", "begin").and("end").minus("begin").as("length"));
             operations.add(group("length").count().as("count"));
-            operations.add(
-                sort(Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
+            operations.add(sort(Sort.by(sortDirection, "length").and(Sort.by(sortDirection, "count")))); // sortierung
         }
         // Standard Summation
         else {
             operations.add(group(attributes[0], attributes[1]).count().as("count"));
-            operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
+            operations.add(sort(Sort.by(sortDirection, "count"))); // sortierung
         }
 
-        operations.add(match(new Criteria("count").gte(limit))); // limit
+        // Limit
+        operations.add(match(new Criteria("count").gte(Integer.parseInt(minOccurrence))));
+        operations.add(match(new Criteria("count").lte(Double.parseDouble(maxOccurrence.orElse("Infinity")))));
 
         List<UIMATypesSummation> results =
             mongoTemplate.aggregate(newAggregation(operations), "uimadocuments", UIMATypesSummation.class)
@@ -333,14 +365,15 @@ public class UimaDocumentService {
      * @param names      Selected documents
      * @param types      Selected types
      * @param attributes Selected attributes
-     * @param limit
      * @param begin
      * @param end
      * @return
      */
     public List<UIMATypesSummation> getTypesSummationByDateOrName(String[] names, String[] types, String[] attributes,
-        int limit, Optional<String> begin, Optional<String> end) {
+        String minOccurrence, Optional<String> maxOccurrence, String sorting, Optional<String> begin,
+        Optional<String> end) {
 
+        Sort.Direction sortDirection = sorting.equals("true") ? Sort.Direction.DESC : Sort.Direction.ASC;
         int attributeGroup = 1;
 
         /*
@@ -381,13 +414,13 @@ public class UimaDocumentService {
                 operations.add(project("data.end", "data.begin").and("data.end").minus("data.begin").as("length"));
                 //         operations.add(match(new Criteria("length").lte(5)));
                 operations.add(group("length").count().as("count"));
-                operations.add(sort(
-                    Sort.by(Sort.Direction.DESC, "length").and(Sort.by(Sort.Direction.DESC, "count")))); // sortierung
+                operations.add(
+                    sort(Sort.by(sortDirection, "length").and(Sort.by(sortDirection, "count")))); // sortierung
             }
             // Standard Summation
             else {
                 operations.add(group("data." + attributes[0]).count().as("count"));
-                operations.add(sort(Sort.by(Sort.Direction.DESC, "count"))); // sortierung
+                operations.add(sort(Sort.by(sortDirection, "count"))); // sortierung
             }
 
             // Nur wenn Gruppe date oder name ist
@@ -407,10 +440,18 @@ public class UimaDocumentService {
             result.addAll(results.getMappedResults());
         }
 
-        // get all that are less than limit
+        // get all that are less or more then limit
         List<UIMATypesSummation> removeFromResult = result;
-        List<UIMATypesSummation> removeFromResultFinished =
-            removeFromResult.stream().filter(x -> x.getCount() < limit).collect(Collectors.toList());
+        List<UIMATypesSummation> removeFromResultFinished = new ArrayList<>();
+        List<UIMATypesSummation> removeFromResultFinishedMin =
+            removeFromResult.stream().filter(x -> x.getCount() < Integer.parseInt(minOccurrence))
+                .collect(Collectors.toList());
+        List<UIMATypesSummation> removeFromResultFinishedMax =
+            removeFromResult.stream().filter(x -> x.getCount() > Double.parseDouble(maxOccurrence.orElse("Infinity")))
+                .collect(Collectors.toList());
+        removeFromResultFinished.addAll(removeFromResultFinishedMax);
+        removeFromResultFinished.addAll(removeFromResultFinishedMin);
+
         List<String> remove =
             removeFromResultFinished.stream().map(UIMATypesSummation::getId).collect(Collectors.toList());
 
@@ -425,13 +466,16 @@ public class UimaDocumentService {
             }
         }
 
-        Collections.sort(endResult, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+        if (sorting.equals("true")) {
+            Collections.sort(endResult, Comparator.comparing(UIMATypesSummation::getCount).reversed());
+        } else {
+            Collections.sort(endResult, Comparator.comparing(UIMATypesSummation::getCount));
+        }
 
         return endResult;
     }
 
     /**
-     *
      * @param names
      * @param minOccurrence
      * @param maxOccurrence
@@ -439,7 +483,8 @@ public class UimaDocumentService {
      * @param end
      * @return
      */
-    public List getLocationSummation(String[] names, String minOccurrence, Optional<String> maxOccurrence,Optional<String> begin, Optional<String> end) {
+    public List getLocationSummation(String[] names, String minOccurrence, Optional<String> maxOccurrence,
+        Optional<String> begin, Optional<String> end) {
 
         GeneralInfo generalInfo = this.getGeneralInfo();
         String[] emptyString = new String[0]; // rest of them
@@ -452,8 +497,8 @@ public class UimaDocumentService {
 
         System.out.println(namedEntityTypes.get(0));
 
-        return this.getTypesSummation(
-            names, namedEntityTypes.toArray(String[]::new), attributes, emptyString, minOccurrence, maxOccurrence,begin, end, true);
+        return this.getTypesSummation(names, namedEntityTypes.toArray(String[]::new), attributes, emptyString,
+            minOccurrence, maxOccurrence, "true", begin, end, true);
 
     }
 }

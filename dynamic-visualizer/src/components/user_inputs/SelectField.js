@@ -1,6 +1,6 @@
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-
+import {hexToWord} from "../../helper/envConst";
 
 
 /**
@@ -33,7 +33,15 @@ function SelectField(props) {
     if (props.selectedOption.length !== 0 && props.options) {
         if (props.isMulti) {
             props.selectedOption.forEach((option) => {
-                defaultValue.push({value: option, label: option})
+                if(props.placeholder === "Types"){
+                    defaultValue.push({value: option, label: option.replaceAll("_", " ").toUpperCase()})
+                }
+                else if (props.placeholder === "Colors"){
+                    defaultValue.push({value: option, label: hexToWord[option]})
+                }
+                else {
+                    defaultValue.push({value: option, label: option})
+                }
             })
         } else {
             const value = props.options.find(option => option.value === props.selectedOption)

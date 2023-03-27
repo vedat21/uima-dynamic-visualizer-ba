@@ -39,8 +39,8 @@ export default function StackedBarChartNormalized(props) {
     let offset = d3.stackOffsetExpand // stack offset method
     let order = d3.stackOrderNone // stack order method
     let xFormat = "%" // a format specifier string for the x-axis
-    let xLabel // a label for the x-axis
-    let colors = d3.schemeTableau10 // array of colors
+    let xLabel = props.selectedXLabel; // a label for the x-axis
+    let colors = props.selectedColors.length ? props.selectedColors : d3.schemeTableau10; // array of colors
 
     const ref = useD3((svg) => {
 

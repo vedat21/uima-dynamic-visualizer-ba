@@ -213,7 +213,7 @@ public class UIMADocument {
     }
 
     /**
-     * To add tokenValue as key (POS)
+     * To add extra attributes
      *
      * @param result
      * @return Map
@@ -239,7 +239,37 @@ public class UIMADocument {
                         }
                     }
                 }
+            } else if (entry.getKey().toLowerCase().contains("sentence")) {
+                for (UIMATypeMapper typeValue : type) {
+                    for (UIMATypeMapper lemma : lemmas) {
+                        if (lemma.getBegin().equals(typeValue.getBegin())) {
+                            typeValue.setTokenValue(lemma.getValue());
+                        }
+                    }
+                }
+            } else if (entry.getKey().toLowerCase().contains("sentiment")) {
+                for (UIMATypeMapper typeValue : type) {
+                    for (UIMATypeMapper lemma : lemmas) {
+                        if (lemma.getBegin().equals(typeValue.getBegin())) {
+                            if (Double.parseDouble(typeValue.getSentiment()) > 0) {
+                                typeValue.setSentimentCategory("positiv");
+                            } else if (Double.parseDouble(typeValue.getSentiment()) < 0) {
+                                typeValue.setSentimentCategory("negativ");
+                            } else if (Double.parseDouble(typeValue.getSentiment()) == 0) {
+                                typeValue.setSentimentCategory("neutral");
+                            } else {
+                                typeValue.setSentimentCategory("neutral");
+                            }
+                        }
+                    }
+                    if(typeValue.getSentimentCategory() == null){
+                        typeValue.setSentimentCategory("neutral");
+                        System.out.println(typeValue.getSentimentCategory());
+                    }
+                }
             }
+
+
 
             newResult.put(entry.getKey(), type);
         }

@@ -23,18 +23,18 @@ export default function HorizontalBarChart(props) {
     let marginTop = 30 // the top margin, in pixels
     let marginRight = 0 // the right margin, in pixels
     let marginBottom = 10 // the bottom margin, in pixels
-    let marginLeft = 50 // the left margin, in pixels
+    let marginLeft = 100 // the left margin, in pixels
     let width = 1200 // the outer width of the chart, in pixels
     let height = 800; // outer height, in pixels
     let xType = d3.scaleLinear; // type of x-scale
     let xDomain; // [xmin, xmax]
     let xRange = [marginLeft, width - marginRight]; // [left, right]
     let xFormat; // a format specifier string for the x-axis
-    let xLabel; // a label for the x-axis
+    let xLabel = props.selectedXLabel; // a label for the x-axis
     let yPadding = 0.1; // amount of y-range to reserve to separate bars
     let yDomain; // an array of (ordinal) y-values
     let yRange; // [top, bottom]
-    let color = "steelblue"; // bar fill color
+    let color = props.selectedColors.length ? props.selectedColors : d3.schemeTableau10; // array of colors
     let titleColor = "white"; // title fill color when atop bar
     let titleAltColor = "white"; // title fill color when atop background
 
@@ -49,6 +49,8 @@ export default function HorizontalBarChart(props) {
             if (xDomain === undefined) xDomain = [0, d3.max(X)];
             if (yDomain === undefined) yDomain = Y;
             yDomain = new d3.InternSet(yDomain);
+
+            color = d3.scaleOrdinal(color);
 
             // Omit any data not present in the y-domain.
             const I = d3.range(X.length).filter(i => yDomain.has(Y[i]));
@@ -94,20 +96,22 @@ export default function HorizontalBarChart(props) {
                     .text(xLabel));
 
             svg.append("g")
-                .attr("fill", color)
                 .selectAll("rect")
                 .data(I)
                 .join("rect")
                 .attr("x", xScale(0))
                 .attr("y", i => yScale(Y[i]))
                 .attr("width", i => xScale(X[i]) - xScale(0))
-                .attr("height", yScale.bandwidth());
+                .attr("height", yScale.bandwidth())
+                .attr("fill", function (d, i) {
+                    return color(i);
+                });
 
             svg.append("g")
                 .attr("fill", titleColor)
                 .attr("text-anchor", "end")
                 .attr("font-family", "sans-serif")
-                .attr("font-size", 10)
+                .attr("font-size", 13)
                 .selectAll("text")
                 .data(I)
                 .join("text")
@@ -124,9 +128,7 @@ export default function HorizontalBarChart(props) {
             svg.append("g")
                 .attr("transform", `translate(${marginLeft},0)`)
                 .call(yAxis);
-
-            return svg.node();
-        },
+            },
         [response]
     );
 

@@ -79,6 +79,12 @@ public class UimaDocumentController {
         return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.getTypes(typesAsArray, namesAsArray));
     }
 
+    @GetMapping("/documents/types")
+    public ResponseEntity<Object> getTest(@RequestParam Optional<String> types, @RequestParam Optional<String> names) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(uimaDocumentService.getTest());
+    }
+
     /**
      * To get summed data of UIMA Documents.
      *
@@ -89,8 +95,8 @@ public class UimaDocumentController {
     public ResponseEntity<Object> getTypesSummation(@RequestParam Optional<String> types,
         @RequestParam Optional<String> names, @RequestParam Optional<String> attributes,
         @RequestParam Optional<String> conditions, @RequestParam(defaultValue = "0") String minOccurrence,
-        @RequestParam Optional<String> maxOccurrence, @RequestParam Optional<String> begin,
-        @RequestParam Optional<String> end) {
+        @RequestParam Optional<String> maxOccurrence, @RequestParam(defaultValue = "true") String sorting,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
 
         if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -104,12 +110,12 @@ public class UimaDocumentController {
         // Für Orte
         if (types.get().toLowerCase().contains("loc")) {
             return ResponseEntity.status(HttpStatus.OK)
-                .body(this.getLocationSummation(names, minOccurrence, maxOccurrence,begin, end));
+                .body(this.getLocationSummation(names, minOccurrence, maxOccurrence, begin, end));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(
             uimaDocumentService.getTypesSummation(namesAsArray, typesAsArray, attributesAsArray, conditionsAsArray,
-                minOccurrence, maxOccurrence, begin, end, false));
+                minOccurrence, maxOccurrence, sorting, begin, end, false));
 
     }
 
@@ -119,11 +125,13 @@ public class UimaDocumentController {
      * @param types
      * @return
      */
-    @GetMapping("/documents/sumbydate")
+    @GetMapping("/documents/sumbygroup")
     public ResponseEntity<Object> getTypesSummationByDateOrName(@RequestParam Optional<String> names,
         @RequestParam Optional<String> types, @RequestParam Optional<String> attributes,
-        @RequestParam Optional<String> conditions, @RequestParam(defaultValue = "0") String limit,
-        @RequestParam Optional<String> begin, @RequestParam Optional<String> end) {
+        @RequestParam Optional<String> conditions, @RequestParam(defaultValue = "0") String minOccurrence,
+        @RequestParam Optional<String> maxOccurrence, @RequestParam(defaultValue = "true") String sorting,
+        @RequestParam Optional<String> begin, @RequestParam Optional<String> end,
+        @RequestParam(defaultValue = "false") String preserveNullAndEmptyArrays) {
 
         if (types.isEmpty() || names.isEmpty() || attributes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -136,11 +144,11 @@ public class UimaDocumentController {
         if (Arrays.asList(attributesAsArray).contains("date") || Arrays.asList(attributesAsArray).contains("name")) {
             return ResponseEntity.status(HttpStatus.OK).body(
                 uimaDocumentService.getTypesSummationByDateOrName(namesAsArray, typesAsArray, attributesAsArray,
-                    Integer.parseInt(limit), begin, end));
+                    minOccurrence, maxOccurrence, sorting, begin, end));
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(
                 uimaDocumentService.getTypesSummationByGroup(namesAsArray, typesAsArray, attributesAsArray,
-                    Integer.parseInt(limit), begin, end));
+                    minOccurrence, maxOccurrence, sorting, begin, end, preserveNullAndEmptyArrays));
         }
     }
 

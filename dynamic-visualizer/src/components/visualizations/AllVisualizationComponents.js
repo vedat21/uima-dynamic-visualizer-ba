@@ -9,7 +9,6 @@ import RadarChart from "./charts/sum/RadarChart"
 import ScatterChart from "./charts/ScatterChart";
 import RichTextEditor from "./text/RichTextEditor";
 import ChartTopBar from "./topbars/ChartTopBar";
-import TextTopBar from "./topbars/TextTopBar";
 import TextComponent from "./text/TextComponent";
 import WorldMapMarkCities from "./other/WorldMapMarkCities";
 import WorldMapMarkAreas from "./other/WorldMapMarkAreas";
@@ -26,6 +25,8 @@ import StackedBarChart from "./charts/sumbygroup/StackedBarChart";
 import HorizontalBarChart from "./charts/sum/HorizontalBarChart";
 import StackedHorizontalBarChart from "./charts/sumbygroup/StackedHorizontalBarChart";
 import StackedBarChartNormalized from "./charts/sumbygroup/StackedBarChartNormalized";
+import GruppedScatterChart from "./charts/GruppedScatterChart";
+import TestLegend from "../../TestLegend";
 
 
 // all visualization components. map string to the component. Has to match values in SelectContainer.js
@@ -43,6 +44,7 @@ const components = {
     "radarchart": RadarChart,
     "richtexteditor": RichTextEditor,
     "scatterchart": ScatterChart,
+    "gruppedscatterchart": GruppedScatterChart,
     "stackedareachart": StackedAreaChart,
     "stackedbarchart": StackedBarChart,
     "stackedbarchartnormalized": StackedBarChartNormalized,
@@ -70,67 +72,51 @@ const components = {
  * @param editVisualization
  * @returns {React.ReactElement<{key}>|React.DetailedReactHTMLElement<{style: {height: string}, key}, HTMLElement>}
  */
-export default (visualization, editable, onDeleteComponentClicked, label,
-                editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd, editVisualization) => {
+export default (visualization, editable, onDeleteComponentClicked, editRichtext, richTextContent, selectedDocuments, lemmaBegin, setLemmaBegin, lemmaEnd, setLemmaEnd, editVisualization) => {
 
     if (typeof components[visualization.selectedVisualization] !== "undefined") {
-        // entweder erstell komponenten die texttopbar oder charttopbar entählt.
-        // hier texttopbar
-        if (visualization.selectedVisualization.includes("text")) {
-            return React.createElement("div", {key: uuid()}, [
-                React.createElement(TextTopBar, {
-                    editable: editable,
-                    key: uuid(),
-                    onDeleteComponentClicked: onDeleteComponentClicked,
-                }),
-                React.createElement(components[visualization.selectedVisualization], {
-                    content: richTextContent,
-                    editable: editable,
-                    editRichtext: editRichtext,
-                    key: uuid(),
-                    label: label,
-                    lemmaBegin: lemmaBegin,
-                    lemmaEnd: lemmaEnd,
-                    selectedDocuments: selectedDocuments,
-                    setLemmaBegin: setLemmaBegin,
-                    setLemmaEnd: setLemmaEnd,
-                    url: visualization.url,
-                }),
 
-            ]);
-        } else {
-            // height muss 100% sein wegen world map
-            return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
-                React.createElement(ChartTopBar, {
-                    editable: editable,
-                    editVisualization: editVisualization,
-                    id: visualization.id,
-                    key: uuid(),
-                    onDeleteComponentClicked: onDeleteComponentClicked,
-                    selectedAttributes: visualization.selectedAttributes,
-                    selectedConditions: visualization.selectedConditions,
-                    selectedLabel: label,
-                    selectedMaxOccurrence: visualization.selectedMaxOccurrence,
-                    selectedMinOccurrence: visualization.selectedMinOccurrence,
-                    selectedTypes: visualization.selectedTypes,
-                    selectedVisualization: visualization.selectedVisualization,
-                }),
-                React.createElement(components[visualization.selectedVisualization], {
-                    editable: editable,
-                    key: uuid(),
-                    label: label,
-                    lemmaBegin: lemmaBegin,
-                    lemmaEnd: lemmaEnd,
-                    limit: visualization.limit,
-                    selectedDocuments: selectedDocuments,
-                    selectedMaxOccurrence: visualization.selectedMaxOccurrence,
-                    selectedMinOccurrence: visualization.selectedMinOccurrence,
-                    types: visualization.types,
-                    url: visualization.url,
-                }),
+        // height muss 100% sein wegen world map
+        return React.createElement("div", {key: uuid(), style: {height: "100%"}}, [
+            React.createElement(ChartTopBar, {
+                editable: editable,
+                editVisualization: editVisualization,
+                id: visualization.id,
+                key: uuid(),
+                onDeleteComponentClicked: onDeleteComponentClicked,
+                selectedAttributes: visualization.selectedAttributes,
+                selectedColors: visualization.selectedColors,
+                selectedConditions: visualization.selectedConditions,
+                selectedMaxOccurrence: visualization.selectedMaxOccurrence,
+                selectedMinOccurrence: visualization.selectedMinOccurrence,
+                selectedSorting: visualization.selectedSorting,
+                selectedTypes: visualization.selectedTypes,
+                selectedVisualization: visualization.selectedVisualization,
+                selectedXLabel: visualization.selectedXLabel,
+                selectedYLabel: visualization.selectedYLabel,
+            }),
+            React.createElement(components[visualization.selectedVisualization], {
+                content: richTextContent,
+                editable: editable,
+                editRichtext: editRichtext,
+                key: uuid(),
+                label: visualization.label,
+                lemmaBegin: lemmaBegin,
+                lemmaEnd: lemmaEnd,
+                selectedColors: visualization.selectedColors,
+                selectedDocuments: selectedDocuments,
+                selectedMaxOccurrence: visualization.selectedMaxOccurrence,
+                selectedMinOccurrence: visualization.selectedMinOccurrence,
+                selectedSorting: visualization.selectedSorting,
+                selectedXLabel: visualization.selectedXLabel,
+                selectedYLabel: visualization.selectedYLabel,
+                setLemmaBegin: setLemmaBegin,
+                setLemmaEnd: setLemmaEnd,
+                types: visualization.types,
+                url: visualization.url,
+            }),
 
-            ]);
-        }
-
+        ]);
     }
+
 }

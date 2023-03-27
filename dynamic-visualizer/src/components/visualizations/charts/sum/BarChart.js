@@ -18,7 +18,7 @@ export default function BarChart(props) {
     // Configurations
     let x = x => x.id // given d in data, returns the (ordinal) x-value
     let y = y => y.count // given d in data, returns the (quantitative) y-value
-    let title // given d in data, returns the title text
+    let title; // given d in data, returns the title text
     let marginTop = 20 // the top margin, in pixels
     let marginRight = 0 // the right margin, in pixels
     let marginBottom = 30 // the bottom margin, in pixels
@@ -32,8 +32,11 @@ export default function BarChart(props) {
     let yRange = [height - marginBottom, marginTop] // [bottom, top]
     let xPadding = 0.1 // amount of x-range to reserve to separate bars
     let yFormat // a format specifier string for the y-axis
-    let yLabel = props.label // a label for the y-axis
-    let color = "steelblue" // bar fill color
+    let yLabel = props.selectedYLabel // a label for the y-axis
+    let color = props.selectedColors // bar fill color
+    let titleColor = "white"; // title fill color when atop bar
+    let titleAltColor = "white"; // title fill color when atop background
+
 
     const ref = useD3(
         (svg) => {
@@ -46,6 +49,8 @@ export default function BarChart(props) {
             if (xDomain === undefined) xDomain = X;
             if (yDomain === undefined) yDomain = [0, d3.max(Y)];
             xDomain = new d3.InternSet(xDomain);
+
+            color = color.length ? d3.scaleOrdinal(props.selectedColors) : d3.scaleOrdinal(["steelblue"]);
 
             // Omit any data not present in the x-domain.
             const I = d3.range(X.length).filter(i => xDomain.has(X[i]));
@@ -87,21 +92,24 @@ export default function BarChart(props) {
                     .text(yLabel));
 
             const bar = svg.append("g")
-                .attr("fill", color)
                 .selectAll("rect")
                 .data(I)
                 .join("rect")
                 .attr("x", i => xScale(X[i]))
                 .attr("y", i => yScale(Y[i]))
                 .attr("height", i => yScale(0) - yScale(Y[i]))
-                .attr("width", xScale.bandwidth());
+                .attr("width", xScale.bandwidth())
+                .attr("fill", function (d, i) {
+                    return color(i);
+                });
 
             if (title) bar.append("title")
                 .text(title);
 
             svg.append("g")
                 .attr("transform", `translate(0,${height - marginBottom})`)
-                .call(xAxis);
+                .call(xAxis)
+
 
             return svg.node();
         },

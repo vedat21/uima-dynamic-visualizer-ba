@@ -81,22 +81,31 @@ function PresentationView(props) {
      * @param isText
      * @param limit
      */
-    function editVisualization(id, selectedTypes, selectedAttributes, selectedVisualization, selectedConditions ,isText, selectedMinOccurrence, selectedMaxOccurrence,selectedLabel){
+    function editVisualization(selectedData) {
         saveLayout();
 
-        const selectedComponent = visualizations.find(x => x.id === id);
-        const selectedTypesString = Array.isArray(selectedTypes) ? selectedTypes.join() : selectedTypes;
-        const reqeuestParamSum = selectedVisualization === "horizonchart" || selectedVisualization === "stackedbarchartnormalized" ||  selectedVisualization === "areachart" || selectedVisualization === "stackedareachart" || selectedVisualization === "stackedbarchart" || selectedVisualization === "stackedhorizontalbarchart"
-            ? apiEndpoints.sumbydate : apiEndpoints.sum
+        const selectedComponent = visualizations.find(x => x.id === selectedData.id);
+        const selectedTypesString = Array.isArray(selectedData.selectedTypes) ? selectedData.selectedTypes.join() : selectedData.selectedTypes;
+        let reqeuestParamSum = selectedData.selectedVisualization === "horizonchart" || selectedData.selectedVisualization === "stackedbarchartnormalized" || selectedData.selectedVisualization === "areachart" || selectedData.selectedVisualization === "stackedareachart" || selectedData.selectedVisualization === "stackedbarchart" || selectedData.selectedVisualization === "stackedhorizontalbarchart"
+            ? apiEndpoints.sumbygroup : apiEndpoints.sum
+        if (selectedData.selectedVisualization === "gruppedscatterchart") {
+            reqeuestParamSum = apiEndpoints.single;
+        }
+
+        //    const reqeuestParamSum = apiEndpoints.single;
 
         // alle einzeln überschreiben
-        selectedComponent.selectedTypes = selectedTypes;
-        selectedComponent.selectedAttributes = selectedAttributes;
-        selectedComponent.selectedVisualization = selectedVisualization;
-        selectedComponent.label = selectedLabel
-        selectedComponent.selectedMinOccurrence = selectedMinOccurrence
-        selectedComponent.selectedMaxOccurrence = selectedMaxOccurrence
-        selectedComponent.url =  apiEndpoints.basis + reqeuestParamSum + selectedTypesString + apiEndpoints.requestParamAttribute + selectedAttributes + apiEndpoints.requestParamNames;
+        selectedComponent.selectedAttributes = selectedData.selectedAttributes;
+        selectedComponent.selectedColors = selectedData.selectedColors;
+        selectedComponent.selectedMaxOccurrence = selectedData.selectedMaxOccurrence
+        selectedComponent.selectedMinOccurrence = selectedData.selectedMinOccurrence
+        selectedComponent.selectedPreserveEmptyAndNull = selectedData.selectedPreserveEmptyAndNull
+        selectedComponent.selectedSorting = selectedData.selectedSorting;
+        selectedComponent.selectedTypes = selectedData.selectedTypes;
+        selectedComponent.selectedVisualization = selectedData.selectedVisualization;
+        selectedComponent.selectedXLabel = selectedData.selectedXLabel
+        selectedComponent.selectedYLabel = selectedData.selectedYLabel
+        selectedComponent.url = apiEndpoints.basis + reqeuestParamSum + selectedTypesString + apiEndpoints.requestParamAttribute + selectedData.selectedAttributes + apiEndpoints.requestParamNames;
 
         // trigger rerender
         setVisualizations(visualizations.concat([]));
@@ -114,39 +123,45 @@ function PresentationView(props) {
      * @param selectedMaxOccurrence
      * @param selectedLabel
      */
-    function addVisualization(selectedTypes, selectedAttributes, selectedVisualization, selectedConditions ,isText, selectedMinOccurrence, selectedMaxOccurrence,selectedLabel) {
-
+    function addVisualization(selectedData) {
         saveLayout();
         // if selectedTypes only contains one element then do not join
-        const selectedTypesString = Array.isArray(selectedTypes) ? selectedTypes.join() : selectedTypes;
+        const selectedTypesString = Array.isArray(selectedData.selectedTypes) ? selectedData.selectedTypes.join() : selectedData.selectedTypes;
 
         // difference between chart component and other
-        if (!isText) {
+        if (!selectedData.isText) {
 
-            const reqeuestParamSum = selectedVisualization === "horizonchart" || selectedVisualization === "stackedbarchartnormalized" ||  selectedVisualization === "areachart" || selectedVisualization === "stackedareachart" || selectedVisualization === "stackedbarchart" || selectedVisualization === "stackedhorizontalbarchart"
-                ? apiEndpoints.sumbydate : apiEndpoints.sum
+            let reqeuestParamSum = selectedData.selectedVisualization === "horizonchart" || selectedData.selectedVisualization === "stackedbarchartnormalized" || selectedData.selectedVisualization === "areachart" || selectedData.selectedVisualization === "stackedareachart" || selectedData.selectedVisualization === "stackedbarchart" || selectedData.selectedVisualization === "stackedhorizontalbarchart"
+                ? apiEndpoints.sumbygroup : apiEndpoints.sum
+
+            if (selectedData.selectedVisualization === "gruppedscatterchart") {
+                reqeuestParamSum = apiEndpoints.single;
+            }
 
             const dataToAdd = {
-                component: selectedVisualization,
                 id: uuid(),
-                url: apiEndpoints.basis + reqeuestParamSum + selectedTypesString + apiEndpoints.requestParamAttribute + selectedAttributes
+                url: apiEndpoints.basis + reqeuestParamSum + selectedTypesString + apiEndpoints.requestParamAttribute + selectedData.selectedAttributes
                     + apiEndpoints.requestParamNames,
-                label: selectedLabel,
-                selectedAttributes: selectedAttributes,
-                selectedConditions: selectedConditions,
-                selectedMaxOccurrence: selectedMaxOccurrence,
-                selectedMinOccurrence: selectedMinOccurrence,
-                selectedTypes: selectedTypes,
-                selectedVisualization : selectedVisualization,
+                selectedAttributes: selectedData.selectedAttributes,
+                selectedColors: selectedData.selectedColors,
+                selectedConditions: selectedData.selectedConditions,
+                selectedMaxOccurrence: selectedData.selectedMaxOccurrence,
+                selectedMinOccurrence: selectedData.selectedMinOccurrence,
+                selectedPreserveEmptyAndNull: selectedData.selectedPreserveEmptyAndNull,
+                selectedSorting: selectedData.selectedSorting,
+                selectedTypes: selectedData.selectedTypes,
+                selectedVisualization: selectedData.selectedVisualization,
+                selectedXLabel: selectedData.selectedXLabel,
+                selectedYLabel: selectedData.selectedYLabel,
             };
             /* if bodydata is null then init list with only added data. else add to bodydata. (using concat to trigger rerender) */
             visualizations === null ? setVisualizations([dataToAdd]) : setVisualizations(visualizations.concat([dataToAdd]))
         } else {
             const dataToAdd = {
                 id: uuid(),
-                selectedVisualization: selectedVisualization,
+                selectedVisualization: selectedData.selectedVisualization,
                 content: "x",
-                url: apiEndpoints.basis + apiEndpoints.sum + selectedTypesString + apiEndpoints.requestParamAttribute + selectedAttributes
+                url: apiEndpoints.basis + apiEndpoints.sum + selectedTypesString + apiEndpoints.requestParamAttribute + selectedData.selectedAttributes
                     + apiEndpoints.requestParamNames,
             };
             /* if bodydata is null then init list with only added data. else add to bodydata.

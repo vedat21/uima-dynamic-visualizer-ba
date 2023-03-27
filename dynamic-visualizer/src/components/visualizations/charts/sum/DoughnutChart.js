@@ -104,6 +104,12 @@ export default function DoughnutChart(props) {
                 .attr("font-weight", (_, i) => i ? null : "bold")
                 .text(d => d);
 
+            svg.append("g")
+                .attr("transform", "translate(" + (width / 2 - 120) + "," + 20 + ")")
+                .append("text")
+                .text(props.selectedXLabel)
+                .attr("class", "title")
+
             return Object.assign(svg.node(), {scales: {color}});
         },
         [response]

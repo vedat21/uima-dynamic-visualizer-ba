@@ -33,9 +33,8 @@ export default function StackedAreaChart(props) {
     const order = d3.stackOrderNone; // stack order method
     let xFormat; // a format specifier string for the x-axis
     let yFormat; // a format specifier for the y-axis
-    // let yLabel = props.url.split("sumbydate?types=")[1] !== null ?  props.url.split("sumbydate?types=")[1].split("&names")[0] : "Title" // a label for the y-axis
-    let yLabel = props.label
-    const colors = d3.schemeTableau10; // array of colors for z
+    let yLabel = props.selectedYLabel;
+    let colors = props.selectedColors.length ? props.selectedColors : d3.schemeTableau10; // array of colors
 
     const ref = useD3(
         (svg) => {

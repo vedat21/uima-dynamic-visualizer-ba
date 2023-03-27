@@ -36,8 +36,8 @@ export default function StackedHorizontalBarChart(props) {
     let offset = d3.stackOffsetDiverging; // stack offset method
     let order = d3.stackOrderNone; // stack order method
     let xFormat; // a format specifier string for the x-axis
-    let xLabel = props.label; // a label for the x-axis
-    let colors = d3.schemeTableau10; // array of colors
+    let xLabel = props.selectedXLabel; // a label for the x-axis
+    let colors = props.selectedColors.length ? props.selectedColors : d3.schemeTableau10; // array of colors
 
     const ref = useD3(
         (svg) => {
@@ -132,8 +132,6 @@ export default function StackedHorizontalBarChart(props) {
             svg.append("g")
                 .attr("transform", `translate(100,0)`)
                 .call(yAxis);
-
-            return Object.assign(svg.node(), {scales: {color}});
         },
         [response]
     );

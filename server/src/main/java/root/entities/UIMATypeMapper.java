@@ -38,6 +38,8 @@ public class UIMATypeMapper {
     String PosValue;
     String pronType;
     String reference;
+    String sentiment;
+    String sentimentCategory;
     String subtitle;
     String tense;
     String timestamp;
